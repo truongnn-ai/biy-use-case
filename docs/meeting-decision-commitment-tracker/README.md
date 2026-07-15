@@ -23,7 +23,8 @@ a record created in one app appears instantly in the other.
 ```
         ┌─────────────────────────────────────┐
         │  Dataverse (one solution)           │
-        │  Meeting · Decision · Commitment    │
+        │  Team Member · Meeting ·            │
+        │  Decision · Commitment              │
         └──────────┬───────────────┬──────────┘
                    │               │
         ┌──────────▼─────┐  ┌──────▼───────────────┐
@@ -54,7 +55,7 @@ a record created in one app appears instantly in the other.
 
 - **AYA category:** Team / Single department (in-scope — no Enterprise dimensions)
 - **Apps:** Two — a **model-driven** app + a **canvas** app over the same data
-- **Backend:** Dataverse (3 lean tables) — no external SQL, no Client systems
+- **Backend:** Dataverse (4 lean tables incl. a fictional Team Member table) — no external SQL, no Client systems
 - **Data:** Internal only — no PII, no financial, no client data (sample data is fictional)
 - **AI:** None in this phase (AYA score 1) — AI note-summarizer is deferred
 - **Build target:** Beginner, ≤1 week; model-driven first (safety net), then canvas

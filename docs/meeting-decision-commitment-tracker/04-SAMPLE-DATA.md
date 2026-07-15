@@ -1,22 +1,32 @@
 # Sample Data — Meeting Decision & Commitment Tracker
 
-All records are **fictional and PII-free** (names are made-up labels/roles). Columns match
-the **lean core model** in 02-DATA-MODEL.md. Dates are relative to a **demo date of
+All records are **fictional and PII-free** (people are made-up names + roles). Columns
+match the **lean core model** in 02-DATA-MODEL.md. Dates are relative to a **demo date of
 2026-07-15** so the Radar and "due for review" states are populated. Same data feeds
 **both** apps.
 
-> Load order: **Meetings → Decisions → Commitments**.
+> Load order: **Team Members → Meetings → Decisions → Commitments**.
+
+## Team Members (fictional — no PII)
+
+| Team Member Name | Role |
+|---|---|
+| Maya | Team Lead |
+| Dev | Engineer |
+| Priya | Engineer |
+| Leo | Analyst |
+| Sam | Manager |
 
 ## Meetings
 
-| Meeting Name | Meeting Date | Meeting Type | Attendees | Notes / Summary |
+| Meeting Name | Meeting Date | Meeting Type | Attendees (free text) | Notes / Summary |
 |---|---|---|---|---|
 | M1 — Weekly Team Sync — 2026-07-10 | 2026-07-10 | Standup | Maya, Dev, Priya, Leo | Discussed sprint cadence, onboarding gaps, and the flaky test suite. |
 | M2 — Q3 Planning — 2026-06-25 | 2026-06-25 | Planning | Sam, Maya, Dev, Priya | Set Q3 priorities; debated tooling; agreed to revisit vendor in July. |
 | M3 — Process Review — 2026-05-20 | 2026-05-20 | Review | Maya, Dev, Leo | Reviewed handover process; decided on backup owners for key tasks. |
 | M4 — Steering Check-in — 2026-07-14 | 2026-07-14 | Steering | Sam, Maya | Reversed the earlier "single tooling vendor" call after cost concerns. |
 
-## Decisions
+## Decisions  (Decision Maker = lookup to Team Member)
 
 | Decision Title | Meeting | Context / Problem | Options Considered | Chosen Option | Rationale | Decision Maker | Decision Date | Decision Status | Review Date |
 |---|---|---|---|---|---|---|---|---|---|
@@ -29,7 +39,7 @@ the **lean core model** in 02-DATA-MODEL.md. Dates are relative to a **demo date
 > tooling" (M4) supersedes it — material for the timeline/reversal demo. Two decisions have
 > **Review Date ≤ 2026-07-15**, so they appear under "Due for review".
 
-## Commitments
+## Commitments  (Owner = lookup to Team Member; blank = ownerless)
 
 | Commitment Title | Meeting | Related Decision | Description | Owner | Due Date | Original Due Date | Times Postponed | Commitment Status |
 |---|---|---|---|---|---|---|---|---|
@@ -48,3 +58,4 @@ the **lean core model** in 02-DATA-MODEL.md. Dates are relative to a **demo date
 - **Slipping (Times Postponed ≥ 2):** "Compare tooling vendor quotes" (3).
 - **Decisions due for review:** "Standardize on single tooling vendor", "Assign backup owners for key tasks".
 - **Reversed / superseded:** "Standardize on single tooling vendor" (Reversed), superseded by "Revert to best-of-breed tooling".
+- **"My commitments" demo:** pick **Dev** → 2 commitments (onboarding checklist, vendor quotes).

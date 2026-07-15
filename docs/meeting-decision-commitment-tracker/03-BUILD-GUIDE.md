@@ -7,11 +7,11 @@
 
 ## Two-app approach
 
-Both apps sit on the **same 3 Dataverse tables** — no data duplication, changes in one
+Both apps sit on the **same 4 Dataverse tables** — no data duplication, changes in one
 appear instantly in the other.
 
 ```
-   Dataverse (one solution): Meeting · Decision · Commitment
+   Dataverse (one solution): Team Member · Meeting · Decision · Commitment
                  │                        │
         Model-driven app            Canvas app
      (fast data entry/admin)   (demo visuals: dashboard + Radar)
@@ -35,7 +35,7 @@ remaining days in the canvas app.
 
 | Day | Focus | App |
 |-----|-------|-----|
-| 1 | Create solution + 3 tables + choices + relationships (02-DATA-MODEL.md) | — |
+| 1 | Create solution + 4 tables (incl. Team Member) + choices + relationships (02-DATA-MODEL.md) | — |
 | 2 | Load sample data (04-SAMPLE-DATA.md); verify relationships | — |
 | 3 | **Track A** — Model-driven app: forms, core views, sitemap (safety net) | Model-driven |
 | 4 | **Track B** — Canvas shell: Home dashboard + nav; Meetings & Decisions screens | Canvas |
@@ -48,10 +48,12 @@ remaining days in the canvas app.
 ## Step 1 — Solution, tables, relationships (shared)
 
 1. make.powerapps.com → **Solutions** → **New solution** → "Meeting Decision & Commitment Tracker".
-2. Inside the solution, **New → Table** for **Meeting**, **Decision**, **Commitment** (columns per 02-DATA-MODEL.md).
+2. Inside the solution, **New → Table** for **Team Member**, **Meeting**, **Decision**, **Commitment** (columns per 02-DATA-MODEL.md). Team Member holds **fictional** people only — no PII.
 3. Relationships:
    - Decision → **Lookup** "Meeting".
+   - Decision → **Lookup** "Decision Maker" → Team Member (optional).
    - Commitment → **Lookup** "Meeting".
+   - Commitment → **Lookup** "Owner" → Team Member (optional; blank = ownerless).
    - Commitment → **Lookup** "Related Decision" (optional).
 4. **Do not** create calculated columns — derived flags are computed in the apps/views.
 
@@ -59,14 +61,14 @@ remaining days in the canvas app.
 
 ## Step 2 — Load sample data (shared)
 
-- Enter records from **04-SAMPLE-DATA.md** using the grid editor (Meetings → Decisions → Commitments).
+- Enter records from **04-SAMPLE-DATA.md** using the grid editor (**Team Members → Meetings → Decisions → Commitments** — people first so the Decision Maker/Owner lookups can resolve).
 
 ---
 
 ## Track A — Model-driven app (Day 3, build this first)
 
 1. In the solution: **New → App → Model-driven app**.
-2. Add the three tables to the **sitemap** (one nav group each).
+2. Add Meeting, Decision, Commitment to the **sitemap** (one nav group each); add **Team Member** as a small "Reference data" nav item so you can manage the people list.
 3. **Forms:** open each table's main form; arrange the core columns top-to-bottom (Copilot/default form is fine).
 4. **Views** — create these (they reproduce the derived flags as filters):
    - Commitments → **Overdue** = Status not in (Done, Cancelled) AND Due Date is before Today.
@@ -121,7 +123,7 @@ Add nav buttons/icons to Meetings, Decisions, Commitments, Follow-up Radar.
 
 ### Screen 4 — Commitments + Commitment detail
 
-- Gallery with filter buttons: **All · My commitments (`Owner = MyNameInput.Text`) · Open · Overdue**. Color due date red when overdue.
+- Gallery with filter buttons: **All · My commitments · Open · Overdue**. "My commitments" uses a Team Member dropdown `cmbMe`: `Filter(Commitments, Owner.'Team Member Name' = cmbMe.Selected.'Team Member Name')`. Color due date red when overdue.
 - Commitment detail: `EditForm` + **Postpone** button (date picker → Patch from 02-DATA-MODEL.md).
 
 ### Screen 5 — Follow-up Radar (the wow screen)

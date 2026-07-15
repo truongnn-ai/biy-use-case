@@ -29,7 +29,7 @@ entry/admin (built first as a safety net) and a **canvas app** as the demo showp
 ## 1a. Demo scope — core vs. deferred (⭐ number-one rule: keep it simple)
 
 **Core (build this phase):**
-- 3 lean Dataverse tables (Meeting, Decision, Commitment) — core columns only.
+- 4 lean Dataverse tables (Team Member, Meeting, Decision, Commitment) — core columns only. Team Member holds fictional people; Decision Maker & Owner are lookups to it.
 - Model-driven app: forms + core views (Overdue, Ownerless, Slipping, Due-for-review, Reversed).
 - Canvas app: Home dashboard (KPIs), Meetings, Decisions (+ Reversed filter/timeline), Commitments, Follow-up Radar, Postpone.
 - Sample data to make every state visible.
@@ -72,7 +72,7 @@ are written once and never read again. That novelty is the demo's selling point.
 
 - N1 — Not a full project/task management replacement (no Gantt, sprints, dependencies engine).
 - N2 — No integration with Client systems, external SQL, HR, or calendar sync (optional Outlook reminder only).
-- N3 — No PII, financial, or confidential data. Attendee/owner names are treated as free-text labels, kept Internal.
+- N3 — No PII, financial, or confidential data. People live in a **Team Member** table with **fictional** name + role only (no email/ID); Attendees are free-text labels. Not linked to real M365 users. Kept Internal.
 - N4 — No enterprise-wide rollout, multi-department roles, or SSO customization.
 - N5 — No approvals workflow (decisions are recorded, not routed for sign-off).
 
@@ -104,7 +104,7 @@ are written once and never read again. That novelty is the demo's selling point.
 ### Commitments / follow-ups
 
 - US-08: As Maya, I can add a commitment with owner, description, type, due date, priority, and status.
-- US-09: As Dev, I can filter to **"My commitments"** by typing my name.
+- US-09: As Dev, I can filter to **"My commitments"** by picking myself from a Team Member dropdown.
 - US-10: As anyone, the **Follow-up Radar** shows commitments that are **overdue**, **ownerless** (no owner), or **repeatedly postponed** (postponed ≥ 2 times).
 - US-11: As Dev, when I push a due date out, the app increments a **"times postponed"** counter and keeps the **original due date**.
 
@@ -118,7 +118,7 @@ are written once and never read again. That novelty is the demo's selling point.
 
 ## 6. Functional requirements
 
-- FR-01 — Three related tables: **Meeting**, **Decision**, **Commitment** (see 02-DATA-MODEL.md).
+- FR-01 — Four related tables: **Team Member** (fictional people), **Meeting**, **Decision**, **Commitment** (see 02-DATA-MODEL.md). Decision Maker and Owner are **lookups** to Team Member; Attendees stays free-text.
 - FR-02 — A Meeting has many Decisions and many Commitments. A Decision optionally has many Commitments.
 - FR-03 — Commitment must compute **Is Overdue** = (Status not in {Done, Cancelled}) AND (Due Date < today).
 - FR-04 — Commitment must flag **Is Ownerless** = Owner is blank.
@@ -173,7 +173,7 @@ are written once and never read again. That novelty is the demo's selling point.
 
 ## 11. Open questions for the client
 
-- OQ-1 — Preferred owner identity: free-text name (simplest, keeps Internal) vs. real user lookup (raises data classification)?
+- OQ-1 — **Resolved:** owner/decision-maker use a **fictional Team Member lookup** (keeps Internal). Linking to real M365 users is a Phase-2 decision that would raise Data classification to PII.
 - OQ-2 — Is the optional Outlook reminder flow desired for the demo, or keep zero-integration?
 - OQ-3 — Include the optional AI note-summarization feature, or keep AI at score 1 (none)?
 

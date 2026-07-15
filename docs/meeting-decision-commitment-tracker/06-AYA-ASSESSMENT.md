@@ -8,7 +8,7 @@ change any score: same data, same users, same classification.
 | # | Dimension | Selected score | Justification |
 |---|-----------|:---:|---------------|
 | 1 | Users | **3 — Internal: Team / Single department** | Used by one team/department; internal only, not internet-facing. |
-| 2 | Data Confidentiality & Classification | **2 — Internal** | Meeting notes, decisions, commitments. No PII, financial, or confidential data; owner/attendee names are free-text labels and sample data is fictional. |
+| 2 | Data Confidentiality & Classification | **2 — Internal** | Meeting notes, decisions, commitments. The **Team Member** table holds **fictional** people (name + role only — no email/ID/PII) and is **not** linked to real M365 users; attendees are free-text. All sample data is made up. No PII, financial, or confidential data. |
 | 3 | Integration | **1 — No integration with Client systems** | Dataverse only. The optional Outlook reminder uses Office 365 sources, which the matrix still classes under score 1. No Client systems. |
 | 4 | Business Criticality | **2 — Useful but workaround exists** | Improves follow-through; teams can still fall back to notes/email. Not critical to operations. |
 | 5 | Complexity & Scale | **1 — Simple, under 2000 records** | 3 tables, straightforward logic; demo < 200 records. |
@@ -25,7 +25,7 @@ change any score: same data, same users, same classification.
 
 ## Guardrails to stay in-scope during build
 
-- **Do not** add real user lookups tied to HR/identity data if it would push Data to PII (score 5). Keep Owner/Organizer as free-text labels for the demo (see PRD OQ-1).
+- **Do not** link the Team Member table to real Microsoft 365 users or add email/ID/HR fields — that pushes Data to PII (score 5, out of scope). Keep Team Member records **fictional** (name + role) for the demo (see PRD OQ-1).
 - **Do not** connect to Client systems or external SQL (would raise Integration).
 - **Do not** market it as enterprise-wide or multi-department in the demo (would raise Users to ⚠️4 and Growth to ⚠️5).
 - Keep the optional AI strictly **Microsoft-provided, productivity-only, human-confirmed** (score 2 max).

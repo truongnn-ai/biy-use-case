@@ -1,17 +1,24 @@
 # Data Model — Meeting Decision & Commitment Tracker
 
-Backend: **Microsoft Dataverse**. Three tables, shared by **both apps** (canvas +
+Backend: **Microsoft Dataverse**. Four tables, shared by **both apps** (canvas +
 model-driven). Build the tables once; both apps read/write the same rows.
 
 > **Demo scope rule:** columns below are the **minimum core set** needed for the demo.
 > Anything not listed is deliberately **deferred** (see bottom of file). Keep it lean.
 
-> Publisher/prefix: use your environment's default (e.g. `cr123_`). Put the 3 tables **and
+> **People are fictional.** The **Team Member** table holds made-up demo people (name +
+> role only — no email, no ID, no PII). This is what keeps AYA Data at **Internal (2)**.
+> Do **not** wire it to real Microsoft 365 users for the demo (that would be PII → out of scope).
+
+> Publisher/prefix: use your environment's default (e.g. `cr123_`). Put the 4 tables **and
 > both apps** in a single solution named **Meeting Decision & Commitment Tracker**.
 
 ## Entity-relationship overview
 
 ```
+Team Member (1) ──< (N) Decision      [Decision Maker]
+Team Member (1) ──< (N) Commitment    [Owner]
+
 Meeting (1) ────< (N) Decision
    │                    │
    │                    │ (1)
@@ -22,20 +29,30 @@ Meeting (1) ────< (N) Decision
 - **Meeting → Decision**: one-to-many
 - **Meeting → Commitment**: one-to-many
 - **Decision → Commitment**: one-to-many, **optional**
+- **Team Member → Decision** (as *Decision Maker*): one-to-many, **optional**
+- **Team Member → Commitment** (as *Owner*): one-to-many, **optional** (blank = ownerless)
+- **Attendees stay free-text** (multiline) — no relationship this phase (N:N deferred)
 
 ---
 
-## Table 1 — Meeting  (5 columns)
+## Table 1 — Team Member  (2 columns) — fictional demo people
+
+| Column (display name) | Data type | Required | Choices / notes |
+|-----------------------|-----------|----------|-----------------|
+| Team Member Name | Single line text | Yes | Primary column. e.g. "Maya". Fictional — no PII |
+| Role | Single line text | No | e.g. "Team Lead", "Engineer", "Manager" |
+
+## Table 2 — Meeting  (5 columns)
 
 | Column (display name) | Data type | Required | Choices / notes |
 |-----------------------|-----------|----------|-----------------|
 | Meeting Name | Single line text | Yes | Primary column. e.g. "Weekly Team Sync — 2026-07-10" |
 | Meeting Date | Date only | Yes | |
 | Meeting Type | Choice | Yes | Standup, Planning, Review, Steering, Ad-hoc, Other |
-| Attendees | Multiline text | No | Comma-separated names/roles (free text — not PII) |
+| Attendees | Multiline text | No | Comma-separated names/roles (**free text** — not linked this phase) |
 | Notes / Summary | Multiline text | No | Raw meeting notes |
 
-## Table 2 — Decision  (10 columns)
+## Table 3 — Decision  (10 columns)
 
 | Column (display name) | Data type | Required | Choices / notes |
 |-----------------------|-----------|----------|-----------------|
@@ -45,12 +62,12 @@ Meeting (1) ────< (N) Decision
 | Options Considered | Multiline text | No | One per line |
 | Chosen Option | Multiline text | Yes | The decision |
 | Rationale | Multiline text | No | **The "why we decided that" — core value** |
-| Decision Maker | Single line text | No | Free-text label |
+| Decision Maker | **Lookup → Team Member** | No | Who's accountable |
 | Decision Date | Date only | Yes | |
 | Decision Status | Choice | Yes | Proposed, Decided, Deferred, Reversed, Superseded — default Decided |
 | Review Date | Date only | No | Drives "due for review" |
 
-## Table 3 — Commitment  (9 columns)
+## Table 4 — Commitment  (9 columns)
 
 | Column (display name) | Data type | Required | Choices / notes |
 |-----------------------|-----------|----------|-----------------|
@@ -58,7 +75,7 @@ Meeting (1) ────< (N) Decision
 | Meeting | Lookup → Meeting | Yes | |
 | Related Decision | Lookup → Decision | No | Optional link |
 | Description | Multiline text | No | |
-| Owner | Single line text | No | **Blank = ownerless** (drives Radar) |
+| Owner | **Lookup → Team Member** | No | **Blank = ownerless** (drives Radar) |
 | Due Date | Date only | No | |
 | Original Due Date | Date only | No | Set once on create; never changed by Postpone |
 | Times Postponed | Whole number | Yes | Default 0. **≥ 2 = slipping** |
@@ -75,7 +92,7 @@ app** with Power Fx, and reproduce them as **filter conditions on model-driven v
 // Is Overdue
 !(CommitmentStatus.Value in ["Done","Cancelled"]) && !IsBlank(DueDate) && DueDate < Today()
 
-// Is Ownerless
+// Is Ownerless  (Owner is a blank lookup)
 IsBlank(Owner) && !(CommitmentStatus.Value in ["Done","Cancelled"])
 
 // Is Slipping
@@ -83,6 +100,14 @@ TimesPostponed >= 2 && !(CommitmentStatus.Value in ["Done","Cancelled"])
 
 // Decision Due For Review
 DecisionStatus.Value = "Decided" && !IsBlank(ReviewDate) && ReviewDate <= Today()
+```
+
+### "My commitments" (Owner is now a lookup)
+
+Provide a **Team Member dropdown** (`cmbMe`) instead of typing a name, then filter:
+
+```
+Filter(Commitments, Owner.'Team Member Name' = cmbMe.Selected.'Team Member Name')
 ```
 
 ## Postpone behavior
@@ -114,6 +139,8 @@ Patch(Commitments, ThisItem,
 
 These were considered and intentionally cut to stay focused on core value:
 
+- Team Member: *email, job title, manager, photo, link to real M365 users* (would add PII → out of scope)
+- Attendees as a **many-to-many** link to Team Member (kept as free-text this phase)
 - Meeting: *Organizer*, *Meeting Status*
 - Decision: *Confidence*, *Impact Area*, stored *Due-For-Review* column
 - Commitment: *Commitment Type*, *Priority*, *Notes*, stored *Is-Overdue/Ownerless/Slipping* columns
