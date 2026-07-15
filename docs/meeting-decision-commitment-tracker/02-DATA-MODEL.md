@@ -6,9 +6,11 @@ model-driven). Build the tables once; both apps read/write the same rows.
 > **Demo scope rule:** columns below are the **minimum core set** needed for the demo.
 > Anything not listed is deliberately **deferred** (see bottom of file). Keep it lean.
 
-> **People are fictional.** The **Team Member** table holds made-up demo people (name +
-> role only — no email, no ID, no PII). This is what keeps AYA Data at **Internal (2)**.
-> Do **not** wire it to real Microsoft 365 users for the demo (that would be PII → out of scope).
+> **People are fictional.** The **Team Member** table holds made-up demo people (name,
+> role, and a **fictional/dummy email** — no real ID, no real PII). The Email exists only
+> so the daily reminder flow (FR-10) has somewhere to send to. This is what keeps AYA Data
+> at **Internal (2)**. Do **not** populate it with real employee addresses or wire it to
+> real Microsoft 365 users for the demo (that would be PII → out of scope).
 
 > Publisher/prefix: use your environment's default (e.g. `cr123_`). Put the 4 tables **and
 > both apps** in a single solution named **Meeting Decision & Commitment Tracker**.
@@ -35,12 +37,13 @@ Meeting (1) ────< (N) Decision
 
 ---
 
-## Table 1 — Team Member  (2 columns) — fictional demo people
+## Table 1 — Team Member  (3 columns) — fictional demo people
 
 | Column (display name) | Data type | Required | Choices / notes |
 |-----------------------|-----------|----------|-----------------|
 | Team Member Name | Single line text | Yes | Primary column. e.g. "Maya". Fictional — no PII |
 | Role | Single line text | No | e.g. "Team Lead", "Engineer", "Manager" |
+| Email | Single line text (Email format) | No | **Fictional/dummy address** (e.g. `maya.demo@example.com`) used only as the recipient for the daily reminder flow (FR-10). Never a real employee's address — blank = skipped by the flow. |
 
 ## Table 2 — Meeting  (5 columns)
 
@@ -139,11 +142,11 @@ Patch(Commitments, ThisItem,
 
 These were considered and intentionally cut to stay focused on core value:
 
-- Team Member: *email, job title, manager, photo, link to real M365 users* (would add PII → out of scope)
+- Team Member: *job title, manager, photo, link to real M365 users* (would add PII → out of scope). Email is now included (fictional/dummy only, see Table 1) to support FR-10.
 - Attendees as a **many-to-many** link to Team Member (kept as free-text this phase)
 - Meeting: *Organizer*, *Meeting Status*
 - Decision: *Confidence*, *Impact Area*, stored *Due-For-Review* column
 - Commitment: *Commitment Type*, *Priority*, *Notes*, stored *Is-Overdue/Ownerless/Slipping* columns
-- No AI fields, no reminder/automation fields
+- No AI fields
 
 Add any of these later only if the client validates the concept and asks for them.

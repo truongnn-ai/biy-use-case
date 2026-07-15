@@ -26,6 +26,7 @@
 - **Tracks** commitments/follow-ups with owner, due date, and status.
 - **Surfaces** overdue, ownerless, and repeatedly-postponed items on a Follow-up Radar.
 - **Remembers** reversed/superseded decisions on a timeline.
+- **Reminds** owners automatically — a daily email flags their overdue items before you even open the app.
 
 ## Live demo flow (follow in order)
 
@@ -38,30 +39,32 @@
 | 5 | Open **Follow-up Radar** | "Overdue, ownerless, and slipping — the stuff that normally hides in notes." |
 | 6 | **Postpone** a commitment | "Watch the 'times postponed' counter tick up — it instantly appears under Slipping." |
 | 7 | Switch to the **model-driven app** | "Same data, a second experience — a fast admin view. I'll add a record here and it shows up in the polished app instantly." |
+| 8 | Show the **Power Automate flow run history** | "And you don't even need to open the app to know you're behind — this ran at 8am and emailed every owner their overdue items automatically." |
 
 ## Why Power Platform / why now
 
-- **Same data, two experiences:** one Dataverse, a **canvas app** for the team (polished) and a **model-driven app** for fast admin — built once, no duplication.
-- Built in **under a week** by one developer, on **Dataverse only** — no external systems, no SQL, no Client integration.
-- **AYA in-scope: Team / Single department.** No PII, no financial data, no enterprise dimensions, no AI in this phase.
-- Deliberately kept **simple for the demo** — extras (AI note-capture, email reminders) are a validated Phase-2 conversation, not scope creep.
+- **Same data, three experiences:** one Dataverse, a **canvas app** for the team (polished), a **model-driven app** for fast admin, and a **Power Automate flow** that reminds people automatically — built once, no duplication.
+- Built in **under a week** by one developer, on **Dataverse + the standard Office 365 Outlook connector** — no external systems, no SQL, no Client integration.
+- **AYA in-scope: Team / Single department.** No PII, no financial data, no enterprise dimensions, no AI in this phase. The reminder flow uses fictional/dummy addresses, so it doesn't touch real data.
+- Deliberately kept **simple for the demo** — the daily reminder is the one automation that ships; extras like AI note-capture are a validated Phase-2 conversation, not scope creep.
 
 ## Anticipated questions (have answers ready)
 
 - **"Where do the numbers/impact come from?"** → Sample data is illustrative for the demo; live use populates from real meetings.
 - **"Is this just another task tracker?"** → No — it captures *decisions + rationale + reversals*, which task tools don't. Commitments are the lightweight follow-through layer, not a full PM tool.
-- **"What about our data / privacy?"** → Internal-only, no PII by design; owner names are free-text labels for the demo. See the AYA scorecard.
-- **"Can it plug into Outlook/Teams?"** → Yes, as a Phase-2 option — deliberately left out of the demo to keep it zero-integration and in-scope.
+- **"What about our data / privacy?"** → Internal-only, no PII by design; owner names and their email addresses are fictional/dummy for the demo. See the AYA scorecard.
+- **"Can it plug into Outlook/Teams?"** → The daily overdue-reminder email already does, using the Outlook connector. Deeper integration (Teams tab, meeting sync) is a validated Phase-2 conversation.
 
 ## The ask (close with this)
 
 > "If this maps to a real pain for one of your teams, we can pilot it with that team's
-> actual meetings in a couple of weeks — and re-assess the AYA form before adding any
-> Outlook/Teams integration."
+> actual meetings in a couple of weeks — swap the dummy emails for real addresses once
+> we re-assess the AYA form, and add Teams/meeting-sync integration from there."
 
 ## Do / Don't during the demo
 
 - ✅ Lead with the **Follow-up Radar** and the **reversed-decision** view — they're the "aha."
 - ✅ Keep it to one team's story; concrete beats abstract.
+- ✅ Show the reminder flow's run history as proof it's already working, not just a mockup.
 - ❌ Don't pitch it as enterprise-wide (moves it out of AYA scope).
-- ❌ Don't promise live Outlook/Teams sync in the demo build.
+- ❌ Don't imply the flow emails real people — the addresses are fictional/dummy for the demo.

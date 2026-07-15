@@ -3,8 +3,10 @@
 Paste these into **Copilot** inside make.powerapps.com. Copilot generates a first draft;
 always verify column types, choice values, and relationships against **02-DATA-MODEL.md**.
 
-> **Demo scope:** only the lean core is created here. No AI, no automation, no extra fields.
-> Order: create tables → relationships → **model-driven app (first)** → **canvas app** → data.
+> **Demo scope:** only the lean core is created here, plus the one in-scope automation (the
+> daily overdue reminder flow). No AI, no extra fields.
+> Order: create tables → relationships → **model-driven app (first)** → **canvas app** →
+> data → **reminder flow**.
 
 ---
 
@@ -13,8 +15,10 @@ always verify column types, choice values, and relationships against **02-DATA-M
 ```
 Create four Dataverse tables for a "Meeting Decision & Commitment Tracker":
 
-1) Team Member — columns: Team Member Name (primary text), Role (text).
-   (This holds fictional demo people only — no email, no ID, no personal data.)
+1) Team Member — columns: Team Member Name (primary text), Role (text),
+   Email (text, email format).
+   (This holds fictional demo people only — no ID, no real personal data. Email is a
+   fictional/dummy address used only as the recipient for the daily reminder flow.)
 
 2) Meeting — columns: Meeting Name (primary text), Meeting Date (date only),
    Meeting Type (choice: Standup, Planning, Review, Steering, Ad-hoc, Other),
@@ -90,8 +94,24 @@ Help me add these in the canvas app:
 ```
 Add sample rows to the Team Member, Meeting, Decision, and Commitment tables using this data:
 [paste the tables from 04-SAMPLE-DATA.md]
-Enter Team Members first, then Meetings, then Decisions (link Meeting + Decision Maker),
-then Commitments (link Meeting, Owner, and where given the Related Decision).
+Enter Team Members first (incl. their fictional/dummy Email), then Meetings, then Decisions
+(link Meeting + Decision Maker), then Commitments (link Meeting, Owner, and where given
+the Related Decision).
+```
+
+## Prompt G — Build the daily overdue reminder flow (Power Automate)
+
+```
+Create a scheduled cloud flow that runs once daily:
+1. Trigger: Recurrence, every 1 day.
+2. List rows on the Commitment table where Commitment Status is not Done or Cancelled
+   and Due Date is before today (mirrors the "Is Overdue" logic).
+3. Filter out rows where Owner is blank (ownerless commitments have no recipient).
+4. For each remaining commitment, look up the Owner's Team Member record to get their Email.
+5. Send an email (Office 365 Outlook connector) to that Email with the Commitment Title
+   and Due Date, one email per overdue commitment.
+Use only the fictional/dummy Email values already on the Team Member records — never a
+real employee's inbox.
 ```
 
 ## Verification checklist after Copilot runs
@@ -102,7 +122,8 @@ then Commitments (link Meeting, Owner, and where given the Related Decision).
 - [ ] Times Postponed is a whole number, default 0.
 - [ ] Model-driven views return the expected sample records (04-SAMPLE-DATA.md).
 - [ ] Canvas Radar filters + KPI tiles compute from live data (not hard-coded).
-- [ ] Both apps are in the one solution; no PII/financial fields; Team Member holds fictional people only (name + role).
+- [ ] Both apps and the reminder flow are in the one solution; no real PII/financial fields; Team Member holds fictional people only (name, role, dummy email).
+- [ ] Reminder flow, when run manually, emails only the seeded overdue commitments to their dummy addresses, and skips ownerless ones.
 
-> **Deferred (do NOT ask Copilot to build now):** AI note summarizer, email reminder flows,
+> **Deferred (do NOT ask Copilot to build now):** AI note summarizer,
 > Priority/Confidence/Impact Area/Commitment Type/Notes fields. See 03-BUILD-GUIDE §Deferred.

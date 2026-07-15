@@ -29,14 +29,14 @@ entry/admin (built first as a safety net) and a **canvas app** as the demo showp
 ## 1a. Demo scope — core vs. deferred (⭐ number-one rule: keep it simple)
 
 **Core (build this phase):**
-- 4 lean Dataverse tables (Team Member, Meeting, Decision, Commitment) — core columns only. Team Member holds fictional people; Decision Maker & Owner are lookups to it.
+- 4 lean Dataverse tables (Team Member, Meeting, Decision, Commitment) — core columns only. Team Member holds fictional people (incl. a fictional/dummy Email); Decision Maker & Owner are lookups to it.
 - Model-driven app: forms + core views (Overdue, Ownerless, Slipping, Due-for-review, Reversed).
 - Canvas app: Home dashboard (KPIs), Meetings, Decisions (+ Reversed filter/timeline), Commitments, Follow-up Radar, Postpone.
+- **Daily overdue email reminder (FR-10)** — a scheduled Power Automate flow that emails each Owner their overdue commitments via Office 365 Outlook, using the fictional/dummy Email on their Team Member record.
 - Sample data to make every state visible.
 
 **Deferred (NOT this phase):**
 - AI note summarizer (US-13) — Microsoft AI, revisit only if client validates.
-- Daily email reminder flow (FR-10) — keeps the app zero-integration for now.
 - Extra fields: Priority, Confidence, Impact Area, Commitment Type, Notes, Organizer, Meeting Status.
 - Approvals, Teams/Outlook sync, role-based views, analytics.
 
@@ -71,7 +71,7 @@ are written once and never read again. That novelty is the demo's selling point.
 ### Non-goals (out of scope for the demo)
 
 - N1 — Not a full project/task management replacement (no Gantt, sprints, dependencies engine).
-- N2 — No integration with Client systems, external SQL, HR, or calendar sync (optional Outlook reminder only).
+- N2 — No integration with Client systems, external SQL, HR, or calendar sync (the daily Outlook reminder flow is the one integration in scope this phase).
 - N3 — No PII, financial, or confidential data. People live in a **Team Member** table with **fictional** name + role only (no email/ID); Attendees are free-text labels. Not linked to real M365 users. Kept Internal.
 - N4 — No enterprise-wide rollout, multi-department roles, or SSO customization.
 - N5 — No approvals workflow (decisions are recorded, not routed for sign-off).
@@ -112,6 +112,10 @@ are written once and never read again. That novelty is the demo's selling point.
 
 - US-12: As Sam, the Home screen shows KPI tiles: Open commitments, Overdue, Decisions this month, Decisions due for review, Reversed decisions.
 
+### Reminders
+
+- US-14: As Dev, I get a daily email listing my overdue commitments, so I don't have to open the app to know what I'm behind on.
+
 ### Optional AI (Microsoft-provided only — AYA score 2) — **(DEFERRED)**
 
 - US-13 **(DEFERRED)**: As Maya, I can paste raw meeting notes and have Copilot/AI Builder **suggest** candidate decisions and action items, which I confirm before saving.
@@ -127,17 +131,17 @@ are written once and never read again. That novelty is the demo's selling point.
 - FR-07 — All list screens support text search and at least one choice-based filter.
 - FR-08 — Dashboard KPIs recompute from live data (no hard-coded totals).
 - FR-09 — Postpone action on a Commitment: sets a new Due Date, keeps Original Due Date, increments Times Postponed.
-- FR-10 **(DEFERRED)** — A daily Power Automate flow emails owners their overdue commitments via Office 365 Outlook. Out of scope for the demo (keeps the app zero-integration).
+- FR-10 — A daily Power Automate flow queries Commitments for **Is Overdue** records and emails each **Owner** their overdue items via the Office 365 Outlook connector, using the Owner's (fictional/dummy) Email on their Team Member record. Ownerless commitments are skipped (no recipient).
 
 ## 7. Non-functional requirements
 
 - NFR-01 — Buildable by a Power Platform beginner in ≤ 1 week.
-- NFR-02 — Dependency-light: Dataverse only; optional Outlook flow; no external services.
+- NFR-02 — Dependency-light: Dataverse + the standard Office 365 Outlook connector (for FR-10); no external services.
 - NFR-03 — Data volume: demo < 200 records (AYA Complexity = 1).
 - NFR-04 — Availability: non-critical; downtime is insignificant (AYA Availability = 1).
 - NFR-05 — Accessible labels and tab order on forms (basic Power Apps accessibility defaults).
 
-## 8. The two apps
+## 8. The two apps + one flow
 
 ### 8a. Model-driven app (build first — safety net, fast admin)
 - Sitemap with the three tables (Meetings, Decisions, Commitments).
@@ -155,7 +159,12 @@ are written once and never read again. That novelty is the demo's selling point.
 7. **Commitment detail / edit** — full form + "Postpone" button (FR-09).
 8. **Follow-up Radar** — three grouped lists: Overdue · Ownerless · Slipping (postponed ≥ 2).
 
-(Both apps share the same Dataverse tables — see 03-BUILD-GUIDE.md for build order.)
+### 8c. Reminder flow (Power Automate)
+- Scheduled (daily) recurrence trigger.
+- Lists Commitments matching **Is Overdue**, groups by Owner.
+- Sends one email per Owner (Office 365 Outlook connector) listing their overdue items; skips ownerless commitments.
+
+(All three share the same Dataverse tables — see 03-BUILD-GUIDE.md for build order.)
 
 ## 9. Success metrics (for the demo conversation)
 
@@ -174,6 +183,6 @@ are written once and never read again. That novelty is the demo's selling point.
 ## 11. Open questions for the client
 
 - OQ-1 — **Resolved:** owner/decision-maker use a **fictional Team Member lookup** (keeps Internal). Linking to real M365 users is a Phase-2 decision that would raise Data classification to PII.
-- OQ-2 — Is the optional Outlook reminder flow desired for the demo, or keep zero-integration?
+- OQ-2 — **Resolved:** the daily Outlook reminder flow (FR-10) is **in scope** for this phase, using fictional/dummy Team Member emails (see guardrail in 06-AYA-ASSESSMENT.md) so it stays Internal, not PII.
 - OQ-3 — Include the optional AI note-summarization feature, or keep AI at score 1 (none)?
 

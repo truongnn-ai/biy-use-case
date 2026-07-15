@@ -2,46 +2,52 @@
 
 **Two apps, one Dataverse.** For a **Power Platform beginner**, targeting **≤ 1 week**.
 
-> **Demo scope rule:** build only the core below. AI, email reminders, and extra fields are
-> **deferred** (see §Deferred). Simple and working beats feature-rich and unfinished.
+> **Demo scope rule:** build only the core below. AI and extra fields are **deferred** (see
+> §Deferred). The **daily overdue email reminder** is in scope this phase. Simple and
+> working beats feature-rich and unfinished.
 
-## Two-app approach
+## Two-app + one-flow approach
 
-Both apps sit on the **same 4 Dataverse tables** — no data duplication, changes in one
-appear instantly in the other.
+Both apps and the reminder flow sit on the **same 4 Dataverse tables** — no data
+duplication, changes in one app appear instantly in the other, and the flow reads the
+same live data.
 
 ```
    Dataverse (one solution): Team Member · Meeting · Decision · Commitment
-                 │                        │
-        Model-driven app            Canvas app
-     (fast data entry/admin)   (demo visuals: dashboard + Radar)
+          │                        │                        │
+   Model-driven app            Canvas app          Power Automate flow
+ (fast data entry/admin)  (demo visuals: dashboard   (daily overdue
+                            + Radar)                  email reminder)
 ```
 
 - **Model-driven** = your safety net. Mostly auto-generated once tables exist, so you get a
   usable app fast.
 - **Canvas** = the demo showpiece (Home dashboard, Follow-up Radar, decision timeline).
+- **Power Automate flow** = the "make it useful" piece — a daily scheduled flow that emails
+  each Owner their overdue commitments (FR-10), built after both apps.
 
 **Build the model-driven app FIRST** so you always have something to show, then invest the
-remaining days in the canvas app.
+remaining days in the canvas app and the reminder flow.
 
 ## Prerequisites
 
 - A Power Platform environment with **Dataverse** enabled.
-- Maker access to https://make.powerapps.com.
+- Maker access to https://make.powerapps.com and https://make.powerautomate.com.
 - No external SQL, no Client systems, no special internal permissions required.
-- No AI Builder, no Outlook connector needed (those features are deferred).
+- No AI Builder needed (deferred). The **Office 365 Outlook connector** is required for
+  the daily reminder flow (standard connector, included with most licenses).
 
 ## Suggested week plan
 
-| Day | Focus | App |
+| Day | Focus | Component |
 |-----|-------|-----|
-| 1 | Create solution + 4 tables (incl. Team Member) + choices + relationships (02-DATA-MODEL.md) | — |
+| 1 | Create solution + 4 tables (incl. Team Member + Email) + choices + relationships (02-DATA-MODEL.md) | — |
 | 2 | Load sample data (04-SAMPLE-DATA.md); verify relationships | — |
 | 3 | **Track A** — Model-driven app: forms, core views, sitemap (safety net) | Model-driven |
 | 4 | **Track B** — Canvas shell: Home dashboard + nav; Meetings & Decisions screens | Canvas |
 | 5 | **Track B** — Commitments + Postpone + Follow-up Radar; polish/theme | Canvas |
-| 6 | Buffer: fix issues, tidy both apps, package in one solution | Both |
-| 7 | Test both against sample data; rehearse demo script | Both |
+| 6 | **Track C** — Power Automate daily overdue reminder flow; buffer to fix issues, package in one solution | Flow + Both |
+| 7 | Test all three against sample data; rehearse demo script | All |
 
 ---
 
@@ -145,11 +151,37 @@ Tapping a row navigates to Commitment detail.
 
 ---
 
-## Package & test (Days 6–7)
+## Track C — Power Automate reminder flow (Day 6, make it useful)
 
-- Confirm both apps are inside the **one solution**.
+1. In the solution: **New → Automation → Cloud flow → Scheduled cloud flow.**
+2. **Trigger:** Recurrence — Interval `1`, Frequency `Day`, at a fixed time (e.g. 8:00 AM).
+3. **List rows** (Dataverse) on **Commitments**, filter:
+   `Commitment Status ne 'Done' and Commitment Status ne 'Cancelled' and Due Date lt {utcNow()}`
+   (mirrors the **Is Overdue** logic in 02-DATA-MODEL.md — keep the flow and the apps' derived flags consistent).
+4. **Filter array** to drop rows with no Owner (ownerless commitments have no recipient; they still surface via the canvas Follow-up Radar).
+5. **Apply to each** overdue commitment → **Get a row by ID** (Dataverse) on **Team Member** using the Owner lookup, to read their **Email**.
+6. Group by Owner (or just send one email per commitment for simplicity — see note below) and **Send an email (V2)** (Office 365 Outlook connector):
+   - To: the Team Member's Email (fictional/dummy address).
+   - Subject: "You have an overdue commitment: {Commitment Title}".
+   - Body: Commitment Title, Due Date, and a link/reference back to the record.
+7. **Save** and **Run now** to test against the sample data (04-SAMPLE-DATA.md) — confirm only the seeded overdue commitments trigger an email, sent to their dummy address.
+8. **Turn on** the flow.
+
+> **Keep it simple for the demo:** one email per overdue commitment (not batched into a
+> single digest per owner) is fine and far less flow logic. Batch-by-owner only if you
+> have time to spare.
+
+> **AYA guardrail:** only use fictional/dummy addresses in Team Member.Email (see
+> 06-AYA-ASSESSMENT.md). Never point this flow at real employee inboxes for the demo.
+
+---
+
+## Package & test (Day 7)
+
+- Confirm both apps **and** the flow are inside the **one solution**.
 - Create a record in the model-driven app → verify it appears in the canvas app (same data proof).
 - Walk the demo script; confirm Radar/KPIs match the sample data (04-SAMPLE-DATA.md).
+- Run the reminder flow once more; confirm the sample overdue commitments each produced one email to their dummy address.
 
 ## Demo script (5 minutes)
 
@@ -159,6 +191,7 @@ Tapping a row navigates to Commitment detail.
 4. **Follow-up Radar** → Overdue / Ownerless / Slipping.
 5. **Postpone** a commitment → Times Postponed increments → it appears under Slipping.
 6. Switch to the **model-driven app** → "same data, a fast admin view" (create/edit a record live).
+7. Show the **Power Automate flow run history** → "this already emailed the overdue owners this morning."
 
 ---
 
@@ -167,7 +200,6 @@ Tapping a row navigates to Commitment detail.
 Explicitly out of scope for the demo; add later only if the client validates:
 
 - AI note summarizer (Copilot/AI Builder)
-- Daily overdue email reminder (Power Automate + Outlook)
 - Extra fields (Priority, Confidence, Impact Area, Commitment Type, Notes)
 - Approvals, Teams/Outlook sync, role-based views, trend analytics
 

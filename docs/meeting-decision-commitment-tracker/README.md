@@ -11,33 +11,37 @@ Delivered as **two apps over one shared Dataverse** (see architecture below).
 > order.
 
 > **⭐ Number-one rule: keep it simple — this is a demo.** Build only the core feature set.
-> Non-essential features (AI, email reminders, extra fields) are explicitly **deferred**
-> and called out in each doc under a "Deferred" note. Working and simple beats
-> feature-rich and unfinished.
+> Non-essential features (AI, extra fields) are explicitly **deferred** and called out in
+> each doc under a "Deferred" note. The **daily overdue email reminder** is now **in scope**
+> for this phase (it's what makes the app actually useful day-to-day). Working and simple
+> beats feature-rich and unfinished.
 
-## Solution architecture — two apps, one data source
+## Solution architecture — two apps + one flow, one data source
 
-Both apps sit on the **same 3 Dataverse tables** in **one solution**. No data duplication;
-a record created in one app appears instantly in the other.
+Both apps (and the reminder flow) sit on the **same 4 Dataverse tables** in **one
+solution**. No data duplication; a record created in one app appears instantly in the
+other, and the flow reads live from the same tables.
 
 ```
         ┌─────────────────────────────────────┐
         │  Dataverse (one solution)           │
         │  Team Member · Meeting ·            │
         │  Decision · Commitment              │
-        └──────────┬───────────────┬──────────┘
-                   │               │
-        ┌──────────▼─────┐  ┌──────▼───────────────┐
-        │ Model-driven   │  │ Canvas app           │
-        │ (build FIRST — │  │ (demo showpiece —    │
-        │  safety net,   │  │  dashboard + Radar   │
-        │  fast admin)   │  │  + timeline)         │
-        └────────────────┘  └──────────────────────┘
+        └──────────┬──────────┬───────────────┘
+                   │          │
+        ┌──────────▼─────┐  ┌─▼────────────────┐  ┌───────────────────────┐
+        │ Model-driven   │  │ Canvas app        │  │ Power Automate flow   │
+        │ (build FIRST — │  │ (demo showpiece — │  │ (daily, scheduled) —  │
+        │  safety net,   │  │  dashboard + Radar│  │  emails each Owner    │
+        │  fast admin)   │  │  + timeline)      │  │  their overdue items  │
+        └────────────────┘  └───────────────────┘  └───────────────────────┘
 ```
 
 - **Model-driven** is mostly auto-generated once the tables exist → build it first so you
   always have something to show.
 - **Canvas** carries the demo wow-factor (Home KPIs, Follow-up Radar, decision timeline).
+- **Power Automate flow** runs daily, queries overdue Commitments, and emails each Owner
+  via Office 365 Outlook — using the fictional/dummy Email on their Team Member record.
 
 ## Document index
 
@@ -54,9 +58,9 @@ a record created in one app appears instantly in the other.
 ## At a glance
 
 - **AYA category:** Team / Single department (in-scope — no Enterprise dimensions)
-- **Apps:** Two — a **model-driven** app + a **canvas** app over the same data
+- **Apps:** Two — a **model-driven** app + a **canvas** app, plus one **Power Automate** flow — over the same data
 - **Backend:** Dataverse (4 lean tables incl. a fictional Team Member table) — no external SQL, no Client systems
-- **Data:** Internal only — no PII, no financial, no client data (sample data is fictional)
+- **Data:** Internal only — no PII, no financial, no client data (sample data and Team Member emails are fictional/dummy)
 - **AI:** None in this phase (AYA score 1) — AI note-summarizer is deferred
-- **Build target:** Beginner, ≤1 week; model-driven first (safety net), then canvas
-- **Dependencies:** Dataverse only — no automation/Outlook flow in this phase
+- **Build target:** Beginner, ≤1 week; model-driven first (safety net), then canvas, then the reminder flow
+- **Dependencies:** Dataverse + Office 365 Outlook connector (daily overdue-reminder flow, in scope this phase)

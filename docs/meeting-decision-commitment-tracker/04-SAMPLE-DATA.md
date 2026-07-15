@@ -7,15 +7,15 @@ match the **lean core model** in 02-DATA-MODEL.md. Dates are relative to a **dem
 
 > Load order: **Team Members → Meetings → Decisions → Commitments**.
 
-## Team Members (fictional — no PII)
+## Team Members (fictional — no PII; Email is a dummy address for the reminder flow only)
 
-| Team Member Name | Role |
-|---|---|
-| Maya | Team Lead |
-| Dev | Engineer |
-| Priya | Engineer |
-| Leo | Analyst |
-| Sam | Manager |
+| Team Member Name | Role | Email |
+|---|---|---|
+| Maya | Team Lead | maya.demo@example.com |
+| Dev | Engineer | dev.demo@example.com |
+| Priya | Engineer | priya.demo@example.com |
+| Leo | Analyst | leo.demo@example.com |
+| Sam | Manager | sam.demo@example.com |
 
 ## Meetings
 
@@ -59,3 +59,4 @@ match the **lean core model** in 02-DATA-MODEL.md. Dates are relative to a **dem
 - **Decisions due for review:** "Standardize on single tooling vendor", "Assign backup owners for key tasks".
 - **Reversed / superseded:** "Standardize on single tooling vendor" (Reversed), superseded by "Revert to best-of-breed tooling".
 - **"My commitments" demo:** pick **Dev** → 2 commitments (onboarding checklist, vendor quotes).
+- **Daily reminder flow demo:** running the flow against this data should email `dev.demo@example.com` (2 overdue: onboarding checklist, vendor quotes) and `leo.demo@example.com` (1 overdue: handover steps). "Fix flaky test suite" is overdue but ownerless, so it's skipped by the flow (still visible on the canvas Follow-up Radar).
