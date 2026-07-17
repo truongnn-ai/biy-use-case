@@ -1,0 +1,5 @@
+Decision Title,Meeting,Context,Options Considered,Chosen Option,Rationale,Decision Maker,Decision Date,Decision Status,Review Date
+Adopt 2-week sprint cadence,M1 — Weekly Team Sync — 2026-07-10,Delivery felt unpredictable,1-week / 2-week / no sprints,2-week sprints,Balances planning overhead with responsiveness,Maya,2026-07-10,Decided,2026-08-10
+Standardize on single tooling vendor,M2 — Q3 Planning — 2026-06-25,Tool sprawl across team,Single vendor / best-of-breed / status quo,Single vendor,"Simpler admin, volume discount",Sam,2026-06-25,Reversed,2026-07-15
+Assign backup owners for key tasks,M3 — Process Review — 2026-05-20,Bus-factor risk on handovers,Backups / documentation only / do nothing,Named backup owners,Reduces single-point-of-failure risk,Maya,2026-05-20,Decided,2026-07-01
+Revert to best-of-breed tooling,M4 — Steering Check-in — 2026-07-14,Single-vendor cost exceeded budget,Keep single vendor / revert,Revert to best-of-breed,"Cost outweighed admin savings; supersedes M2 decision",Sam,2026-07-14,Decided,2026-09-14

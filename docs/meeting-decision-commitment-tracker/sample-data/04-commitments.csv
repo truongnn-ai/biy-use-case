@@ -1,0 +1,8 @@
+Commitment Title,Meeting,Related Decision,Description,Owner,Due Date,Original Due Date,Times Postponed,Commitment Status
+Draft onboarding checklist,M1 — Weekly Team Sync — 2026-07-10,Assign backup owners for key tasks,New-hire ramp doc,Dev,2026-07-08,2026-07-01,1,In Progress
+Fix flaky test suite,M1 — Weekly Team Sync — 2026-07-10,,Stabilize CI,,2026-07-05,2026-07-05,0,Not Started
+Set up 2-week sprint board,M1 — Weekly Team Sync — 2026-07-10,Adopt 2-week sprint cadence,Configure board,Priya,2026-07-20,2026-07-20,0,In Progress
+Compare tooling vendor quotes,M2 — Q3 Planning — 2026-06-25,Standardize on single tooling vendor,Collect 3 quotes,Dev,2026-07-02,2026-06-20,3,Blocked
+Document handover steps,M3 — Process Review — 2026-05-20,Assign backup owners for key tasks,Write handover guide,Leo,2026-07-12,2026-07-12,0,Not Started
+Announce tooling reversal,M4 — Steering Check-in — 2026-07-14,Revert to best-of-breed tooling,Email the team,Maya,2026-07-18,2026-07-18,0,Not Started
+Archive single-vendor contract notes,M4 — Steering Check-in — 2026-07-14,Revert to best-of-breed tooling,Tidy shared folder,,,,0,Not Started
