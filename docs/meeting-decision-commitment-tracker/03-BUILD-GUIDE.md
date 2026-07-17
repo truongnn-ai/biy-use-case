@@ -73,26 +73,82 @@ remaining days in the canvas app and the reminder flow.
 
 ## Track A — Model-driven app (Day 3, build this first)
 
-1. In the solution: **New → App → Model-driven app**.
-2. Add Meeting, Decision, Commitment to the **sitemap** (one nav group each); add **Team Member** as a small "Reference data" nav item so you can manage the people list.
-3. **Forms:** open each table's main form; arrange the core columns top-to-bottom (Copilot/default form is fine).
-4. **Views** — create these (they reproduce the derived flags as filters):
-   - Commitments → **Overdue** = Commitment Status not in (Done, Cancelled) AND Due Date is before Today.
-   - Commitments → **Ownerless** = Owner does not contain data AND Commitment Status not in (Done, Cancelled).
-   - Commitments → **Slipping** = Times Postponed ≥ 2 AND Commitment Status not in (Done, Cancelled).
-   - Decisions → **Due for review** = Decision Status = Decided AND Review Date on or before Today.
-   - Decisions → **Reversed / Superseded** = Decision Status in (Reversed, Superseded).
-5. (Optional, still simple) Add a native **chart**: Commitments count by Commitment Status.
-6. **Publish.** You now have a complete, usable app as a safety net.
+### A.1 Create the app shell
+
+1. Open your solution (**Meeting Decision & Commitment Tracker**) in make.powerapps.com.
+2. Command bar → **New** → **App** → **Model-driven app**.
+3. In the **New model-driven app** dialog, enter **Name** (e.g. `MDC Tracker – Admin`), leave **Description** blank, select **Create**.
+4. The app designer opens with three panes: **Pages** (left — the sitemap tree), the **preview** (center), and **Properties** (right). Everything below happens from the Pages pane and the command bar above it.
+
+### A.2 Add the four tables to navigation
+
+Repeat for **Meeting**, **Decision**, **Commitment**, then **Team Member**:
+
+1. Command bar → **Add page** → **Dataverse table**.
+2. Tick the table → **Next**.
+3. Accept the default **Form** (Main/Information) and **Views** (Active, All) selections → **Add**.
+4. The table appears in the Pages tree as its own group, with **Views** and **Forms** underneath it.
+
+Once all four are added:
+
+5. Reorder the groups so **Meeting**, **Decision**, **Commitment** come first: select a group in the Pages tree and drag it, or use its **⋯** menu → **Move up** / **Move down**.
+6. Make **Team Member** read as reference data rather than a primary work area: select the Team Member group → the rename (pencil) icon → change the group's display label to **Reference Data**. (This only relabels the nav group — the underlying table is unchanged.)
+
+### A.3 Check (and optionally tidy) the forms
+
+1. In the Pages tree, expand **Commitment** → **Forms** → select the main form to preview it in the center pane.
+2. The Copilot-generated default form already lists every column — that's good enough for the demo as-is.
+3. Optional polish: select the form → **Edit** → drag fields into a top-to-bottom order such as Commitment Title, Owner, Due Date, Commitment Status, Times Postponed, Description → **Save** → **Publish**.
+4. Repeat for Decision and Meeting only if time allows — this step is not required for a working app.
+
+### A.4 Create the five custom views
+
+Views live under each table → **Views** in the Pages tree.
+
+1. Table → **Views** → **+ New view** → name it exactly as in the table below (so it matches the demo script and the checklist).
+2. Open **Edit filters** → **+ New condition** (or **+ New group** when you need to mix AND/OR) → pick the **column**, the **operator**, and the **value**.
+3. **Save**, then **Publish** (you can publish once at the end, after all five views are built).
+
+| View | Table | Conditions (joined with AND unless noted) |
+|---|---|---|
+| **Overdue** | Commitment | Commitment Status **Does Not Equal** Done **AND** Does Not Equal Cancelled **AND** Due Date **Before** Today |
+| **Ownerless** | Commitment | Owner **Does Not Contain Data** **AND** Commitment Status **Does Not Equal** Done **AND** Does Not Equal Cancelled |
+| **Slipping** | Commitment | Times Postponed **Greater Than or Equal** `2` **AND** Commitment Status **Does Not Equal** Done **AND** Does Not Equal Cancelled |
+| **Due for review** | Decision | Decision Status **Equals** Decided **AND** Review Date **On or Before** Today |
+| **Reversed / Superseded** | Decision | Decision Status **Equals** Reversed **OR** Decision Status **Equals** Superseded — put both in one **OR** group (**+ New group**, set the group's join to **Or**) |
+
+> The exact date-operator label can vary slightly by environment version — look for **Before** (strictly earlier than today). If your filter builder only offers **On or Before**, that's an acceptable substitute for a demo (it also counts anything due today as overdue, which is a minor difference).
+
+### A.5 Optional: add a chart
+
+1. Table → **Commitment** → **Charts** → **+ New chart**.
+2. Chart type **Bar** → **Series**: Count of records → **Group by**: Commitment Status → **Save**.
+3. No further wiring needed — it surfaces automatically as a visual pane on the Commitment grid page.
+
+### A.6 Preview, save, publish
+
+1. Command bar → **Save**.
+2. Command bar → **Publish**.
+3. Command bar → **Play** → click through Meeting → Decision → Commitment → Reference Data. For Commitment and Decision, use the view-picker dropdown at the top-left of the grid to confirm all five custom views load and return the expected rows from 04-SAMPLE-DATA.md.
+
+You now have a complete, usable app as your safety net before touching the canvas app.
 
 ---
 
 ## Track B — Canvas app (Days 4–5, the demo showpiece)
 
-1. In the solution: **New → App → Canvas** (Tablet layout).
-2. Add data sources: Meetings, Decisions, Commitments.
+### B.1 Create the app shell
 
-### Screen 1 — Home / Dashboard (KPI tiles)
+1. Inside the solution → **New** → **App** → **Canvas app**.
+2. Name it (e.g. `MDC Tracker – Canvas`), format **Tablet** → **Create**.
+3. In Power Apps Studio: **View** tab → **Data sources** → **+ Add data** → search **Dataverse** → add **Meetings**, **Decisions**, **Commitments**, **Team Members** (Team Members is needed later for the "My commitments" filter and the Postpone step).
+4. In the **Screens** panel, rename the default screen to `scrHome`. Add screens (**New screen** → **Blank**) named `scrMeetings`, `scrMeetingDetail`, `scrDecisions`, `scrDecisionDetail`, `scrCommitments`, `scrCommitmentDetail`, `scrRadar`.
+5. **File** → **Save** early and often as you build.
+
+### B.2 Screen 1 — Home / Dashboard (KPI tiles)
+
+1. On `scrHome`, insert 5 rectangles (or blank containers), each holding one **Label** for the number and one **Label** for the caption underneath (e.g. "Overdue").
+2. Select each number label and paste its formula into the **Text** property:
 
 ```
 // Open commitments
@@ -114,58 +170,118 @@ CountRows(Filter(Decisions,
 CountRows(Filter(Decisions, DecisionStatus.Value in ["Reversed","Superseded"]))
 ```
 
-Add nav buttons/icons to Meetings, Decisions, Commitments, Follow-up Radar.
+3. Insert 4 **Icon** or **Button** controls in a nav bar at the top: Meetings, Decisions, Commitments, Follow-up Radar. Set each **OnSelect**:
+   - `Navigate(scrMeetings, ScreenTransition.Fade)`
+   - `Navigate(scrDecisions, ScreenTransition.Fade)`
+   - `Navigate(scrCommitments, ScreenTransition.Fade)`
+   - `Navigate(scrRadar, ScreenTransition.Fade)`
+4. Press **F5** (Preview) and confirm each tile's number matches what you'd expect from 04-SAMPLE-DATA.md, and each nav button switches screens.
 
-### Screen 2 — Meetings + Meeting detail
+### B.3 Screen — Meetings + Meeting detail
 
-- Gallery over `Meetings`, search on Meeting Name, dropdown filter on Meeting Type, "New" → form.
-- Meeting detail: `EditForm` + two galleries filtered to the selected meeting (Decisions, Commitments).
+1. Build `scrMeetingDetail` first (the target before the link to it): insert a **Form** control, rename it `frmMeeting`, set **Data source** = `Meetings`.
+2. Add two **Vertical galleries** below it:
+   - `galMeetingDecisions` → **Items**: `Filter(Decisions, Meeting = varSelectedMeeting)`
+   - `galMeetingCommitments` → **Items**: `Filter(Commitments, Meeting = varSelectedMeeting)`
+3. Add a **Back** icon → **OnSelect**: `Navigate(scrMeetings, ScreenTransition.Fade)`.
+4. `scrMeetings`: insert a **Vertical gallery** `galMeetings` (layout: Title + subtitle), **Items**:
+   `Search(Meetings, txtSearchMeetings.Text, "MeetingName")`
+5. Above the gallery, add a **Text input** `txtSearchMeetings` and a **Dropdown** `ddMeetingType` with **Items** = `Choices(Meetings.MeetingType)`. Update the gallery **Items** to combine both filters:
+   `Filter(Search(Meetings, txtSearchMeetings.Text, "MeetingName"), ddMeetingType.Selected.Value = MeetingType.Value || IsBlank(ddMeetingType.Selected))`
+6. Set the gallery template's **OnSelect**: `Set(varSelectedMeeting, ThisItem); EditForm(frmMeeting); Navigate(scrMeetingDetail, ScreenTransition.Fade)`.
+7. Add a **+ New meeting** button → **OnSelect**: `NewForm(frmMeeting); Navigate(scrMeetingDetail, ScreenTransition.Fade)`.
 
-### Screen 3 — Decisions + Decision detail
+### B.4 Screen — Decisions + Decision detail
 
-- Gallery + search; filter buttons by **Decision Status** (include a **Reversed** chip — the differentiator).
-- **Timeline** = same gallery sorted by `DecisionDate` descending with a colored status tag.
-- Decision detail: `EditForm` showing rationale + options; button "Add commitment" → new Commitment form with Meeting + Related Decision pre-set.
+1. `scrDecisionDetail`: **Form** `frmDecision`, **Data source** = `Decisions`; add a **Back** icon (`Navigate(scrDecisions, ScreenTransition.Fade)`); add an **Add commitment** button → **OnSelect**: `Set(varPrefillMeeting, varSelectedDecision.Meeting); Set(varPrefillDecision, varSelectedDecision); NewForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)` — on `scrCommitmentDetail`, default the Commitment form's Meeting and Related Decision fields from `varPrefillMeeting` / `varPrefillDecision` while the form is in New mode.
+2. `scrDecisions`: **Vertical gallery** `galDecisions`, **Items**:
+   `Search(Decisions, txtSearchDecisions.Text, "DecisionTitle")`
+3. Add filter chips for each Decision Status (include a standalone **Reversed** chip — the differentiator). Each chip's **OnSelect** sets a variable, e.g. `Set(varStatusFilter, "Reversed")`; an **All** chip sets `Set(varStatusFilter, "")`. Update the gallery **Items**:
+   `Filter(Search(Decisions, txtSearchDecisions.Text, "DecisionTitle"), varStatusFilter = "" || DecisionStatus.Value = varStatusFilter)`
+4. **Timeline**: reuse the same gallery, wrap **Items** in `SortByColumns(..., "DecisionDate", Descending)`, and add a colored status tag — a small label whose **Fill** is `Switch(ThisItem.DecisionStatus.Value, "Decided", Color.Green, "Reversed", Color.Red, "Superseded", Color.Orange, Color.Gray)`.
+5. Gallery template **OnSelect**: `Set(varSelectedDecision, ThisItem); EditForm(frmDecision); Navigate(scrDecisionDetail, ScreenTransition.Fade)`.
 
-### Screen 4 — Commitments + Commitment detail
+### B.5 Screen — Commitments + Commitment detail
 
-- Gallery with filter buttons: **All · My commitments · Open · Overdue**. "My commitments" uses a Team Member dropdown `cmbMe`: `Filter(Commitments, Owner = cmbMe.Selected)` (compares the lookup record directly, not the display name). Color due date red when overdue.
-- Commitment detail: `EditForm` + **Postpone** button (date picker → Patch from 02-DATA-MODEL.md).
+1. `scrCommitmentDetail`: **Form** `frmCommitment`, **Data source** = `Commitments`; add a **Back** icon.
+2. Add a **Postpone** section: a **Date picker** `dtpNewDueDate` and a **Postpone** button → **OnSelect**:
+   ```
+   Patch(Commitments, varSelectedCommitment, {
+       'Original Due Date': If(IsBlank(varSelectedCommitment.'Original Due Date'), varSelectedCommitment.DueDate, varSelectedCommitment.'Original Due Date'),
+       DueDate: dtpNewDueDate.SelectedDate,
+       'Times Postponed': varSelectedCommitment.'Times Postponed' + 1
+   });
+   Set(varSelectedCommitment, LookUp(Commitments, Commitment = varSelectedCommitment.Commitment))
+   ```
+   (the trailing `Set` refreshes the local variable so the form and labels reflect the new values immediately — this follows the Postpone logic in 02-DATA-MODEL.md).
+3. `scrCommitments`: **Vertical gallery** `galCommitments`; filter buttons **All · My commitments · Open · Overdue**, each setting `Set(varCommitmentFilter, "...")`, feeding gallery **Items**:
+   ```
+   Filter(Commitments,
+       Switch(varCommitmentFilter,
+           "My", Owner = cmbMe.Selected,
+           "Open", !(CommitmentStatus.Value in ["Done","Cancelled"]),
+           "Overdue", !(CommitmentStatus.Value in ["Done","Cancelled"]) && !IsBlank(DueDate) && DueDate < Today(),
+           true))
+   ```
+   Add a **Team Member** combo box `cmbMe` (Items = Team Members) above the filter row for "My commitments" — `Owner = cmbMe.Selected` compares the lookup record directly, not the display name.
+4. Color the due-date label red when overdue: label **Color** = `If(!(ThisItem.CommitmentStatus.Value in ["Done","Cancelled"]) && ThisItem.DueDate < Today(), Color.Red, Color.Black)`.
+5. Gallery template **OnSelect**: `Set(varSelectedCommitment, ThisItem); EditForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)`.
 
-### Screen 5 — Follow-up Radar (the wow screen)
+### B.6 Screen — Follow-up Radar (the wow screen)
 
-Three galleries with a count badge each:
-
-```
-// Overdue
-Filter(Commitments, !(CommitmentStatus.Value in ["Done","Cancelled"]) && !IsBlank(DueDate) && DueDate < Today())
-
-// Ownerless
-Filter(Commitments, IsBlank(Owner) && !(CommitmentStatus.Value in ["Done","Cancelled"]))
-
-// Slipping (postponed >= 2)
-Filter(Commitments, TimesPostponed >= 2 && !(CommitmentStatus.Value in ["Done","Cancelled"]))
-```
-
-Tapping a row navigates to Commitment detail.
+1. On `scrRadar`, insert three **Vertical galleries** (side by side or stacked), each with a **Label** above it showing a live count badge (`CountRows(...)` using the same filter as the gallery below it).
+2. **Overdue** gallery **Items**:
+   `Filter(Commitments, !(CommitmentStatus.Value in ["Done","Cancelled"]) && !IsBlank(DueDate) && DueDate < Today())`
+3. **Ownerless** gallery **Items**:
+   `Filter(Commitments, IsBlank(Owner) && !(CommitmentStatus.Value in ["Done","Cancelled"]))`
+4. **Slipping** gallery **Items**:
+   `Filter(Commitments, TimesPostponed >= 2 && !(CommitmentStatus.Value in ["Done","Cancelled"]))`
+5. Each gallery template's **OnSelect**: `Set(varSelectedCommitment, ThisItem); EditForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)` — tapping any row jumps straight to Commitment detail.
+6. End-to-end check: postpone a commitment twice on `scrCommitmentDetail`, navigate back to Radar, confirm it now appears under **Slipping**.
 
 ---
 
 ## Track C — Power Automate reminder flow (Day 6, make it useful)
 
-1. In the solution: **New → Automation → Cloud flow → Scheduled cloud flow.**
-2. **Trigger:** Recurrence — Interval `1`, Frequency `Day`, at a fixed time (e.g. 8:00 AM).
-3. **List rows** (Dataverse) on **Commitments**, filter:
-   `Commitment Status ne 'Done' and Commitment Status ne 'Cancelled' and Due Date lt {utcNow()}`
-   (mirrors the **Is Overdue** logic in 02-DATA-MODEL.md — keep the flow and the apps' derived flags consistent).
-4. **Filter array** to drop rows with no Owner (ownerless commitments have no recipient; they still surface via the canvas Follow-up Radar).
-5. **Apply to each** overdue commitment → **Get a row by ID** (Dataverse) on **Team Member** using the Owner lookup, to read their **Email**.
-6. Group by Owner (or just send one email per commitment for simplicity — see note below) and **Send an email (V2)** (Office 365 Outlook connector):
-   - To: the Team Member's Email (fictional/dummy address).
-   - Subject: "You have an overdue commitment: {Commitment Title}".
-   - Body: Commitment Title, Due Date, and a link/reference back to the record.
-7. **Save** and **Run now** to test against the sample data (04-SAMPLE-DATA.md) — confirm only the seeded overdue commitments trigger an email, sent to their dummy address.
-8. **Turn on** the flow.
+### C.1 Create the flow shell
+
+1. Inside the solution → **New** → **Automation** → **Cloud flow** → **Scheduled cloud flow**.
+2. Name it `Daily overdue commitment reminder`, set **Starting**: today's date, **Repeat every**: `1` **Day**, at a fixed time (e.g. 08:00) → **Create**.
+
+### C.2 List the overdue commitments
+
+1. **+ New step** → search **Dataverse** → action **List rows**.
+2. **Table name**: Commitments.
+3. **Filter rows** (OData syntax):
+   `Commitment Status ne 'Done' and Commitment Status ne 'Cancelled' and Due Date lt '@{utcNow()}'`
+   (mirrors the **Is Overdue** logic in 02-DATA-MODEL.md — keep the flow and the apps' derived flags consistent; if the filter-builder helper shows different schema names for these columns, use those instead).
+4. Save now — you'll test the whole flow in C.6 rather than guessing at field names blind.
+
+### C.3 Drop ownerless commitments
+
+1. **+ New step** → **Filter array**.
+2. **From**: the `value` output of **List rows**.
+3. **Condition**: the Owner lookup field **is not equal to** blank — use the visual picker to select the Owner field from dynamic content if it's offered directly; otherwise use the expression `item()?['_owner_value']` **is not equal to** *(leave the compare value empty)*.
+
+### C.4 Loop through each overdue, owned commitment
+
+1. **+ New step** → **Apply to each** → **Select an output from previous steps**: the Filter array's output.
+2. Inside the loop, **+ Add an action** → **Dataverse** → **Get a row by ID**.
+3. **Table name**: Team Members. **Row ID**: the current item's Owner lookup value (pick it from dynamic content on the Apply to each item).
+
+### C.5 Send the email
+
+1. Still inside the loop, **+ Add an action** → **Office 365 Outlook** → **Send an email (V2)**.
+2. **To**: the **Email** field from the **Get a row by ID** step (dynamic content) — the Team Member's fictional/dummy address.
+3. **Subject**: `You have an overdue commitment: ` + dynamic content **Commitment Title** from the Apply to each item.
+4. **Body**: Commitment Title and Due Date (dynamic content), plus optionally a plain-text reference back to the record.
+
+### C.6 Test, save, turn on
+
+1. **Save** the flow.
+2. **Test** → **Manually** → **Run flow**. Open **Run history** and confirm: one email per seeded overdue commitment in 04-SAMPLE-DATA.md, each sent to its owner's dummy address, and ownerless ones skipped.
+3. If a step errors, expand it in the run history — it shows the exact input/output payload, the fastest way to spot a wrong field name or filter.
+4. Once a manual run succeeds cleanly, toggle the flow **On** (top of the flow's overview page) so the daily Recurrence trigger takes over.
 
 > **Keep it simple for the demo:** one email per overdue commitment (not batched into a
 > single digest per owner) is fine and far less flow logic. Batch-by-owner only if you
