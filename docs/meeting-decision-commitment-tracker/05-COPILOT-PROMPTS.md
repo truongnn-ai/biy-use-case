@@ -10,7 +10,7 @@ always verify column types, choice values, and relationships against **02-DATA-M
 
 ---
 
-## Prompt A — Create the three tables (lean core)
+## Prompt A — Create the four tables (lean core)
 
 ```
 Create four Dataverse tables for a "Meeting Decision & Commitment Tracker":
@@ -22,9 +22,9 @@ Create four Dataverse tables for a "Meeting Decision & Commitment Tracker":
 
 2) Meeting — columns: Meeting Name (primary text), Meeting Date (date only),
    Meeting Type (choice: Standup, Planning, Review, Steering, Ad-hoc, Other),
-   Attendees (multiline text), Notes/Summary (multiline text).
+   Attendees (multiline text), Notes (multiline text).
 
-3) Decision — columns: Decision Title (primary text), Context/Problem (multiline),
+3) Decision — columns: Decision Title (primary text), Context (multiline),
    Options Considered (multiline), Chosen Option (multiline), Rationale (multiline),
    Decision Date (date only),
    Decision Status (choice: Proposed, Decided, Deferred, Reversed, Superseded),
@@ -38,6 +38,8 @@ Create four Dataverse tables for a "Meeting Decision & Commitment Tracker":
    (Owner is added as a lookup in the next prompt.)
 ```
 
+
+
 ## Prompt B — Add the relationships
 
 ```
@@ -48,6 +50,8 @@ Add these relationships:
 - Team Member to Decision: one-to-many and optional (add a "Decision Maker" lookup on Decision).
 - Team Member to Commitment: one-to-many and optional (add an "Owner" lookup on Commitment).
 ```
+
+
 
 ## Prompt C — Generate the model-driven app FIRST (safety net)
 
@@ -61,6 +65,8 @@ For the Decision table add views:
 - "Due for review": Decision Status is Decided and Review Date is on or before today.
 - "Reversed / Superseded": Decision Status is Reversed or Superseded.
 ```
+
+
 
 ## Prompt D — Generate the canvas app (demo showpiece)
 
@@ -77,6 +83,8 @@ Create a canvas app (tablet layout) from the Meeting, Decision, and Commitment t
   ownerless commitments (Owner is blank), and slipping commitments (Times Postponed >= 2).
 ```
 
+
+
 ## Prompt E — Add derived logic + Postpone (canvas)
 
 ```
@@ -89,6 +97,8 @@ Help me add these in the canvas app:
   current Due Date, sets Due Date to a newly picked date, and increments Times Postponed by 1.
 ```
 
+
+
 ## Prompt F — Load sample data (optional)
 
 ```
@@ -98,6 +108,8 @@ Enter Team Members first (incl. their fictional/dummy Email), then Meetings, the
 (link Meeting + Decision Maker), then Commitments (link Meeting, Owner, and where given
 the Related Decision).
 ```
+
+
 
 ## Prompt G — Build the daily overdue reminder flow (Power Automate)
 
@@ -114,6 +126,8 @@ Use only the fictional/dummy Email values already on the Team Member records —
 real employee's inbox.
 ```
 
+
+
 ## Verification checklist after Copilot runs
 
 - [ ] Only the lean core columns exist (no extra fields Copilot may have invented).
@@ -127,3 +141,4 @@ real employee's inbox.
 
 > **Deferred (do NOT ask Copilot to build now):** AI note summarizer,
 > Priority/Confidence/Impact Area/Commitment Type/Notes fields. See 03-BUILD-GUIDE §Deferred.
+

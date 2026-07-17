@@ -77,9 +77,9 @@ remaining days in the canvas app and the reminder flow.
 2. Add Meeting, Decision, Commitment to the **sitemap** (one nav group each); add **Team Member** as a small "Reference data" nav item so you can manage the people list.
 3. **Forms:** open each table's main form; arrange the core columns top-to-bottom (Copilot/default form is fine).
 4. **Views** — create these (they reproduce the derived flags as filters):
-   - Commitments → **Overdue** = Status not in (Done, Cancelled) AND Due Date is before Today.
-   - Commitments → **Ownerless** = Owner does not contain data AND Status not in (Done, Cancelled).
-   - Commitments → **Slipping** = Times Postponed ≥ 2 AND Status not in (Done, Cancelled).
+   - Commitments → **Overdue** = Commitment Status not in (Done, Cancelled) AND Due Date is before Today.
+   - Commitments → **Ownerless** = Owner does not contain data AND Commitment Status not in (Done, Cancelled).
+   - Commitments → **Slipping** = Times Postponed ≥ 2 AND Commitment Status not in (Done, Cancelled).
    - Decisions → **Due for review** = Decision Status = Decided AND Review Date on or before Today.
    - Decisions → **Reversed / Superseded** = Decision Status in (Reversed, Superseded).
 5. (Optional, still simple) Add a native **chart**: Commitments count by Commitment Status.
@@ -129,7 +129,7 @@ Add nav buttons/icons to Meetings, Decisions, Commitments, Follow-up Radar.
 
 ### Screen 4 — Commitments + Commitment detail
 
-- Gallery with filter buttons: **All · My commitments · Open · Overdue**. "My commitments" uses a Team Member dropdown `cmbMe`: `Filter(Commitments, Owner.'Team Member Name' = cmbMe.Selected.'Team Member Name')`. Color due date red when overdue.
+- Gallery with filter buttons: **All · My commitments · Open · Overdue**. "My commitments" uses a Team Member dropdown `cmbMe`: `Filter(Commitments, Owner = cmbMe.Selected)` (compares the lookup record directly, not the display name). Color due date red when overdue.
 - Commitment detail: `EditForm` + **Postpone** button (date picker → Patch from 02-DATA-MODEL.md).
 
 ### Screen 5 — Follow-up Radar (the wow screen)
