@@ -163,7 +163,7 @@ AND
 Decision Status | Equals | Reversed / Superseded
 ```
 
-> **Why Overdue/Due for review use the Contains-data + OR shape, not a plain "Before Today":** this filter builder has no literal Before operator. **On** / **On or Before** / **On or After** pair with a **fixed calendar date** you pick once, so they go stale. **Older Than X Days** is dynamic (re-evaluated on every load) but only accepts **X ≥ 1** — entering `0` throws a validation error. **Today** is a separate dynamic operator that resolves to "equals today." OR'ing them together gives "at least 1 day old, or due today" — i.e. due on or before today — which matches the `DueDate < Today()` / `ReviewDate <= Today()` derived flags in 02-DATA-MODEL.md closely enough for the demo (same minor "counts due-today as overdue too" simplification called out there). **Contains data** guards against blank Due/Review Dates, since both columns are optional.
+> **Why Overdue/Due for review use the Contains-data + OR shape, not a plain "Before Today":** this filter builder has no literal Before operator. **On** / **On or Before** / **On or After** pair with a **fixed calendar date** you pick once, so they go stale. **Older Than X Days** is dynamic (re-evaluated on every load) but only accepts **X ≥ 1** — entering `0` throws a validation error. **Today** is a separate dynamic operator that resolves to "equals today." OR'ing them together gives "at least 1 day old, or due today" — i.e. due on or before today — which matches the `'Due Date' < Today()` / `'Review Date' <= Today()` derived flags in 02-DATA-MODEL.md closely enough for the demo (same minor "counts due-today as overdue too" simplification called out there). **Contains data** guards against blank Due/Review Dates, since both columns are optional.
 
 > **What clears a decision out of "Due for review":** the filter only matches `Decision Status = Decided`, so any status change removes it immediately — no need to fiddle with Review Date. When someone actually reviews a decision, they set its status to either **Reviewed** (still holds — done, no further action) or **Reversed / Superseded** (changed). Only if they want it to resurface again later do they leave it **Decided** and push Review Date to a new future date.
 
@@ -186,6 +186,10 @@ You now have a complete, usable app as your safety net before touching the canva
 ## Track B — Canvas app (Days 4–5, the demo showpiece)
 
 Canvas is 1366×768 (Tablet, landscape) by default — the coordinates below assume that; adjust proportionally if you picked a different size. Every screen shares the same top-left **Back** icon pattern and the same nav bar from `scrHome`, so build `scrHome` first.
+
+> **Field-name gotcha:** Dataverse column **display names that contain a space** — `Commitment Status`, `Due Date`, `Decision Status`, `Review Date`, `Decision Date`, `Meeting Type`, `Times Postponed`, `Original Due Date` — must be wrapped in **single quotes** when referenced in a Power Fx formula, e.g. `'Commitment Status'`, not `CommitmentStatus`. Every formula below already does this. If Studio still throws **"Name isn't valid. 'X' isn't recognized"**, open the **Data** pane (left sidebar) → click **Commitments**/**Decisions**/**Meetings** to see the exact column names Power Apps recognizes, or just start typing inside the `Filter(...)` and let IntelliSense show you the real name — your environment's publisher/Copilot generation can occasionally rename a column slightly differently than the table in 02-DATA-MODEL.md.
+>
+> **Choice-column gotcha:** **Commitment Status** and **Decision Status** are Choice (option set) columns. Depending on your environment's Dataverse connector version, the classic `'Commitment Status'.Value` syntax can throw **"Name isn't valid. 'Value' isn't recognized."** The formulas below use `Text('Commitment Status')` instead — wrapping a Choice column in `Text()` reliably returns its display string (`"Done"`, `"Cancelled"`, etc.) across connector versions. Expect a yellow **delegation warning** on these formulas (`Text()` isn't delegable) — harmless at this demo's small data scale (04-SAMPLE-DATA.md), so ignore it.
 
 ### B.1 Create the app shell
 
@@ -228,7 +232,7 @@ Canvas is 1366×768 (Tablet, landscape) by default — the coordinates below ass
 1. **Insert** → type `rectangle` → click **Rectangle**. Advanced → Size and position: `X = 20`, `Y = 110`, `Width = 245`, `Height = 150`. Display tab → **Fill** → a light card color. Rename `rectTileOpen`.
 2. **Insert** → type `label` → click **Text label**. Position inside the rectangle: `X = 20`, `Y = 130`, `Width = 245`, `Height = 60`. If it renders behind the rectangle, drag it lower in the Tree view list (items lower in the tree paint on top). Text tab → Size ≈ 36, Align Center. Formula bar → property dropdown **Text** → paste:
    ```
-   CountRows(Filter(Commitments, !(CommitmentStatus.Value in ["Done","Cancelled"])))
+   CountRows(Filter(Commitments, !(Text('Commitment Status') in ["Done","Cancelled"])))
    ```
    Rename `lblOpenCount`.
 3. **Insert** → **Text label** again. Position: `X = 20`, `Y = 190`, `Width = 245`, `Height = 60`. Text = `"Open Commitments"` (plain text). Size ≈ 14, Align Center, gray color. Rename `lblOpenCaption`.
@@ -237,10 +241,10 @@ Canvas is 1366×768 (Tablet, landscape) by default — the coordinates below ass
 
    | Tile | X | Number label formula | Caption |
    |---|---|---|---|
-   | Overdue | 285 | `CountRows(Filter(Commitments, !(CommitmentStatus.Value in ["Done","Cancelled"]) && !IsBlank(DueDate) && DueDate < Today()))` | `"Overdue"` |
-   | Decisions this month | 550 | `CountRows(Filter(Decisions, Year(DecisionDate)=Year(Today()) && Month(DecisionDate)=Month(Today())))` | `"Decisions this month"` |
-   | Decisions due for review | 815 | `CountRows(Filter(Decisions, DecisionStatus.Value="Decided" && !IsBlank(ReviewDate) && ReviewDate <= Today()))` | `"Decisions due for review"` |
-   | Reversed / Superseded | 1080 | `CountRows(Filter(Decisions, DecisionStatus.Value = "Reversed / Superseded"))` | `"Reversed / Superseded"` |
+   | Overdue | 285 | `CountRows(Filter(Commitments, !(Text('Commitment Status') in ["Done","Cancelled"]) && !IsBlank('Due Date') && 'Due Date' < Today()))` | `"Overdue"` |
+   | Decisions this month | 550 | `CountRows(Filter(Decisions, Year('Decision Date')=Year(Today()) && Month('Decision Date')=Month(Today())))` | `"Decisions this month"` |
+   | Decisions due for review | 815 | `CountRows(Filter(Decisions, Text('Decision Status')="Decided" && !IsBlank('Review Date') && 'Review Date' <= Today()))` | `"Decisions due for review"` |
+   | Reversed / Superseded | 1080 | `CountRows(Filter(Decisions, Text('Decision Status') = "Reversed / Superseded"))` | `"Reversed / Superseded"` |
 
    Rename each group (`grpTileOverdue`, `grpTileDecisionsMonth`, `grpTileDueReview`, `grpTileReversed`).
 6. Optional: select all 5 tiles → **Arrange** (top command bar, or under its **⋯** overflow) → **Align** → Align Top, then **Distribute** → Distribute Horizontally, to snap them into an even row.
@@ -276,10 +280,10 @@ scrMeetings                                         scrMeetingDetail
    Rename `galMeetingCommitments`. Add a label above it with Text `"Commitments from this meeting"`.
 4. **Insert** → type `icon` → pick the **Back arrow** icon. Position top-left: `X = 20`, `Y = 20`, `Width = 40`, `Height = 40`. **OnSelect**: `Navigate(scrMeetings, ScreenTransition.Fade)`.
 5. On `scrMeetings`: **Insert** → **Vertical gallery** (layout: Title + subtitle). Position: `X = 20`, `Y = 140`, `Width = 1326`, `Height = 580`. **Items**:
-   `Search(Meetings, txtSearchMeetings.Text, "MeetingName")`
+   `Search(Meetings, txtSearchMeetings.Text, "Meeting Name")`
    Rename `galMeetings`.
-6. Above the gallery, **Insert** → type `text input` → click **Text input**, position `X = 20`, `Y = 70`, `Width = 500`, `Height = 40`, rename `txtSearchMeetings`. **Insert** → type `drop down` → click **Drop down**, position `X = 540`, `Y = 70`, `Width = 250`, `Height = 40`, rename `ddMeetingType`, set **Items** = `Choices(Meetings.MeetingType)`. Update `galMeetings`'s **Items** to combine both filters:
-   `Filter(Search(Meetings, txtSearchMeetings.Text, "MeetingName"), ddMeetingType.Selected.Value = MeetingType.Value || IsBlank(ddMeetingType.Selected))`
+6. Above the gallery, **Insert** → type `text input` → click **Text input**, position `X = 20`, `Y = 70`, `Width = 500`, `Height = 40`, rename `txtSearchMeetings`. **Insert** → type `drop down` → click **Drop down**, position `X = 540`, `Y = 70`, `Width = 250`, `Height = 40`, rename `ddMeetingType`, set **Items** = `Choices(Meetings.'Meeting Type')`. Update `galMeetings`'s **Items** to combine both filters:
+   `Filter(Search(Meetings, txtSearchMeetings.Text, "Meeting Name"), ddMeetingType.Selected.Value = Text('Meeting Type') || IsBlank(ddMeetingType.Selected))`
 7. Select `galMeetings`'s template (click once on the gallery, then again on the first row to select the template) → formula bar → **OnSelect**:
    `Set(varSelectedMeeting, ThisItem); EditForm(frmMeeting); Navigate(scrMeetingDetail, ScreenTransition.Fade)`
 8. **Insert** → **Button**, top-right: `X = 1150`, `Y = 20`, `Width = 196`, `Height = 50`. Text = `"+ New meeting"`. **OnSelect**:
@@ -311,13 +315,13 @@ scrDecisions                                        scrDecisionDetail
    `Set(varPrefillMeeting, varSelectedDecision.Meeting); Set(varPrefillDecision, varSelectedDecision); NewForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)`
    On `scrCommitmentDetail`, default the Commitment form's Meeting and Related Decision fields from `varPrefillMeeting` / `varPrefillDecision` while the form is in New mode (set each field card's **Default** property, e.g. `varPrefillMeeting`, only used when `frmCommitment.Mode = FormMode.New`).
 4. On `scrDecisions`: **Insert** → **Vertical gallery**, `X = 20`, `Y = 190`, `Width = 1326`, `Height = 530`. **Items**:
-   `Search(Decisions, txtSearchDecisions.Text, "DecisionTitle")`
+   `Search(Decisions, txtSearchDecisions.Text, "Decision Title")`
    Rename `galDecisions`.
 5. Above it, **Insert** → **Text input** `txtSearchDecisions` (`X = 20`, `Y = 70`).
 6. Add filter chips below the search box — one **Button** per Decision Status, `Y = 120`, each ~150 wide, laid out left to right (`X = 20, 180, 340, 500, 660`): **All**, **Proposed**, **Decided**, **Reviewed**, **Reversed / Superseded** (the differentiator chip — keep it standalone, don't fold it into "All"). Each chip's **OnSelect** sets a variable, e.g. `Set(varStatusFilter, "Reversed / Superseded")`; the **All** chip sets `Set(varStatusFilter, "")`. Update `galDecisions`'s **Items**:
-   `Filter(Search(Decisions, txtSearchDecisions.Text, "DecisionTitle"), varStatusFilter = "" || DecisionStatus.Value = varStatusFilter)`
-7. **Timeline styling**: reuse the same gallery — wrap **Items** in `SortByColumns(..., "DecisionDate", Descending)`, and inside the gallery template add a small colored square/label whose **Fill** is:
-   `Switch(ThisItem.DecisionStatus.Value, "Decided", Color.Green, "Reviewed", Color.Blue, "Reversed / Superseded", Color.Red, Color.Gray)`
+   `Filter(Search(Decisions, txtSearchDecisions.Text, "Decision Title"), varStatusFilter = "" || Text('Decision Status') = varStatusFilter)`
+7. **Timeline styling**: reuse the same gallery — wrap **Items** in `SortByColumns(..., "Decision Date", Descending)`, and inside the gallery template add a small colored square/label whose **Fill** is:
+   `Switch(Text(ThisItem.'Decision Status'), "Decided", Color.Green, "Reviewed", Color.Blue, "Reversed / Superseded", Color.Red, Color.Gray)`
 8. Select the gallery template → **OnSelect**:
    `Set(varSelectedDecision, ThisItem); EditForm(frmDecision); Navigate(scrDecisionDetail, ScreenTransition.Fade)`
 
@@ -344,8 +348,8 @@ scrCommitments                                      scrCommitmentDetail
 2. Below the form, add the **Postpone** section: **Insert** → type `date picker` → click **Date picker**, `X = 20`, `Y = 610`, `Width = 250`, `Height = 40`, rename `dtpNewDueDate`. **Insert** → **Button** next to it, Text = `"Postpone"`, **OnSelect**:
    ```
    Patch(Commitments, varSelectedCommitment, {
-       'Original Due Date': If(IsBlank(varSelectedCommitment.'Original Due Date'), varSelectedCommitment.DueDate, varSelectedCommitment.'Original Due Date'),
-       DueDate: dtpNewDueDate.SelectedDate,
+       'Original Due Date': If(IsBlank(varSelectedCommitment.'Original Due Date'), varSelectedCommitment.'Due Date', varSelectedCommitment.'Original Due Date'),
+       'Due Date': dtpNewDueDate.SelectedDate,
        'Times Postponed': varSelectedCommitment.'Times Postponed' + 1
    });
    Set(varSelectedCommitment, LookUp(Commitments, Commitment = varSelectedCommitment.Commitment))
@@ -358,13 +362,13 @@ scrCommitments                                      scrCommitmentDetail
    Filter(Commitments,
        Switch(varCommitmentFilter,
            "My", Owner = cmbMe.Selected,
-           "Open", !(CommitmentStatus.Value in ["Done","Cancelled"]),
-           "Overdue", !(CommitmentStatus.Value in ["Done","Cancelled"]) && !IsBlank(DueDate) && DueDate < Today(),
+           "Open", !(Text('Commitment Status') in ["Done","Cancelled"]),
+           "Overdue", !(Text('Commitment Status') in ["Done","Cancelled"]) && !IsBlank('Due Date') && 'Due Date' < Today(),
            true))
    ```
    `Owner = cmbMe.Selected` compares the lookup record directly, not the display name.
 6. Inside the gallery template, select the due-date label → **Color**:
-   `If(!(ThisItem.CommitmentStatus.Value in ["Done","Cancelled"]) && ThisItem.DueDate < Today(), Color.Red, Color.Black)`
+   `If(!(Text(ThisItem.'Commitment Status') in ["Done","Cancelled"]) && ThisItem.'Due Date' < Today(), Color.Red, Color.Black)`
 7. Select the gallery template → **OnSelect**:
    `Set(varSelectedCommitment, ThisItem); EditForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)`
 
@@ -384,11 +388,11 @@ scrCommitments                                      scrCommitmentDetail
 
 1. On `scrRadar`, add a label above each of the three columns showing a live count badge, using the same filter as the gallery beneath it, e.g. `"Overdue (" & CountRows(Filter(Commitments, ...)) & ")"`.
 2. **Insert** → **Vertical gallery**, left column: `X = 20`, `Y = 70`, `Width = 430`, `Height = 650`. Rename `galRadarOverdue`. **Items**:
-   `Filter(Commitments, !(CommitmentStatus.Value in ["Done","Cancelled"]) && !IsBlank(DueDate) && DueDate < Today())`
+   `Filter(Commitments, !(Text('Commitment Status') in ["Done","Cancelled"]) && !IsBlank('Due Date') && 'Due Date' < Today())`
 3. **Insert** → **Vertical gallery**, middle column: `X = 468`, `Y = 70`, `Width = 430`, `Height = 650`. Rename `galRadarOwnerless`. **Items**:
-   `Filter(Commitments, IsBlank(Owner) && !(CommitmentStatus.Value in ["Done","Cancelled"]))`
+   `Filter(Commitments, IsBlank(Owner) && !(Text('Commitment Status') in ["Done","Cancelled"]))`
 4. **Insert** → **Vertical gallery**, right column: `X = 916`, `Y = 70`, `Width = 430`, `Height = 650`. Rename `galRadarSlipping`. **Items**:
-   `Filter(Commitments, TimesPostponed >= 2 && !(CommitmentStatus.Value in ["Done","Cancelled"]))`
+   `Filter(Commitments, 'Times Postponed' >= 2 && !(Text('Commitment Status') in ["Done","Cancelled"]))`
 5. Select each gallery's template → **OnSelect**:
    `Set(varSelectedCommitment, ThisItem); EditForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)`
    — tapping any row jumps straight to Commitment detail.

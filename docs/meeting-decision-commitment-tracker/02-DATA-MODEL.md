@@ -120,18 +120,28 @@ Meeting (1) ────< (N) Decision
 Do **not** create calculated/formula columns for the demo. Compute these in the **canvas
 app** with Power Fx, and reproduce them as **filter conditions on model-driven views**.
 
+> **Field-name note:** column display names that contain a space (`Commitment Status`, `Due Date`,
+> `Decision Status`, `Review Date`, `Times Postponed`, `Original Due Date`, `Decision Date`,
+> `Meeting Type`) must be wrapped in single quotes in Power Fx, e.g. `'Commitment Status'`.
+>
+> **Choice-column note:** **Commitment Status** and **Decision Status** are Choice columns. Some
+> Dataverse connector versions reject `.Value` on them ("Name isn't valid. 'Value' isn't
+> recognized"); wrapping in `Text(...)` (as below) reliably returns the display string instead
+> and works across connector versions. Expect a harmless delegation warning at this demo's data
+> scale.
+
 ```
 // Is Overdue
-!(CommitmentStatus.Value in ["Done","Cancelled"]) && !IsBlank(DueDate) && DueDate < Today()
+!(Text('Commitment Status') in ["Done","Cancelled"]) && !IsBlank('Due Date') && 'Due Date' < Today()
 
 // Is Ownerless  (Owner is a blank lookup)
-IsBlank(Owner) && !(CommitmentStatus.Value in ["Done","Cancelled"])
+IsBlank(Owner) && !(Text('Commitment Status') in ["Done","Cancelled"])
 
 // Is Slipping
-TimesPostponed >= 2 && !(CommitmentStatus.Value in ["Done","Cancelled"])
+'Times Postponed' >= 2 && !(Text('Commitment Status') in ["Done","Cancelled"])
 
 // Decision Due For Review
-DecisionStatus.Value = "Decided" && !IsBlank(ReviewDate) && ReviewDate <= Today()
+Text('Decision Status') = "Decided" && !IsBlank('Review Date') && 'Review Date' <= Today()
 ```
 
 
@@ -159,9 +169,9 @@ When the user postpones a commitment (canvas app):
 ```
 Patch(Commitments, ThisItem,
     {
-        OriginalDueDate: Coalesce(ThisItem.OriginalDueDate, ThisItem.DueDate),
-        DueDate: NewDate.SelectedDate,
-        TimesPostponed: ThisItem.TimesPostponed + 1
+        'Original Due Date': Coalesce(ThisItem.'Original Due Date', ThisItem.'Due Date'),
+        'Due Date': NewDate.SelectedDate,
+        'Times Postponed': ThisItem.'Times Postponed' + 1
     }
 )
 ```
