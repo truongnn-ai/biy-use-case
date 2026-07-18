@@ -185,74 +185,163 @@ You now have a complete, usable app as your safety net before touching the canva
 
 ## Track B — Canvas app (Days 4–5, the demo showpiece)
 
+Canvas is 1366×768 (Tablet, landscape) by default — the coordinates below assume that; adjust proportionally if you picked a different size. Every screen shares the same top-left **Back** icon pattern and the same nav bar from `scrHome`, so build `scrHome` first.
+
 ### B.1 Create the app shell
 
 1. Inside the solution → **New** → **App** → **Canvas app**.
 2. Name it (e.g. `MDC Tracker – Canvas`), format **Tablet** → **Create**.
-3. In Power Apps Studio: **View** tab → **Data sources** → **+ Add data** → search **Dataverse** → add **Meetings**, **Decisions**, **Commitments**, **Team Members** (Team Members is needed later for the "My commitments" filter and the Postpone step).
-4. In the **Screens** panel, rename the default screen to `scrHome`. Add screens (**New screen** → **Blank**) named `scrMeetings`, `scrMeetingDetail`, `scrDecisions`, `scrDecisionDetail`, `scrCommitments`, `scrCommitmentDetail`, `scrRadar`.
-5. **File** → **Save** early and often as you build.
+3. In Power Apps Studio: command bar → **Add data** (or the **connect to data** link in the middle of the blank canvas) → search **Dataverse** → add **Meetings**, **Decisions**, **Commitments**, **Team Members** (Team Members is needed later for the "My commitments" filter and the Postpone step). Older Studio versions nest this under a **View** tab → **Data sources**; current Studio surfaces **Add data** directly in the command bar.
+4. In the **Tree view** (left panel, **Screens** tab), double-click the default screen's name and rename it `scrHome`.
+5. Click **New screen** in the command bar → choose **Blank** (not one of the header/scrollable templates — you want an empty canvas each time) → repeat 7 times, naming them in the Tree view as you go: `scrMeetings`, `scrMeetingDetail`, `scrDecisions`, `scrDecisionDetail`, `scrCommitments`, `scrCommitmentDetail`, `scrRadar`.
+6. **File** → **Save** now, and again after every screen below.
 
-### B.2 Screen 1 — Home / Dashboard (KPI tiles)
-
-1. On `scrHome`, insert 5 rectangles (or blank containers), each holding one **Label** for the number and one **Label** for the caption underneath (e.g. "Overdue").
-2. Select each number label and paste its formula into the **Text** property:
+### B.2 Screen — Home / Dashboard (KPI tiles)
 
 ```
-// Open commitments
-CountRows(Filter(Commitments, !(CommitmentStatus.Value in ["Done","Cancelled"])))
-
-// Overdue
-CountRows(Filter(Commitments,
-    !(CommitmentStatus.Value in ["Done","Cancelled"]) && !IsBlank(DueDate) && DueDate < Today()))
-
-// Decisions this month
-CountRows(Filter(Decisions,
-    Year(DecisionDate)=Year(Today()) && Month(DecisionDate)=Month(Today())))
-
-// Decisions due for review
-CountRows(Filter(Decisions,
-    DecisionStatus.Value="Decided" && !IsBlank(ReviewDate) && ReviewDate <= Today()))
-
-// Reversed / superseded decisions
-CountRows(Filter(Decisions, DecisionStatus.Value = "Reversed / Superseded"))
+┌────────────────────────────────────────────────────────────────────┐
+│  [Meetings]   [Decisions]   [Commitments]   [Follow-up Radar]       │  ← nav bar, y=0, h=80
+├────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐        │
+│  │   12   │  │   4    │  │   7    │  │   2    │  │   3    │        │  ← number label
+│  │        │  │        │  │        │  │        │  │        │        │
+│  │  Open  │  │Overdue │  │Decisions│ │Due for │  │Reversed│        │  ← caption label
+│  │Commit- │  │        │  │this mo. │ │ review │  │/Super. │        │
+│  │ ments  │  │        │  │        │  │        │  │        │        │
+│  └────────┘  └────────┘  └────────┘  └────────┘  └────────┘        │
+│                                                                      │
+└────────────────────────────────────────────────────────────────────┘
 ```
 
-3. Insert 4 **Icon** or **Button** controls in a nav bar at the top: Meetings, Decisions, Commitments, Follow-up Radar. Set each **OnSelect**:
-   - `Navigate(scrMeetings, ScreenTransition.Fade)`
-   - `Navigate(scrDecisions, ScreenTransition.Fade)`
-   - `Navigate(scrCommitments, ScreenTransition.Fade)`
-   - `Navigate(scrRadar, ScreenTransition.Fade)`
-4. Press **F5** (Preview) and confirm each tile's number matches what you'd expect from 04-SAMPLE-DATA.md, and each nav button switches screens.
+**Nav bar**
+
+1. On `scrHome`, click **Insert** → type `button` in the search box → click **Button**.
+2. Properties panel → **Advanced** tab → **Size and position**: `X = 20`, `Y = 0`, `Width = 200`, `Height = 60`.
+3. Formula bar: switch the property dropdown (top-left, shows the currently edited property) to **Text** → type `"Meetings"` → Enter.
+4. Switch the property dropdown to **OnSelect** → `Navigate(scrMeetings, ScreenTransition.Fade)` → Enter.
+5. Tree view → double-click the button's default name (e.g. `Button1`) → rename `btnNavMeetings`.
+6. Select it → Ctrl+C → Ctrl+V three times. For each copy, only change `X` (230, 440, 650), `Text` (`"Decisions"`, `"Commitments"`, `"Follow-up Radar"`), `OnSelect` (`Navigate(scrDecisions, ScreenTransition.Fade)`, `Navigate(scrCommitments, ScreenTransition.Fade)`, `Navigate(scrRadar, ScreenTransition.Fade)`), and rename (`btnNavDecisions`, `btnNavCommitments`, `btnNavRadar`).
+
+**One KPI tile (then clone it)**
+
+1. **Insert** → type `rectangle` → click **Rectangle**. Advanced → Size and position: `X = 20`, `Y = 110`, `Width = 245`, `Height = 150`. Display tab → **Fill** → a light card color. Rename `rectTileOpen`.
+2. **Insert** → type `label` → click **Text label**. Position inside the rectangle: `X = 20`, `Y = 130`, `Width = 245`, `Height = 60`. If it renders behind the rectangle, drag it lower in the Tree view list (items lower in the tree paint on top). Text tab → Size ≈ 36, Align Center. Formula bar → property dropdown **Text** → paste:
+   ```
+   CountRows(Filter(Commitments, !(CommitmentStatus.Value in ["Done","Cancelled"])))
+   ```
+   Rename `lblOpenCount`.
+3. **Insert** → **Text label** again. Position: `X = 20`, `Y = 190`, `Width = 245`, `Height = 60`. Text = `"Open Commitments"` (plain text). Size ≈ 14, Align Center, gray color. Rename `lblOpenCaption`.
+4. Select all three (rectangle + 2 labels) → right-click → **Group**, rename the group `grpTileOpen`.
+5. Select `grpTileOpen` → Ctrl+C → Ctrl+V four times. For each copy change only the group's `X` (285, 550, 815, 1080), the number label's **Text** formula, and the caption label's **Text**:
+
+   | Tile | X | Number label formula | Caption |
+   |---|---|---|---|
+   | Overdue | 285 | `CountRows(Filter(Commitments, !(CommitmentStatus.Value in ["Done","Cancelled"]) && !IsBlank(DueDate) && DueDate < Today()))` | `"Overdue"` |
+   | Decisions this month | 550 | `CountRows(Filter(Decisions, Year(DecisionDate)=Year(Today()) && Month(DecisionDate)=Month(Today())))` | `"Decisions this month"` |
+   | Decisions due for review | 815 | `CountRows(Filter(Decisions, DecisionStatus.Value="Decided" && !IsBlank(ReviewDate) && ReviewDate <= Today()))` | `"Decisions due for review"` |
+   | Reversed / Superseded | 1080 | `CountRows(Filter(Decisions, DecisionStatus.Value = "Reversed / Superseded"))` | `"Reversed / Superseded"` |
+
+   Rename each group (`grpTileOverdue`, `grpTileDecisionsMonth`, `grpTileDueReview`, `grpTileReversed`).
+6. Optional: select all 5 tiles → **Arrange** (top command bar, or under its **⋯** overflow) → **Align** → Align Top, then **Distribute** → Distribute Horizontally, to snap them into an even row.
+7. Press **F5** (Preview), confirm each tile's number matches what you'd expect from 04-SAMPLE-DATA.md, click each nav button to confirm it switches screens, then **Esc** to exit Preview.
 
 ### B.3 Screen — Meetings + Meeting detail
 
-1. Build `scrMeetingDetail` first (the target before the link to it): insert a **Form** control, rename it `frmMeeting`, set **Data source** = `Meetings`.
-2. Add two **Vertical galleries** below it:
-   - `galMeetingDecisions` → **Items**: `Filter(Decisions, Meeting = varSelectedMeeting)`
-   - `galMeetingCommitments` → **Items**: `Filter(Commitments, Meeting = varSelectedMeeting)`
-3. Add a **Back** icon → **OnSelect**: `Navigate(scrMeetings, ScreenTransition.Fade)`.
-4. `scrMeetings`: insert a **Vertical gallery** `galMeetings` (layout: Title + subtitle), **Items**:
+Build `scrMeetingDetail` first — it's the navigation target, so it needs to exist before you wire the list screen's `OnSelect` to it.
+
+```
+scrMeetings                                         scrMeetingDetail
+┌───────────────────────────────────────┐   ┌───────────────────────────────────────┐
+│ [<] Meetings          [+ New meeting]  │   │ [<] Back                              │
+├───────────────────────────────────────┤   ├───────────────┬───────────────────────┤
+│ [ Search meetings...  ] [Type:  All v]│   │ frmMeeting     │ Decisions             │
+├───────────────────────────────────────┤   │ Meeting Name   │ ┌───────────────────┐ │
+│ ┌─────────────────────────────────┐   │   │ Meeting Date   │ │galMeetingDecisions│ │
+│ │ Weekly Ops Sync       2026-07-14│   │   │ Meeting Type   │ └───────────────────┘ │
+│ │ Product Roadmap Rev.  2026-07-10│   │   │                │ Commitments           │
+│ │ ...  (galMeetings)              │   │   │                │ ┌───────────────────┐ │
+│ └─────────────────────────────────┘   │   │                │ │galMeetingCommit-  │ │
+└───────────────────────────────────────┘   │                │ │ments              │ │
+                                             │                │ └───────────────────┘ │
+                                             └───────────────┴───────────────────────┘
+```
+
+1. On `scrMeetingDetail`: **Insert** → type `edit form` → click **Edit form**. Advanced → Size and position: `X = 20`, `Y = 20`, `Width = 400`, `Height = 600`. In the Properties panel (right side), set **Data source** = `Meetings`. Rename `frmMeeting`.
+2. **Insert** → type `gallery` → pick a **Vertical gallery** layout (e.g. "Title, subtitle"). Position it to the right of the form: `X = 440`, `Y = 60`, `Width = 900`, `Height = 280`. Formula bar → **Items**:
+   `Filter(Decisions, Meeting = varSelectedMeeting)`
+   Rename `galMeetingDecisions`. Add a label above it with Text `"Decisions from this meeting"`.
+3. **Insert** another **Vertical gallery** below it: `X = 440`, `Y = 380`, `Width = 900`, `Height = 280`. **Items**:
+   `Filter(Commitments, Meeting = varSelectedMeeting)`
+   Rename `galMeetingCommitments`. Add a label above it with Text `"Commitments from this meeting"`.
+4. **Insert** → type `icon` → pick the **Back arrow** icon. Position top-left: `X = 20`, `Y = 20`, `Width = 40`, `Height = 40`. **OnSelect**: `Navigate(scrMeetings, ScreenTransition.Fade)`.
+5. On `scrMeetings`: **Insert** → **Vertical gallery** (layout: Title + subtitle). Position: `X = 20`, `Y = 140`, `Width = 1326`, `Height = 580`. **Items**:
    `Search(Meetings, txtSearchMeetings.Text, "MeetingName")`
-5. Above the gallery, add a **Text input** `txtSearchMeetings` and a **Dropdown** `ddMeetingType` with **Items** = `Choices(Meetings.MeetingType)`. Update the gallery **Items** to combine both filters:
+   Rename `galMeetings`.
+6. Above the gallery, **Insert** → type `text input` → click **Text input**, position `X = 20`, `Y = 70`, `Width = 500`, `Height = 40`, rename `txtSearchMeetings`. **Insert** → type `drop down` → click **Drop down**, position `X = 540`, `Y = 70`, `Width = 250`, `Height = 40`, rename `ddMeetingType`, set **Items** = `Choices(Meetings.MeetingType)`. Update `galMeetings`'s **Items** to combine both filters:
    `Filter(Search(Meetings, txtSearchMeetings.Text, "MeetingName"), ddMeetingType.Selected.Value = MeetingType.Value || IsBlank(ddMeetingType.Selected))`
-6. Set the gallery template's **OnSelect**: `Set(varSelectedMeeting, ThisItem); EditForm(frmMeeting); Navigate(scrMeetingDetail, ScreenTransition.Fade)`.
-7. Add a **+ New meeting** button → **OnSelect**: `NewForm(frmMeeting); Navigate(scrMeetingDetail, ScreenTransition.Fade)`.
+7. Select `galMeetings`'s template (click once on the gallery, then again on the first row to select the template) → formula bar → **OnSelect**:
+   `Set(varSelectedMeeting, ThisItem); EditForm(frmMeeting); Navigate(scrMeetingDetail, ScreenTransition.Fade)`
+8. **Insert** → **Button**, top-right: `X = 1150`, `Y = 20`, `Width = 196`, `Height = 50`. Text = `"+ New meeting"`. **OnSelect**:
+   `NewForm(frmMeeting); Navigate(scrMeetingDetail, ScreenTransition.Fade)`
 
 ### B.4 Screen — Decisions + Decision detail
 
-1. `scrDecisionDetail`: **Form** `frmDecision`, **Data source** = `Decisions`; add a **Back** icon (`Navigate(scrDecisions, ScreenTransition.Fade)`); add an **Add commitment** button → **OnSelect**: `Set(varPrefillMeeting, varSelectedDecision.Meeting); Set(varPrefillDecision, varSelectedDecision); NewForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)` — on `scrCommitmentDetail`, default the Commitment form's Meeting and Related Decision fields from `varPrefillMeeting` / `varPrefillDecision` while the form is in New mode.
-2. `scrDecisions`: **Vertical gallery** `galDecisions`, **Items**:
+```
+scrDecisions                                        scrDecisionDetail
+┌───────────────────────────────────────┐   ┌───────────────────────────────────────┐
+│ [<] Decisions                         │   │ [<] Back            [+ Add commitment]│
+├───────────────────────────────────────┤   ├───────────────────────────────────────┤
+│ [ Search decisions...           ]     │   │ frmDecision                            │
+│ (All)(Proposed)(Decided)(Reviewed)    │   │  Decision Title:  ...                  │
+│ (Reversed / Superseded)               │   │  Rationale / Options: ...              │
+├───────────────────────────────────────┤   │  Decision Status: ...                  │
+│ ┌─────────────────────────────────┐   │   │  Review Date: ...                      │
+│ │● Adopt new CRM vendor  [Decided]│   │   └───────────────────────────────────────┘
+│ │  2026-07-12                     │   │
+│ │● Freeze feature X   [Reversed]  │   │
+│ │  2026-06-30 (galDecisions)      │   │
+│ └─────────────────────────────────┘   │
+└───────────────────────────────────────┘
+```
+
+1. On `scrDecisionDetail`: **Insert** → **Edit form**, `X = 20`, `Y = 20`, `Width = 900`, `Height = 650`, **Data source** = `Decisions`, rename `frmDecision`.
+2. **Insert** → **Back arrow** icon, `X = 20`, `Y = 20` (in front of the form — nudge the form down to `Y = 90` if it overlaps), **OnSelect**: `Navigate(scrDecisions, ScreenTransition.Fade)`.
+3. **Insert** → **Button**, top-right, Text = `"+ Add commitment"`. **OnSelect**:
+   `Set(varPrefillMeeting, varSelectedDecision.Meeting); Set(varPrefillDecision, varSelectedDecision); NewForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)`
+   On `scrCommitmentDetail`, default the Commitment form's Meeting and Related Decision fields from `varPrefillMeeting` / `varPrefillDecision` while the form is in New mode (set each field card's **Default** property, e.g. `varPrefillMeeting`, only used when `frmCommitment.Mode = FormMode.New`).
+4. On `scrDecisions`: **Insert** → **Vertical gallery**, `X = 20`, `Y = 190`, `Width = 1326`, `Height = 530`. **Items**:
    `Search(Decisions, txtSearchDecisions.Text, "DecisionTitle")`
-3. Add filter chips for each Decision Status (include a standalone **Reversed / Superseded** chip — the differentiator). Each chip's **OnSelect** sets a variable, e.g. `Set(varStatusFilter, "Reversed / Superseded")`; an **All** chip sets `Set(varStatusFilter, "")`. Update the gallery **Items**:
+   Rename `galDecisions`.
+5. Above it, **Insert** → **Text input** `txtSearchDecisions` (`X = 20`, `Y = 70`).
+6. Add filter chips below the search box — one **Button** per Decision Status, `Y = 120`, each ~150 wide, laid out left to right (`X = 20, 180, 340, 500, 660`): **All**, **Proposed**, **Decided**, **Reviewed**, **Reversed / Superseded** (the differentiator chip — keep it standalone, don't fold it into "All"). Each chip's **OnSelect** sets a variable, e.g. `Set(varStatusFilter, "Reversed / Superseded")`; the **All** chip sets `Set(varStatusFilter, "")`. Update `galDecisions`'s **Items**:
    `Filter(Search(Decisions, txtSearchDecisions.Text, "DecisionTitle"), varStatusFilter = "" || DecisionStatus.Value = varStatusFilter)`
-4. **Timeline**: reuse the same gallery, wrap **Items** in `SortByColumns(..., "DecisionDate", Descending)`, and add a colored status tag — a small label whose **Fill** is `Switch(ThisItem.DecisionStatus.Value, "Decided", Color.Green, "Reviewed", Color.Blue, "Reversed / Superseded", Color.Red, Color.Gray)`.
-5. Gallery template **OnSelect**: `Set(varSelectedDecision, ThisItem); EditForm(frmDecision); Navigate(scrDecisionDetail, ScreenTransition.Fade)`.
+7. **Timeline styling**: reuse the same gallery — wrap **Items** in `SortByColumns(..., "DecisionDate", Descending)`, and inside the gallery template add a small colored square/label whose **Fill** is:
+   `Switch(ThisItem.DecisionStatus.Value, "Decided", Color.Green, "Reviewed", Color.Blue, "Reversed / Superseded", Color.Red, Color.Gray)`
+8. Select the gallery template → **OnSelect**:
+   `Set(varSelectedDecision, ThisItem); EditForm(frmDecision); Navigate(scrDecisionDetail, ScreenTransition.Fade)`
 
 ### B.5 Screen — Commitments + Commitment detail
 
-1. `scrCommitmentDetail`: **Form** `frmCommitment`, **Data source** = `Commitments`; add a **Back** icon.
-2. Add a **Postpone** section: a **Date picker** `dtpNewDueDate` and a **Postpone** button → **OnSelect**:
+```
+scrCommitments                                      scrCommitmentDetail
+┌───────────────────────────────────────┐   ┌───────────────────────────────────────┐
+│ [<] Commitments                       │   │ [<] Back                              │
+├───────────────────────────────────────┤   ├───────────────────────────────────────┤
+│ Me: [ cmbMe: pick team member    v]   │   │ frmCommitment                          │
+│ (All)(My commitments)(Open)(Overdue)  │   │  Commitment Title: ...                 │
+├───────────────────────────────────────┤   │  Owner: ...                            │
+│ ┌─────────────────────────────────┐   │   │  Due Date: ...                         │
+│ │ Ship v2 API docs   Due 07-15(red)│  │   │  Commitment Status: ...                │
+│ │ Owner: Jane D.                   │   │   │  Times Postponed: ...                  │
+│ │ Finalize vendor bud. Due 07-20   │   │   ├───────────────────────────────────────┤
+│ │ Owner: (none)  (galCommitments)  │   │   │ Postpone: [dtpNewDueDate v] [Postpone] │
+│ └─────────────────────────────────┘   │   └───────────────────────────────────────┘
+└───────────────────────────────────────┘
+```
+
+1. On `scrCommitmentDetail`: **Insert** → **Edit form**, `X = 20`, `Y = 90`, `Width = 900`, `Height = 500`, **Data source** = `Commitments`, rename `frmCommitment`. **Insert** → **Back arrow** icon at `X = 20, Y = 20` → **OnSelect**: `Navigate(scrCommitments, ScreenTransition.Fade)`.
+2. Below the form, add the **Postpone** section: **Insert** → type `date picker` → click **Date picker**, `X = 20`, `Y = 610`, `Width = 250`, `Height = 40`, rename `dtpNewDueDate`. **Insert** → **Button** next to it, Text = `"Postpone"`, **OnSelect**:
    ```
    Patch(Commitments, varSelectedCommitment, {
        'Original Due Date': If(IsBlank(varSelectedCommitment.'Original Due Date'), varSelectedCommitment.DueDate, varSelectedCommitment.'Original Due Date'),
@@ -262,7 +351,9 @@ CountRows(Filter(Decisions, DecisionStatus.Value = "Reversed / Superseded"))
    Set(varSelectedCommitment, LookUp(Commitments, Commitment = varSelectedCommitment.Commitment))
    ```
    (the trailing `Set` refreshes the local variable so the form and labels reflect the new values immediately — this follows the Postpone logic in 02-DATA-MODEL.md).
-3. `scrCommitments`: **Vertical gallery** `galCommitments`; filter buttons **All · My commitments · Open · Overdue**, each setting `Set(varCommitmentFilter, "...")`, feeding gallery **Items**:
+3. On `scrCommitments`: **Insert** → type `combo box` → click **Combo box**, `X = 20`, `Y = 70`, `Width = 400`, rename `cmbMe`, **Items** = `Team Members` (needed for "My commitments" below).
+4. Below it, add filter chips (buttons) **All · My commitments · Open · Overdue**, `Y = 130`, each setting `Set(varCommitmentFilter, "...")` in its **OnSelect** (e.g. `Set(varCommitmentFilter, "My")`).
+5. **Insert** → **Vertical gallery**, `X = 20`, `Y = 190`, `Width = 1326`, `Height = 530`, rename `galCommitments`. **Items**:
    ```
    Filter(Commitments,
        Switch(varCommitmentFilter,
@@ -271,20 +362,36 @@ CountRows(Filter(Decisions, DecisionStatus.Value = "Reversed / Superseded"))
            "Overdue", !(CommitmentStatus.Value in ["Done","Cancelled"]) && !IsBlank(DueDate) && DueDate < Today(),
            true))
    ```
-   Add a **Team Member** combo box `cmbMe` (Items = Team Members) above the filter row for "My commitments" — `Owner = cmbMe.Selected` compares the lookup record directly, not the display name.
-4. Color the due-date label red when overdue: label **Color** = `If(!(ThisItem.CommitmentStatus.Value in ["Done","Cancelled"]) && ThisItem.DueDate < Today(), Color.Red, Color.Black)`.
-5. Gallery template **OnSelect**: `Set(varSelectedCommitment, ThisItem); EditForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)`.
+   `Owner = cmbMe.Selected` compares the lookup record directly, not the display name.
+6. Inside the gallery template, select the due-date label → **Color**:
+   `If(!(ThisItem.CommitmentStatus.Value in ["Done","Cancelled"]) && ThisItem.DueDate < Today(), Color.Red, Color.Black)`
+7. Select the gallery template → **OnSelect**:
+   `Set(varSelectedCommitment, ThisItem); EditForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)`
 
 ### B.6 Screen — Follow-up Radar (the wow screen)
 
-1. On `scrRadar`, insert three **Vertical galleries** (side by side or stacked), each with a **Label** above it showing a live count badge (`CountRows(...)` using the same filter as the gallery below it).
-2. **Overdue** gallery **Items**:
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│ [<] Follow-up Radar                                                   │
+├─────────────────────┬─────────────────────┬───────────────────────────┤
+│ Overdue (7)          │ Ownerless (3)       │ Slipping (2)              │
+│ ┌─────────────────┐  │ ┌─────────────────┐ │ ┌───────────────────────┐ │
+│ │galRadarOverdue   │  │ │galRadarOwnerless│ │ │galRadarSlipping        │ │
+│ │ row · row · row  │  │ │ row · row       │ │ │ row · row              │ │
+│ └─────────────────┘  │ └─────────────────┘ │ └───────────────────────┘ │
+└─────────────────────┴─────────────────────┴───────────────────────────┘
+```
+
+1. On `scrRadar`, add a label above each of the three columns showing a live count badge, using the same filter as the gallery beneath it, e.g. `"Overdue (" & CountRows(Filter(Commitments, ...)) & ")"`.
+2. **Insert** → **Vertical gallery**, left column: `X = 20`, `Y = 70`, `Width = 430`, `Height = 650`. Rename `galRadarOverdue`. **Items**:
    `Filter(Commitments, !(CommitmentStatus.Value in ["Done","Cancelled"]) && !IsBlank(DueDate) && DueDate < Today())`
-3. **Ownerless** gallery **Items**:
+3. **Insert** → **Vertical gallery**, middle column: `X = 468`, `Y = 70`, `Width = 430`, `Height = 650`. Rename `galRadarOwnerless`. **Items**:
    `Filter(Commitments, IsBlank(Owner) && !(CommitmentStatus.Value in ["Done","Cancelled"]))`
-4. **Slipping** gallery **Items**:
+4. **Insert** → **Vertical gallery**, right column: `X = 916`, `Y = 70`, `Width = 430`, `Height = 650`. Rename `galRadarSlipping`. **Items**:
    `Filter(Commitments, TimesPostponed >= 2 && !(CommitmentStatus.Value in ["Done","Cancelled"]))`
-5. Each gallery template's **OnSelect**: `Set(varSelectedCommitment, ThisItem); EditForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)` — tapping any row jumps straight to Commitment detail.
+5. Select each gallery's template → **OnSelect**:
+   `Set(varSelectedCommitment, ThisItem); EditForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)`
+   — tapping any row jumps straight to Commitment detail.
 6. End-to-end check: postpone a commitment twice on `scrCommitmentDetail`, navigate back to Radar, confirm it now appears under **Slipping**.
 
 ---
