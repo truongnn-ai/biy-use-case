@@ -199,6 +199,9 @@ Canvas is 1366×768 (Tablet, landscape) by default — the coordinates below ass
 4. In the **Tree view** (left panel, **Screens** tab), double-click the default screen's name and rename it `scrHome`.
 5. Click **New screen** in the command bar → choose **Blank** (not one of the header/scrollable templates — you want an empty canvas each time) → repeat 7 times, naming them in the Tree view as you go: `scrMeetings`, `scrMeetingDetail`, `scrDecisions`, `scrDecisionDetail`, `scrCommitments`, `scrCommitmentDetail`, `scrRadar`.
 6. **File** → **Save** now, and again after every screen below.
+7. Select **App** in the Tree view → formula bar → **OnStart**, and set:
+   `Set(varSelectedMeeting, First(Meetings)); Set(varSelectedDecision, First(Decisions)); Set(varSelectedCommitment, First(Commitments)); Set(varPrefillMeeting, First(Decisions).Meeting); Set(varPrefillDecision, First(Decisions))`
+   This pre-declares the session variables used across B.3–B.5 (`galMeetingDecisions`, `galMeetingCommitments`, the detail-screen `OnSelect`/`Patch` formulas, and the commitment prefill logic) so Power Fx recognizes their names — and their record types — right away. Use `First(TableName)` rather than `Blank()`: Power Fx infers a variable's type from the shape of the formula, so `First(Meetings)` types the variable as a `Meetings` record even when the table is empty at runtime (it'll just hold a blank value until something real is `Set()` later), whereas `Blank()` alone has no type and throws "No type found for variable... ensure it is Set to a non-blank value somewhere in the app." Note `varPrefillMeeting` is seeded from `First(Decisions).Meeting` (a lookup-shaped record), not `First(Meetings)` (a full-table record) — it must match the shape it's actually assigned later in B.4 step 3 (`Set(varPrefillMeeting, varSelectedDecision.Meeting)`), otherwise Power Fx will flag the same "incompatible record type" problem on that later `Set()`. If `App.OnStart` doesn't run automatically in Studio, force it once via **App** → **OnStart** → the "run OnStart" prompt, or add a manual **Button** with the same formula temporarily.
 
 ### B.2 Screen — Home / Dashboard (KPI tiles)
 
@@ -271,19 +274,22 @@ scrMeetings                                         scrMeetingDetail
                                              └───────────────┴───────────────────────┘
 ```
 
-1. On `scrMeetingDetail`: **Insert** → type `edit form` → click **Edit form**. Advanced → Size and position: `X = 20`, `Y = 20`, `Width = 400`, `Height = 600`. In the Properties panel (right side), set **Data source** = `Meetings`. Rename `frmMeeting`.
+1. On `scrMeetingDetail`: **Insert** → type `edit form` → click **Edit form**. Advanced → Size and position: `X = 20`, `Y = 20`, `Width = 400`, `Height = 600`. In the Properties panel (right side), set **Data source** = `Meetings`. Rename `frmMeeting`. Formula bar → **Item**: `varSelectedMeeting`.
+   **Don't skip this:** `EditForm(frmMeeting)` (used in step 7 below) only switches the form into Edit *mode* — it does **not** pick which record to show. That's the form's separate `Item` property. Without setting it, the form renders "No item to display" even though the related Decisions/Commitments galleries (which filter on `varSelectedMeeting` directly) work fine.
 2. **Insert** → type `gallery` → pick a **Vertical gallery** layout (e.g. "Title, subtitle"). Position it to the right of the form: `X = 440`, `Y = 60`, `Width = 900`, `Height = 280`. Formula bar → **Items**:
-   `Filter(Decisions, Meeting = varSelectedMeeting)`
+   `Filter(Decisions, Meeting.'Meeting Name' = varSelectedMeeting.'Meeting Name')`
    Rename `galMeetingDecisions`. Add a label above it with Text `"Decisions from this meeting"`.
+   **Why not `Meeting = varSelectedMeeting`:** a Lookup column (`Meeting` on Decisions) and a full-table record (`varSelectedMeeting`, a Meetings row) are different record shapes even though they both "point at" Meetings — comparing them with `=` throws **"Incompatible types for comparison. Record, Record."** Compare the primary name column instead (`'Meeting Name'`, guaranteed present on both sides) — this is Microsoft's documented pattern for filtering by a Dataverse lookup. The same fix applies anywhere below that compares a lookup column to a variable/selected record.
 3. **Insert** another **Vertical gallery** below it: `X = 440`, `Y = 380`, `Width = 900`, `Height = 280`. **Items**:
-   `Filter(Commitments, Meeting = varSelectedMeeting)`
+   `Filter(Commitments, Meeting.'Meeting Name' = varSelectedMeeting.'Meeting Name')`
    Rename `galMeetingCommitments`. Add a label above it with Text `"Commitments from this meeting"`.
 4. **Insert** → type `icon` → pick the **Back arrow** icon. Position top-left: `X = 20`, `Y = 20`, `Width = 40`, `Height = 40`. **OnSelect**: `Navigate(scrMeetings, ScreenTransition.Fade)`.
-5. On `scrMeetings`: **Insert** → **Vertical gallery** (layout: Title + subtitle). Position: `X = 20`, `Y = 140`, `Width = 1326`, `Height = 580`. **Items**:
-   `Search(Meetings, txtSearchMeetings.Text, "Meeting Name")`
-   Rename `galMeetings`.
-6. Above the gallery, **Insert** → type `text input` → click **Text input**, position `X = 20`, `Y = 70`, `Width = 500`, `Height = 40`, rename `txtSearchMeetings`. **Insert** → type `drop down` → click **Drop down**, position `X = 540`, `Y = 70`, `Width = 250`, `Height = 40`, rename `ddMeetingType`, set **Items** = `Choices(Meetings.'Meeting Type')`. Update `galMeetings`'s **Items** to combine both filters:
-   `Filter(Search(Meetings, txtSearchMeetings.Text, "Meeting Name"), ddMeetingType.Selected.Value = Text('Meeting Type') || IsBlank(ddMeetingType.Selected))`
+5. On `scrMeetings`: **Insert** → type `text input` → click **Text input**, position `X = 20`, `Y = 70`, `Width = 500`, `Height = 40`, rename `txtSearchMeetings`. **Insert** → type `drop down` → click **Drop down**, position `X = 540`, `Y = 70`, `Width = 250`, `Height = 40`, rename `ddMeetingType`, set **Items** = `Choices(Meetings.'Meeting Type')`.
+6. **Insert** → **Vertical gallery** (layout: Title + subtitle). Position: `X = 20`, `Y = 140`, `Width = 1326`, `Height = 580`. Rename `galMeetings`. **Items**:
+   `Filter(Search(Meetings, txtSearchMeetings.Text, 'Meeting Name'), Text(ddMeetingType.Selected.Value) = Text('Meeting Type') || IsBlank(ddMeetingType.Selected))`
+   Build the search box and dropdown before the gallery — the gallery's `Items` formula references both controls by name, and Studio throws **"Name isn't valid... isn't recognized"** if you set it before they exist.
+   **Quoting note:** `Search()`'s column argument is a **field reference**, not a string literal — use single quotes (`'Meeting Name'`), not double quotes (`"Meeting Name"`). Double-quoting it is what throws **"Expected identifier name"** (Power Fx sees a text literal where it expects a column identifier).
+   **Choice-column note:** `ddMeetingType.Selected.Value` is an `OptionSetValue`, not plain text — comparing it directly to `Text('Meeting Type')` throws **"Incompatible types for comparison... OptionSetValue, Text."** Wrap it in `Text(...)` too, same as the `Commitment Status`/`Decision Status` comparisons elsewhere in this guide.
 7. Select `galMeetings`'s template (click once on the gallery, then again on the first row to select the template) → formula bar → **OnSelect**:
    `Set(varSelectedMeeting, ThisItem); EditForm(frmMeeting); Navigate(scrMeetingDetail, ScreenTransition.Fade)`
 8. **Insert** → **Button**, top-right: `X = 1150`, `Y = 20`, `Width = 196`, `Height = 50`. Text = `"+ New meeting"`. **OnSelect**:
@@ -309,17 +315,16 @@ scrDecisions                                        scrDecisionDetail
 └───────────────────────────────────────┘
 ```
 
-1. On `scrDecisionDetail`: **Insert** → **Edit form**, `X = 20`, `Y = 20`, `Width = 900`, `Height = 650`, **Data source** = `Decisions`, rename `frmDecision`.
+1. On `scrDecisionDetail`: **Insert** → **Edit form**, `X = 20`, `Y = 20`, `Width = 900`, `Height = 650`, **Data source** = `Decisions`, rename `frmDecision`. Formula bar → **Item**: `varSelectedDecision` (same reason as `frmMeeting` in B.3 step 1 — `EditForm()` sets mode, not which record).
 2. **Insert** → **Back arrow** icon, `X = 20`, `Y = 20` (in front of the form — nudge the form down to `Y = 90` if it overlaps), **OnSelect**: `Navigate(scrDecisions, ScreenTransition.Fade)`.
 3. **Insert** → **Button**, top-right, Text = `"+ Add commitment"`. **OnSelect**:
    `Set(varPrefillMeeting, varSelectedDecision.Meeting); Set(varPrefillDecision, varSelectedDecision); NewForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)`
    On `scrCommitmentDetail`, default the Commitment form's Meeting and Related Decision fields from `varPrefillMeeting` / `varPrefillDecision` while the form is in New mode (set each field card's **Default** property, e.g. `varPrefillMeeting`, only used when `frmCommitment.Mode = FormMode.New`).
-4. On `scrDecisions`: **Insert** → **Vertical gallery**, `X = 20`, `Y = 190`, `Width = 1326`, `Height = 530`. **Items**:
-   `Search(Decisions, txtSearchDecisions.Text, "Decision Title")`
-   Rename `galDecisions`.
-5. Above it, **Insert** → **Text input** `txtSearchDecisions` (`X = 20`, `Y = 70`).
-6. Add filter chips below the search box — one **Button** per Decision Status, `Y = 120`, each ~150 wide, laid out left to right (`X = 20, 180, 340, 500, 660`): **All**, **Proposed**, **Decided**, **Reviewed**, **Reversed / Superseded** (the differentiator chip — keep it standalone, don't fold it into "All"). Each chip's **OnSelect** sets a variable, e.g. `Set(varStatusFilter, "Reversed / Superseded")`; the **All** chip sets `Set(varStatusFilter, "")`. Update `galDecisions`'s **Items**:
-   `Filter(Search(Decisions, txtSearchDecisions.Text, "Decision Title"), varStatusFilter = "" || Text('Decision Status') = varStatusFilter)`
+4. On `scrDecisions`: **Insert** → **Text input** `txtSearchDecisions` (`X = 20`, `Y = 70`).
+5. Add filter chips below the search box — one **Button** per Decision Status, `Y = 120`, each ~150 wide, laid out left to right (`X = 20, 180, 340, 500, 660`): **All**, **Proposed**, **Decided**, **Reviewed**, **Reversed / Superseded** (the differentiator chip — keep it standalone, don't fold it into "All"). Each chip's **OnSelect** sets a variable, e.g. `Set(varStatusFilter, "Reversed / Superseded")`; the **All** chip sets `Set(varStatusFilter, "")`.
+6. **Insert** → **Vertical gallery**, `X = 20`, `Y = 190`, `Width = 1326`, `Height = 530`. Rename `galDecisions`. **Items**:
+   `Filter(Search(Decisions, txtSearchDecisions.Text, 'Decision Title'), varStatusFilter = "" || Text('Decision Status') = varStatusFilter)`
+   Build the search box and filter chips before the gallery — its `Items` formula references both `txtSearchDecisions` and `varStatusFilter` by name.
 7. **Timeline styling**: reuse the same gallery — wrap **Items** in `SortByColumns(..., "Decision Date", Descending)`, and inside the gallery template add a small colored square/label whose **Fill** is:
    `Switch(Text(ThisItem.'Decision Status'), "Decided", Color.Green, "Reviewed", Color.Blue, "Reversed / Superseded", Color.Red, Color.Gray)`
 8. Select the gallery template → **OnSelect**:
@@ -344,7 +349,7 @@ scrCommitments                                      scrCommitmentDetail
 └───────────────────────────────────────┘
 ```
 
-1. On `scrCommitmentDetail`: **Insert** → **Edit form**, `X = 20`, `Y = 90`, `Width = 900`, `Height = 500`, **Data source** = `Commitments`, rename `frmCommitment`. **Insert** → **Back arrow** icon at `X = 20, Y = 20` → **OnSelect**: `Navigate(scrCommitments, ScreenTransition.Fade)`.
+1. On `scrCommitmentDetail`: **Insert** → **Edit form**, `X = 20`, `Y = 90`, `Width = 900`, `Height = 500`, **Data source** = `Commitments`, rename `frmCommitment`. Formula bar → **Item**: `varSelectedCommitment` (same reason as `frmMeeting` in B.3 step 1 — `EditForm()` sets mode, not which record). **Insert** → **Back arrow** icon at `X = 20, Y = 20` → **OnSelect**: `Navigate(scrCommitments, ScreenTransition.Fade)`.
 2. Below the form, add the **Postpone** section: **Insert** → type `date picker` → click **Date picker**, `X = 20`, `Y = 610`, `Width = 250`, `Height = 40`, rename `dtpNewDueDate`. **Insert** → **Button** next to it, Text = `"Postpone"`, **OnSelect**:
    ```
    Patch(Commitments, varSelectedCommitment, {
@@ -352,7 +357,7 @@ scrCommitments                                      scrCommitmentDetail
        'Due Date': dtpNewDueDate.SelectedDate,
        'Times Postponed': varSelectedCommitment.'Times Postponed' + 1
    });
-   Set(varSelectedCommitment, LookUp(Commitments, Commitment = varSelectedCommitment.Commitment))
+   Set(varSelectedCommitment, LookUp(Commitments, 'Commitment Title' = varSelectedCommitment.'Commitment Title'))
    ```
    (the trailing `Set` refreshes the local variable so the form and labels reflect the new values immediately — this follows the Postpone logic in 02-DATA-MODEL.md).
 3. On `scrCommitments`: **Insert** → type `combo box` → click **Combo box**, `X = 20`, `Y = 70`, `Width = 400`, rename `cmbMe`, **Items** = `Team Members` (needed for "My commitments" below).
@@ -361,12 +366,12 @@ scrCommitments                                      scrCommitmentDetail
    ```
    Filter(Commitments,
        Switch(varCommitmentFilter,
-           "My", Owner = cmbMe.Selected,
+           "My", Owner.'Team Member Name' = cmbMe.Selected.'Team Member Name',
            "Open", !(Text('Commitment Status') in ["Done","Cancelled"]),
            "Overdue", !(Text('Commitment Status') in ["Done","Cancelled"]) && !IsBlank('Due Date') && 'Due Date' < Today(),
            true))
    ```
-   `Owner = cmbMe.Selected` compares the lookup record directly, not the display name.
+   `Owner.'Team Member Name' = cmbMe.Selected.'Team Member Name'` compares the primary name column on both sides — the same fix as the `Meeting` lookup comparisons in B.3, needed because `Owner` (a lookup) and `cmbMe.Selected` (a full Team Members record) are different record shapes and can't be compared directly with `=`.
 6. Inside the gallery template, select the due-date label → **Color**:
    `If(!(Text(ThisItem.'Commitment Status') in ["Done","Cancelled"]) && ThisItem.'Due Date' < Today(), Color.Red, Color.Black)`
 7. Select the gallery template → **OnSelect**:
