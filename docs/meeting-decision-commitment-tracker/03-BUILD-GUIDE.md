@@ -293,7 +293,8 @@ scrMeetings                                         scrMeetingDetail
 7. Select `galMeetings`'s template (click once on the gallery, then again on the first row to select the template) → formula bar → **OnSelect**:
    `Set(varSelectedMeeting, ThisItem); EditForm(frmMeeting); Navigate(scrMeetingDetail, ScreenTransition.Fade)`
 8. **Insert** → **Button**, top-right: `X = 1150`, `Y = 20`, `Width = 196`, `Height = 50`. Text = `"+ New meeting"`. **OnSelect**:
-   `NewForm(frmMeeting); Navigate(scrMeetingDetail, ScreenTransition.Fade)`
+   `Set(varSelectedMeeting, Defaults(Meetings)); NewForm(frmMeeting); Navigate(scrMeetingDetail, ScreenTransition.Fade)`
+   The `Set(varSelectedMeeting, Defaults(Meetings))` matters even though `NewForm` ignores the form's `Item` — `galMeetingDecisions`/`galMeetingCommitments` filter on `varSelectedMeeting` directly, not on the form. Without resetting it, those galleries keep showing the previously selected meeting's decisions/commitments on a brand-new (unsaved) meeting. `Defaults(Meetings)` gives a correctly-typed blank Meetings record that won't match any real `Meeting.'Meeting Name'`, so both galleries render empty until the new meeting is saved and actually selected.
 
 ### B.4 Screen — Decisions + Decision detail
 
