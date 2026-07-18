@@ -1,4 +1,4 @@
-Commitment Title,Meeting,Related Decision,Description,Owner,Due Date,Original Due Date,Times Postponed,Commitment Status
+Commitment Title,Meeting,Related Decision,Description,Commitment Owner,Due Date,Original Due Date,Times Postponed,Commitment Status
 Draft onboarding checklist,M1 — Weekly Team Sync — 2026-07-10,Assign backup owners for key tasks,New-hire ramp doc,Dev,2026-07-08,2026-07-01,1,In Progress
 Fix flaky test suite,M1 — Weekly Team Sync — 2026-07-10,,Stabilize CI,,2026-07-05,2026-07-05,0,Not Started
 Set up 2-week sprint board,M1 — Weekly Team Sync — 2026-07-10,Adopt 2-week sprint cadence,Configure board,Priya,2026-07-20,2026-07-20,0,In Progress

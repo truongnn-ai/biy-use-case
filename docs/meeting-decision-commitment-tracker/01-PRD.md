@@ -30,7 +30,7 @@ entry/admin (built first as a safety net) and a **canvas app** as the demo showp
 
 **Core (build this phase):**
 - 4 lean Dataverse tables (Team Member, Meeting, Decision, Commitment) — core columns only. Team Member holds fictional people (incl. a fictional/dummy Email); Decision Maker & Owner are lookups to it.
-- Model-driven app: forms + core views (Overdue, Ownerless, Slipping, Due-for-review, Reversed).
+- Model-driven app: forms + core views (Overdue, Ownerless, Slipping, Due-for-review, Reversed / Superseded).
 - Canvas app: Home dashboard (KPIs), Meetings, Decisions (+ Reversed filter/timeline), Commitments, Follow-up Radar, Postpone.
 - **Daily overdue email reminder (FR-10)** — a scheduled Power Automate flow that emails each Owner their overdue commitments via Office 365 Outlook, using the fictional/dummy Email on their Team Member record.
 - Sample data to make every state visible.
@@ -97,7 +97,7 @@ are written once and never read again. That novelty is the demo's selling point.
 ### Decisions
 
 - US-04: As Maya, I can record a decision with context, options considered, chosen option, rationale, decision maker, and decision date.
-- US-05: As Maya, I can set a decision **status** (Proposed, Decided, Deferred, Reversed, Superseded) and a **review date**.
+- US-05: As Maya, I can set a decision **status** (Proposed, Decided, Reviewed, Reversed / Superseded) and a **review date**.
 - US-06: As Sam, I can see a **decision timeline** and filter to **reversed/superseded** decisions.
 - US-07: As Sam, I can see decisions **due for review** (review date ≤ today).
 
@@ -110,7 +110,7 @@ are written once and never read again. That novelty is the demo's selling point.
 
 ### Dashboard
 
-- US-12: As Sam, the Home screen shows KPI tiles: Open commitments, Overdue, Decisions this month, Decisions due for review, Reversed decisions.
+- US-12: As Sam, the Home screen shows KPI tiles: Open commitments, Overdue, Decisions this month, Decisions due for review, Reversed / Superseded decisions.
 
 ### Reminders
 
@@ -153,7 +153,7 @@ are written once and never read again. That novelty is the demo's selling point.
 1. **Home / Dashboard** — KPI tiles + quick links to each area.
 2. **Meetings** — searchable gallery; "New meeting"; filter by type.
 3. **Meeting detail** — meeting fields + related Decisions gallery + related Commitments gallery.
-4. **Decisions** — gallery + filter by status (incl. **Reversed**) + search; "Timeline" toggle sorted by decision date.
+4. **Decisions** — gallery + filter by status (incl. **Reversed / Superseded**) + search; "Timeline" toggle sorted by decision date.
 5. **Decision detail / edit** — full decision form; quick-add linked commitment.
 6. **Commitments** — gallery with tabs/filters: All · My commitments · Open · Overdue.
 7. **Commitment detail / edit** — full form + "Postpone" button (FR-09).

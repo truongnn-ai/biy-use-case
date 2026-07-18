@@ -101,6 +101,8 @@ Once all four are added:
 3. Optional polish: select the form → **Edit** → drag fields into a top-to-bottom order such as Commitment Title, Owner, Due Date, Commitment Status, Times Postponed, Description → **Save** → **Publish**.
 4. Repeat for Decision and Meeting only if time allows — this step is not required for a working app.
 
+> **System "Owner" field gotcha (all four tables):** every Dataverse table auto-generates its own system **Owner** column (`ownerid` — tracks which Dataverse *user/team* administratively owns the row for security purposes). This is unrelated to the **Owner** lookup we designed on Commitment (which points to a Team Member and means "who committed to this"). Copilot-generated forms sometimes surface the system Owner field and mark it required, which blocks saving a new record until you manually pick a user. You **cannot delete it from the form** — Dataverse blocks removing a required column's only occurrence on a form — so instead select it → in the Properties panel check **Hide**, then **Save and publish**. Dataverse still auto-assigns ownership to the creating user behind the scenes; hiding just stops it from blocking you on save.
+
 ### A.4 Create the five custom views
 
 Views live under each table → **Views** in the Pages tree.
@@ -111,13 +113,59 @@ Views live under each table → **Views** in the Pages tree.
 
 | View | Table | Conditions (joined with AND unless noted) |
 |---|---|---|
-| **Overdue** | Commitment | Commitment Status **Does Not Equal** Done **AND** Does Not Equal Cancelled **AND** Due Date **Before** Today |
+| **Overdue** | Commitment | Commitment Status **Does Not Equal** Done **AND** Does Not Equal Cancelled **AND** Due Date **Contains Data** **AND** (Due Date **Older Than X Days** `1` **OR** Due Date **Today**) — see tree below |
 | **Ownerless** | Commitment | Owner **Does Not Contain Data** **AND** Commitment Status **Does Not Equal** Done **AND** Does Not Equal Cancelled |
 | **Slipping** | Commitment | Times Postponed **Greater Than or Equal** `2` **AND** Commitment Status **Does Not Equal** Done **AND** Does Not Equal Cancelled |
-| **Due for review** | Decision | Decision Status **Equals** Decided **AND** Review Date **On or Before** Today |
-| **Reversed / Superseded** | Decision | Decision Status **Equals** Reversed **OR** Decision Status **Equals** Superseded — put both in one **OR** group (**+ New group**, set the group's join to **Or**) |
+| **Due for review** | Decision | Decision Status **Equals** Decided **AND** Review Date **Contains Data** **AND** (Review Date **Older Than X Days** `1` **OR** Review Date **Today**) |
+| **Reversed / Superseded** | Decision | Decision Status **Equals** `Reversed / Superseded` — single condition, no OR group needed |
 
-> The exact date-operator label can vary slightly by environment version — look for **Before** (strictly earlier than today). If your filter builder only offers **On or Before**, that's an acceptable substitute for a demo (it also counts anything due today as overdue, which is a minor difference).
+**Filter trees** (build each with **+ New condition** / **+ New group** in **Edit filters** — a `└── OR` line means: add a new group, set its join to **Or**, then add its child conditions inside):
+
+**Overdue** (Commitment)
+```
+AND
+├── Commitment Status | Does Not Equal | Done
+├── Commitment Status | Does Not Equal | Cancelled
+├── Due Date | Contains data
+└── OR
+    ├── Due Date | Older than X days | 1
+    └── Due Date | Today
+```
+
+**Ownerless** (Commitment)
+```
+AND
+├── Owner | Does not contain data
+├── Commitment Status | Does Not Equal | Done
+└── Commitment Status | Does Not Equal | Cancelled
+```
+
+**Slipping** (Commitment)
+```
+AND
+├── Times Postponed | Greater Than or Equal | 2
+├── Commitment Status | Does Not Equal | Done
+└── Commitment Status | Does Not Equal | Cancelled
+```
+
+**Due for review** (Decision)
+```
+AND
+├── Decision Status | Equals | Decided
+├── Review Date | Contains data
+└── OR
+    ├── Review Date | Older than X days | 1
+    └── Review Date | Today
+```
+
+**Reversed / Superseded** (Decision)
+```
+Decision Status | Equals | Reversed / Superseded
+```
+
+> **Why Overdue/Due for review use the Contains-data + OR shape, not a plain "Before Today":** this filter builder has no literal Before operator. **On** / **On or Before** / **On or After** pair with a **fixed calendar date** you pick once, so they go stale. **Older Than X Days** is dynamic (re-evaluated on every load) but only accepts **X ≥ 1** — entering `0` throws a validation error. **Today** is a separate dynamic operator that resolves to "equals today." OR'ing them together gives "at least 1 day old, or due today" — i.e. due on or before today — which matches the `DueDate < Today()` / `ReviewDate <= Today()` derived flags in 02-DATA-MODEL.md closely enough for the demo (same minor "counts due-today as overdue too" simplification called out there). **Contains data** guards against blank Due/Review Dates, since both columns are optional.
+
+> **What clears a decision out of "Due for review":** the filter only matches `Decision Status = Decided`, so any status change removes it immediately — no need to fiddle with Review Date. When someone actually reviews a decision, they set its status to either **Reviewed** (still holds — done, no further action) or **Reversed / Superseded** (changed). Only if they want it to resurface again later do they leave it **Decided** and push Review Date to a new future date.
 
 ### A.5 Optional: add a chart
 
@@ -167,7 +215,7 @@ CountRows(Filter(Decisions,
     DecisionStatus.Value="Decided" && !IsBlank(ReviewDate) && ReviewDate <= Today()))
 
 // Reversed / superseded decisions
-CountRows(Filter(Decisions, DecisionStatus.Value in ["Reversed","Superseded"]))
+CountRows(Filter(Decisions, DecisionStatus.Value = "Reversed / Superseded"))
 ```
 
 3. Insert 4 **Icon** or **Button** controls in a nav bar at the top: Meetings, Decisions, Commitments, Follow-up Radar. Set each **OnSelect**:
@@ -196,9 +244,9 @@ CountRows(Filter(Decisions, DecisionStatus.Value in ["Reversed","Superseded"]))
 1. `scrDecisionDetail`: **Form** `frmDecision`, **Data source** = `Decisions`; add a **Back** icon (`Navigate(scrDecisions, ScreenTransition.Fade)`); add an **Add commitment** button → **OnSelect**: `Set(varPrefillMeeting, varSelectedDecision.Meeting); Set(varPrefillDecision, varSelectedDecision); NewForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)` — on `scrCommitmentDetail`, default the Commitment form's Meeting and Related Decision fields from `varPrefillMeeting` / `varPrefillDecision` while the form is in New mode.
 2. `scrDecisions`: **Vertical gallery** `galDecisions`, **Items**:
    `Search(Decisions, txtSearchDecisions.Text, "DecisionTitle")`
-3. Add filter chips for each Decision Status (include a standalone **Reversed** chip — the differentiator). Each chip's **OnSelect** sets a variable, e.g. `Set(varStatusFilter, "Reversed")`; an **All** chip sets `Set(varStatusFilter, "")`. Update the gallery **Items**:
+3. Add filter chips for each Decision Status (include a standalone **Reversed / Superseded** chip — the differentiator). Each chip's **OnSelect** sets a variable, e.g. `Set(varStatusFilter, "Reversed / Superseded")`; an **All** chip sets `Set(varStatusFilter, "")`. Update the gallery **Items**:
    `Filter(Search(Decisions, txtSearchDecisions.Text, "DecisionTitle"), varStatusFilter = "" || DecisionStatus.Value = varStatusFilter)`
-4. **Timeline**: reuse the same gallery, wrap **Items** in `SortByColumns(..., "DecisionDate", Descending)`, and add a colored status tag — a small label whose **Fill** is `Switch(ThisItem.DecisionStatus.Value, "Decided", Color.Green, "Reversed", Color.Red, "Superseded", Color.Orange, Color.Gray)`.
+4. **Timeline**: reuse the same gallery, wrap **Items** in `SortByColumns(..., "DecisionDate", Descending)`, and add a colored status tag — a small label whose **Fill** is `Switch(ThisItem.DecisionStatus.Value, "Decided", Color.Green, "Reviewed", Color.Blue, "Reversed / Superseded", Color.Red, Color.Gray)`.
 5. Gallery template **OnSelect**: `Set(varSelectedDecision, ThisItem); EditForm(frmDecision); Navigate(scrDecisionDetail, ScreenTransition.Fade)`.
 
 ### B.5 Screen — Commitments + Commitment detail
@@ -303,7 +351,7 @@ CountRows(Filter(Decisions, DecisionStatus.Value in ["Reversed","Superseded"]))
 
 1. Canvas **Home dashboard** — Overdue and "Decisions due for review" tiles.
 2. Open a **meeting** → decisions + commitments captured together.
-3. Open a **decision** → rationale + options; filter Decisions to **Reversed**.
+3. Open a **decision** → rationale + options; filter Decisions to **Reversed / Superseded**.
 4. **Follow-up Radar** → Overdue / Ownerless / Slipping.
 5. **Postpone** a commitment → Times Postponed increments → it appears under Slipping.
 6. Switch to the **model-driven app** → "same data, a fast admin view" (create/edit a record live).

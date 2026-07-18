@@ -89,7 +89,7 @@ Meeting (1) ────< (N) Decision
 | Rationale             | Multiline text           | No       | **The "why we decided that" — core value**                          |
 | Decision Maker        | **Lookup → Team Member** | No       | Who's accountable                                                   |
 | Decision Date         | Date only                | Yes      |                                                                     |
-| Decision Status       | Choice                   | Yes      | Proposed, Decided, Deferred, Reversed, Superseded — default Decided |
+| Decision Status       | Choice                   | Yes      | Proposed, Decided, Reviewed, Reversed / Superseded — default Decided |
 | Review Date           | Date only                | No       | Drives "due for review"                                             |
 
 
@@ -171,7 +171,9 @@ Patch(Commitments, ThisItem,
 ## Choice set summary (for Copilot generation)
 
 - **Meeting Type:** Standup · Planning · Review · Steering · Ad-hoc · Other
-- **Decision Status:** Proposed · Decided · Deferred · Reversed · Superseded
+- **Decision Status:** Proposed · Decided · Reviewed · Reversed / Superseded
+
+  *(Proposed = not decided yet, folds in the old "Deferred"; Decided = finalized, awaiting review; Reviewed = reviewed and still holds; Reversed / Superseded = reviewed and changed — merges the old "Reversed" and "Superseded" into one status.)*
 - **Commitment Status:** Not Started · In Progress · Blocked · Done · Cancelled · Deferred
 
 ---

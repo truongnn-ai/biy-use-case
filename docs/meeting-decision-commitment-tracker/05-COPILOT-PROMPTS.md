@@ -27,7 +27,7 @@ Create four Dataverse tables for a "Meeting Decision & Commitment Tracker":
 3) Decision — columns: Decision Title (primary text), Context (multiline),
    Options Considered (multiline), Chosen Option (multiline), Rationale (multiline),
    Decision Date (date only),
-   Decision Status (choice: Proposed, Decided, Deferred, Reversed, Superseded),
+   Decision Status (choice: Proposed, Decided, Reviewed, Reversed / Superseded),
    Review Date (date only).
    (Decision Maker is added as a lookup in the next prompt.)
 
@@ -42,13 +42,28 @@ Create four Dataverse tables for a "Meeting Decision & Commitment Tracker":
 
 ## Prompt B — Add the relationships
 
+> **Do NOT paste this into the global Copilot chat you used for Prompt A** — with no table
+> open, Copilot has no context that these tables already exist and may recreate them instead
+> of adding lookups. Instead, open **each target table individually** (Tables → the table →
+> its own Columns/Copilot pane) and paste only that table's prompt below.
+>
+> If you'd rather skip Copilot for this step: it's only 5 lookup columns — adding them by
+> hand is just as fast (open the table → **+ Add column** → type **Lookup** → pick the
+> related table) and carries no risk of duplicate tables.
+
+**B1 — inside the Decision table:**
 ```
-Add these relationships:
-- Meeting to Decision: one-to-many (add a "Meeting" lookup on Decision).
-- Meeting to Commitment: one-to-many (add a "Meeting" lookup on Commitment).
-- Decision to Commitment: one-to-many and optional (add a "Related Decision" lookup on Commitment).
-- Team Member to Decision: one-to-many and optional (add a "Decision Maker" lookup on Decision).
-- Team Member to Commitment: one-to-many and optional (add an "Owner" lookup on Commitment).
+Add these lookup columns to this existing table (do not create new tables):
+- "Meeting": lookup to the existing Meeting table (Meeting is the one side, one-to-many).
+- "Decision Maker": lookup to the existing Team Member table (Team Member is the one side, one-to-many, optional).
+```
+
+**B2 — inside the Commitment table:**
+```
+Add these lookup columns to this existing table (do not create new tables):
+- "Meeting": lookup to the existing Meeting table (Meeting is the one side, one-to-many).
+- "Owner": lookup to the existing Team Member table (Team Member is the one side, one-to-many, optional).
+- "Related Decision": lookup to the existing Decision table (Decision is the one side, one-to-many, optional).
 ```
 
 
@@ -63,7 +78,7 @@ navigation, plus the Team Member table as a reference-data area. For the Commitm
 - "Slipping": Times Postponed is greater than or equal to 2 and status is not Done or Cancelled.
 For the Decision table add views:
 - "Due for review": Decision Status is Decided and Review Date is on or before today.
-- "Reversed / Superseded": Decision Status is Reversed or Superseded.
+- "Reversed / Superseded": Decision Status is Reversed / Superseded.
 ```
 
 
@@ -76,7 +91,7 @@ Create a canvas app (tablet layout) from the Meeting, Decision, and Commitment t
   decisions this month, decisions due for review, and reversed/superseded decisions.
 - A Meetings screen (searchable gallery + form) and a Meeting detail screen showing the
   meeting plus its related decisions and commitments.
-- A Decisions screen with search, a filter for Decision Status (including a Reversed filter),
+- A Decisions screen with search, a filter for Decision Status (including a Reversed / Superseded filter),
   and a timeline view sorted by Decision Date.
 - A Commitments screen with filter buttons for All, My commitments, Open, and Overdue.
 - A "Follow-up Radar" screen with three lists: overdue commitments,

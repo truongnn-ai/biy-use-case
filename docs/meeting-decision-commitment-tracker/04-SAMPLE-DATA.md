@@ -31,13 +31,15 @@ match the **lean core model** in 02-DATA-MODEL.md. Dates are relative to a **dem
 | Decision Title | Meeting | Context / Problem | Options Considered | Chosen Option | Rationale | Decision Maker | Decision Date | Decision Status | Review Date |
 |---|---|---|---|---|---|---|---|---|---|
 | Adopt 2-week sprint cadence | M1 | Delivery felt unpredictable | 1-week / 2-week / no sprints | 2-week sprints | Balances planning overhead with responsiveness | Maya | 2026-07-10 | Decided | 2026-08-10 |
-| Standardize on single tooling vendor | M2 | Tool sprawl across team | Single vendor / best-of-breed / status quo | Single vendor | Simpler admin, volume discount | Sam | 2026-06-25 | Reversed | 2026-07-15 |
+| Standardize on single tooling vendor | M2 | Tool sprawl across team | Single vendor / best-of-breed / status quo | Single vendor | Simpler admin, volume discount | Sam | 2026-06-25 | Reversed / Superseded | 2026-07-15 |
 | Assign backup owners for key tasks | M3 | Bus-factor risk on handovers | Backups / documentation only / do nothing | Named backup owners | Reduces single-point-of-failure risk | Maya | 2026-05-20 | Decided | 2026-07-01 |
 | Revert to best-of-breed tooling | M4 | Single-vendor cost exceeded budget | Keep single vendor / revert | Revert to best-of-breed | Cost outweighed admin savings; supersedes M2 decision | Sam | 2026-07-14 | Decided | 2026-09-14 |
 
-> "Standardize on single tooling vendor" (M2) is **Reversed**; "Revert to best-of-breed
-> tooling" (M4) supersedes it — material for the timeline/reversal demo. Two decisions have
-> **Review Date ≤ 2026-07-15**, so they appear under "Due for review".
+> "Standardize on single tooling vendor" (M2) is **Reversed / Superseded** by "Revert to
+> best-of-breed tooling" (M4) — material for the timeline/reversal demo. Its Review Date has
+> also passed, but it does **not** appear under "Due for review" — that view requires
+> **Status = Decided**, and this one no longer is. Only "Assign backup owners for key tasks"
+> (still Decided, Review Date 2026-07-01) appears there.
 
 ## Commitments  (Owner = lookup to Team Member; blank = ownerless)
 
@@ -56,7 +58,7 @@ match the **lean core model** in 02-DATA-MODEL.md. Dates are relative to a **dem
 - **Overdue:** "Fix flaky test suite", "Compare tooling vendor quotes", "Document handover steps".
 - **Ownerless:** "Fix flaky test suite", "Archive single-vendor contract notes".
 - **Slipping (Times Postponed ≥ 2):** "Compare tooling vendor quotes" (3).
-- **Decisions due for review:** "Standardize on single tooling vendor", "Assign backup owners for key tasks".
-- **Reversed / superseded:** "Standardize on single tooling vendor" (Reversed), superseded by "Revert to best-of-breed tooling".
+- **Decisions due for review:** "Assign backup owners for key tasks" only ("Standardize on single tooling vendor" is excluded — its status is Reversed / Superseded, not Decided).
+- **Reversed / superseded:** "Standardize on single tooling vendor" (Reversed / Superseded), superseded by "Revert to best-of-breed tooling".
 - **"My commitments" demo:** pick **Dev** → 2 commitments (onboarding checklist, vendor quotes).
 - **Daily reminder flow demo:** running the flow against this data should email `dev.demo@example.com` (2 overdue: onboarding checklist, vendor quotes) and `leo.demo@example.com` (1 overdue: handover steps). "Fix flaky test suite" is overdue but ownerless, so it's skipped by the flow (still visible on the canvas Follow-up Radar).

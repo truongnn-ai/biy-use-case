@@ -35,7 +35,7 @@
 | 1 | Open **Home dashboard** | "At a glance: open commitments, what's overdue, and decisions due to be revisited." |
 | 2 | Open a **meeting** | "One meeting → its decisions and commitments captured together, not scattered." |
 | 3 | Open a **decision** | "Here's the *rationale* and the options we weighed — this is what usually gets lost." |
-| 4 | Filter decisions to **Reversed** | "We even track when we change our mind — so nobody re-opens a settled call by accident." |
+| 4 | Filter decisions to **Reversed / Superseded** | "We even track when we change our mind — so nobody re-opens a settled call by accident." |
 | 5 | Open **Follow-up Radar** | "Overdue, ownerless, and slipping — the stuff that normally hides in notes." |
 | 6 | **Postpone** a commitment | "Watch the 'times postponed' counter tick up — it instantly appears under Slipping." |
 | 7 | Switch to the **model-driven app** | "Same data, a second experience — a fast admin view. I'll add a record here and it shows up in the polished app instantly." |
