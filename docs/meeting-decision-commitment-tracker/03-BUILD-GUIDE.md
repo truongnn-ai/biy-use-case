@@ -579,6 +579,22 @@ Three independently-filtered galleries side by side, each mirroring one of the m
    `concat('Reminder sent — Owner: ', outputs('Send_an_email_(V2)')?['body/to'], ' | Meeting: ', body('Get_meeting')?['new_MeetingName'], ' | Commitment: ', items('Apply_to_each')?['new_CommitmentTitle'], ' | Due: ', items('Apply_to_each')?['new_DueDate'])`
    This gives every run a plain, searchable record of exactly which owner/meeting/commitment got emailed and when, visible straight in **Run history** (C.6) — no new Dataverse table or column needed, and it costs one cheap Compose step per iteration. Swap in your environment's actual column schema names if they differ from the `new_` prefix shown in the Commitment table's column list. If a run fails partway through the loop, this Compose output is also the fastest way to tell how many reminders had already gone out before the failure.
 
+### C.5.1 No-mailbox alternative: mobile push notification (demo-only stand-in)
+
+> If you don't have an Outlook mailbox to send from yet, use this section **instead of**
+> C.5 steps 2–6 (the Office 365 Outlook actions) to still get a visible "ping" for the
+> demo. Keep C.5 step 1 ("Log reminder attempt") as-is either way — this only replaces
+> the actual send.
+
+1. Still inside the loop, right after **Log reminder attempt**, **+ Add an action** → search **Notifications** → **Send me a mobile notification**. This is a built-in Power Automate connector, not Office 365 Outlook — it pushes to the Power Automate mobile app for whichever account is signed into the *flow* (i.e., you, the maker), so there's no mailbox and typically no separate sign-in screen the first time you add it.
+2. **Text**: click in, open the **Expression** tab, and paste a formula in the same style as the Compose steps so the push itself carries the demo-relevant context:
+   `concat('DEMO PUSH — would notify ', body('Get_owner')?['new_Email'], ' | Meeting: ', body('Get_meeting')?['new_MeetingName'], ' | Commitment: ', items('Apply_to_each')?['new_CommitmentTitle'], ' | Due: ', items('Apply_to_each')?['new_DueDate'])`
+   Leading with "would notify \<owner email\>" is what lets you narrate the demo honestly — the push physically lands on your own phone, not the commitment owner's, but the text makes clear who it would have gone to once Outlook is wired up via C.5.
+3. **Mobile app needed to actually see it:** the action succeeds and logs a run either way, but the push itself only shows up if the Power Automate mobile app is installed and signed into the same Microsoft account that owns this flow. If you're demoing without the app installed, treat Run history (C.6) as the visible proof instead of the phone buzzing.
+4. Still inside the loop, right after this notification action, **+ Add an action** → **Compose** (rename it "Log reminder sent — demo push"). Same as C.5 step 1 — click into **Inputs** → **Expression** tab → paste → **OK**:
+   `concat('Reminder sent (demo push) — Owner: ', body('Get_owner')?['new_Email'], ' | Meeting: ', body('Get_meeting')?['new_MeetingName'], ' | Commitment: ', items('Apply_to_each')?['new_CommitmentTitle'], ' | Due: ', items('Apply_to_each')?['new_DueDate'])`
+   The mobile notification action doesn't return a usable "to" field the way `Send an email (V2)` does, so this Compose rebuilds the summary from `Get_owner`/`Get_meeting`/`Apply_to_each` directly rather than referencing the notification action's output (contrast with C.5 step 6, which reads `outputs('Send_an_email_(V2)')` once Outlook is available).
+
 
 
 ### C.6 Test, save, turn on
