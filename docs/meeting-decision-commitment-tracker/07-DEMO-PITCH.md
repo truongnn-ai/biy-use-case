@@ -26,7 +26,7 @@
 - **Tracks** commitments/follow-ups with owner, due date, and status.
 - **Surfaces** overdue, ownerless, and repeatedly-postponed items on a Follow-up Radar.
 - **Remembers** reversed/superseded decisions on a timeline.
-- **Reminds** owners automatically — a daily email flags their overdue items before you even open the app.
+- **Reminds** owners automatically — a daily email names the meeting and flags their overdue commitment, before you even open the app.
 
 ## Live demo flow (follow in order)
 
@@ -39,7 +39,7 @@
 | 5 | Open **Follow-up Radar** | "Overdue, ownerless, and slipping — the stuff that normally hides in notes." |
 | 6 | **Postpone** a commitment | "Watch the 'times postponed' counter tick up — it instantly appears under Slipping." |
 | 7 | Switch to the **model-driven app** | "Same data, a second experience — a fast admin view. I'll add a record here and it shows up in the polished app instantly." |
-| 8 | Show the **Power Automate flow run history** | "And you don't even need to open the app to know you're behind — this ran at 8am and emailed every owner their overdue items automatically." |
+| 8 | Show the **Power Automate flow run history** | "And you don't even need to open the app to know you're behind — this ran at 8am and emailed every owner their overdue commitments, naming exactly which meeting each one came from." |
 
 ## Why Power Platform / why now
 
@@ -51,7 +51,7 @@
 ## Anticipated questions (have answers ready)
 
 - **"Where do the numbers/impact come from?"** → Sample data is illustrative for the demo; live use populates from real meetings.
-- **"Is this just another task tracker?"** → No — it captures *decisions + rationale + reversals*, which task tools don't. Commitments are the lightweight follow-through layer, not a full PM tool.
+- **"Is this just another task tracker?"** → No — it captures *decisions + rationale + reversals*, which task tools don't. Commitments are the lightweight follow-through layer, not a full PM tool, and the reminder email is a light meeting-context nudge, not a task-management notification — keep using your existing tracker for broader work.
 - **"What about our data / privacy?"** → Internal-only, no PII by design; owner names and their email addresses are fictional/dummy for the demo. See the AYA scorecard.
 - **"Can it plug into Outlook/Teams?"** → The daily overdue-reminder email already does, using the Outlook connector. Deeper integration (Teams tab, meeting sync) is a validated Phase-2 conversation.
 

@@ -131,7 +131,7 @@ are written once and never read again. That novelty is the demo's selling point.
 - FR-07 — All list screens support text search and at least one choice-based filter.
 - FR-08 — Dashboard KPIs recompute from live data (no hard-coded totals).
 - FR-09 — Postpone action on a Commitment: sets a new Due Date, keeps Original Due Date, increments Times Postponed.
-- FR-10 — A daily Power Automate flow queries Commitments for **Is Overdue** records and emails each **Owner** their overdue items via the Office 365 Outlook connector, using the Owner's (fictional/dummy) Email on their Team Member record. Ownerless commitments are skipped (no recipient).
+- FR-10 — A daily Power Automate flow queries Commitments for **Is Overdue** records and emails each **Owner** one overdue item via the Office 365 Outlook connector, using the Owner's (fictional/dummy) Email on their Team Member record and naming the originating **Meeting** for context. Ownerless commitments are skipped (no recipient). Intentionally minimal — a meeting-context nudge, not a task-management surface (see **N1**): no snooze, reassignment, or priority actions.
 
 ## 7. Non-functional requirements
 
@@ -161,8 +161,10 @@ are written once and never read again. That novelty is the demo's selling point.
 
 ### 8c. Reminder flow (Power Automate)
 - Scheduled (daily) recurrence trigger.
-- Lists Commitments matching **Is Overdue**, groups by Owner.
-- Sends one email per Owner (Office 365 Outlook connector) listing their overdue items; skips ownerless commitments.
+- Lists Commitments matching **Is Overdue**, drops ownerless ones.
+- Sends one email per overdue commitment (Office 365 Outlook connector), naming the
+  originating Meeting plus the commitment and its due date; skips ownerless commitments.
+  Deliberately minimal — a nudge back to the meeting, not a task-management inbox.
 
 (All three share the same Dataverse tables — see 03-BUILD-GUIDE.md for build order.)
 

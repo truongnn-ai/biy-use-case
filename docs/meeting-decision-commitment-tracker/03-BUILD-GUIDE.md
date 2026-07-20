@@ -468,6 +468,14 @@ Three independently-filtered galleries side by side, each mirroring one of the m
 
 ## Track C — Power Automate reminder flow (Day 6, make it useful)
 
+> **Scope rule for this flow:** it is a **light nudge, not a task-management system**.
+> Its whole job is: notice a commitment tied to a specific meeting is overdue, and tell
+> the Owner which meeting it came from. Resist adding anything that starts to look like a
+> task manager — snooze/reassign/priority actions, status dropdowns, digests — even
+> though Outlook and Power Automate make those easy to bolt on. This app isn't replacing
+> the team's real task-tracking tool; it's just making sure meeting follow-ups don't get
+> lost.
+
 ### C.1 Create the flow shell
 
 1. Inside the solution → **New** → **Automation** → **Cloud flow** → **Scheduled cloud flow**.
@@ -488,18 +496,19 @@ Three independently-filtered galleries side by side, each mirroring one of the m
 2. **From**: the `value` output of **List rows**.
 3. **Condition**: the Commitment Owner lookup field **is not equal to** blank — use the visual picker to select the Commitment Owner field from dynamic content if it's offered directly; otherwise use the expression `item()?['_<schema name of the Commitment Owner column>_value']` **is not equal to** *(leave the compare value empty)* — check the actual schema name in the picker rather than assuming `_owner_value`, since that's the system Owner column's schema name, not this custom lookup's.
 
-### C.4 Loop through each overdue, owned commitment
+### C.4 Loop through each overdue, owned commitment — pull owner and meeting context
 
 1. **+ New step** → **Apply to each** → **Select an output from previous steps**: the Filter array's output.
-2. Inside the loop, **+ Add an action** → **Dataverse** → **Get a row by ID**.
+2. Inside the loop, **+ Add an action** → **Dataverse** → **Get a row by ID** (rename it, e.g. "Get owner").
 3. **Table name**: Team Members. **Row ID**: the current item's Commitment Owner lookup value (pick it from dynamic content on the Apply to each item).
+4. Still inside the loop, **+ Add an action** → **Dataverse** → **Get a row by ID** again (rename it, e.g. "Get meeting"). **Table name**: Meetings. **Row ID**: the current item's Meeting lookup value (dynamic content from the Apply to each item). Every Commitment has a required Meeting lookup (02-DATA-MODEL.md), so this step never fails on a missing meeting — this is what lets the email name the meeting a commitment came from instead of reading like a bare to-do.
 
 ### C.5 Send the email
 
 1. Still inside the loop, **+ Add an action** → **Office 365 Outlook** → **Send an email (V2)**.
-2. **To**: the **Email** field from the **Get a row by ID** step (dynamic content) — the Team Member's fictional/dummy address.
-3. **Subject**: `You have an overdue commitment: ` + dynamic content **Commitment Title** from the Apply to each item.
-4. **Body**: Commitment Title and Due Date (dynamic content), plus optionally a plain-text reference back to the record.
+2. **To**: the **Email** field from the **Get owner** step (dynamic content) — the Team Member's fictional/dummy address.
+3. **Subject**: `Overdue commitment from "` + dynamic content **Meeting Name** from the **Get meeting** step + `": ` + dynamic content **Commitment Title** from the Apply to each item.
+4. **Body**: **Meeting Name** and **Meeting Date** (from **Get meeting**) first, so the Owner immediately places which meeting this is about, then **Commitment Title** and **Due Date** (from the Apply to each item). Keep it to those four fields, plain text — no status dropdowns, priority flags, or action buttons; per the scope rule above, this stays a nudge, not a task-management notification.
 
 ### C.6 Test, save, turn on
 
