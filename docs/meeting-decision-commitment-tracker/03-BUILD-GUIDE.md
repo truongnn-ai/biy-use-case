@@ -425,27 +425,44 @@ scrCommitments                                      scrCommitmentDetail
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│ [<] Follow-up Radar                                                   │
+│ [<]                                                                   │
 ├─────────────────────┬─────────────────────┬───────────────────────────┤
 │ Overdue (7)          │ Ownerless (3)       │ Slipping (2)              │
 │ ┌─────────────────┐  │ ┌─────────────────┐ │ ┌───────────────────────┐ │
 │ │galRadarOverdue   │  │ │galRadarOwnerless│ │ │galRadarSlipping        │ │
-│ │ row · row · row  │  │ │ row · row       │ │ │ row · row              │ │
+│ │ Ship v2 API docs │  │ │ Finalize budget │ │ │ Compare tooling quotes │ │
+│ │ Due 07-15 (red)  │  │ │ Owner: (none)   │ │ │ Due 07-18              │ │
+│ │ Owner: Jane D.   │  │ │ ...             │ │ │ Owner: Sam K.          │ │
 │ └─────────────────┘  │ └─────────────────┘ │ └───────────────────────┘ │
 └─────────────────────┴─────────────────────┴───────────────────────────┘
 ```
 
-1. On `scrRadar`, add a label above each of the three columns showing a live count badge, using the same filter as the gallery beneath it, e.g. `"Overdue (" & CountRows(Filter(Commitments, ...)) & ")"`.
-2. **Insert** → **Vertical gallery**, left column: `X = 20`, `Y = 70`, `Width = 430`, `Height = 650`. Rename `galRadarOverdue`. **Items**:
+Three independently-filtered galleries side by side, each mirroring one of the model-driven app's custom views (A.4) so the two apps agree on what counts as "needs follow-up." Build the three count labels *after* their gallery so you can copy the gallery's exact `Filter(...)` into the label's `CountRows(Filter(...))` — typing the filter twice from scratch is how the count and the list quietly drift apart.
+
+1. **Insert** → type `icon` → pick the **Back arrow** icon. Position: `X = 20`, `Y = 20`, `Width = 40`, `Height = 40`. **OnSelect**: `Navigate(scrHome, ScreenTransition.Fade)` (Radar is reached only from the Home nav bar in B.2, not from its own list screen, so Back returns to Home).
+2. **Insert** → **Vertical gallery** (layout: "Title, subtitle, body" — same layout as `galCommitments` in B.5, so you get three text placeholders to repurpose), left column: `X = 20`, `Y = 110`, `Width = 430`, `Height = 610`. Rename `galRadarOverdue`. Formula bar → **Items**:
    `Filter(Commitments, !(Text('Commitment Status') in ["Done","Cancelled"]) && !IsBlank('Due Date') && 'Due Date' < Today())`
-3. **Insert** → **Vertical gallery**, middle column: `X = 468`, `Y = 70`, `Width = 430`, `Height = 650`. Rename `galRadarOwnerless`. **Items**:
+3. **Insert** → **Vertical gallery** (same layout), middle column: `X = 468`, `Y = 110`, `Width = 430`, `Height = 610`. Rename `galRadarOwnerless`. **Items**:
    `Filter(Commitments, IsBlank('Commitment Owner') && !(Text('Commitment Status') in ["Done","Cancelled"]))`
-4. **Insert** → **Vertical gallery**, right column: `X = 916`, `Y = 70`, `Width = 430`, `Height = 650`. Rename `galRadarSlipping`. **Items**:
+4. **Insert** → **Vertical gallery** (same layout), right column: `X = 916`, `Y = 110`, `Width = 430`, `Height = 610`. Rename `galRadarSlipping`. **Items**:
    `Filter(Commitments, 'Times Postponed' >= 2 && !(Text('Commitment Status') in ["Done","Cancelled"]))`
-5. Select each gallery's template → **OnSelect**:
+5. For each gallery, set the three auto-generated placeholder labels via the canvas (not the **Fields** panel — same reason as B.5 step 5, its per-card boxes only accept picking a column, not a typed formula):
+   - Click the gallery once, then click its **first row** to drill into the template.
+   - **Title** label → formula bar → property dropdown **Text** → `ThisItem.'Commitment Title'`.
+   - **Subtitle** label → **Text** → `"Due " & If(IsBlank(ThisItem.'Due Date'), "(none)", Text(ThisItem.'Due Date', "yyyy-mm-dd"))`.
+   - **Body** label → **Text** → `"Owner: " & If(IsBlank(ThisItem.'Commitment Owner'), "(none)", ThisItem.'Commitment Owner'.'Team Member Name')` — guard with `IsBlank()` before dereferencing, same as B.5 step 5, since every row in `galRadarOwnerless` has a blank Commitment Owner by definition.
+   - Repeat all three sub-steps for `galRadarOverdue`, `galRadarOwnerless`, and `galRadarSlipping` — each gallery's template is a separate control, so setting labels on one does not carry over to the others.
+6. Still inside each template, select the **Subtitle** (due-date) label → formula bar → property dropdown → **Color**:
+   `If(!(Text(ThisItem.'Commitment Status') in ["Done","Cancelled"]) && !IsBlank(ThisItem.'Due Date') && ThisItem.'Due Date' < Today(), Color.Red, Color.Black)`
+   Same formula as B.5 step 6 — apply it to all three galleries so an overdue row reads red no matter which column it surfaces in (a Slipping or Ownerless row can also be overdue).
+7. On `scrRadar`, add a label above each gallery showing a live count badge, positioned just above its gallery (`Y = 70`, matching the gallery's `X`/`Width`). **Text** formula = the *exact same* `Filter(...)` used in that gallery's `Items`, wrapped in `CountRows()` and concatenated with a caption, e.g. for the left column:
+   `"Overdue (" & CountRows(Filter(Commitments, !(Text('Commitment Status') in ["Done","Cancelled"]) && !IsBlank('Due Date') && 'Due Date' < Today())) & ")"`
+   Repeat for the middle (`"Ownerless (" & CountRows(Filter(Commitments, IsBlank('Commitment Owner') && !(Text('Commitment Status') in ["Done","Cancelled"]))) & ")"`) and right (`"Slipping (" & CountRows(Filter(Commitments, 'Times Postponed' >= 2 && !(Text('Commitment Status') in ["Done","Cancelled"]))) & ")"`) columns.
+8. Select each gallery's template → formula bar → **OnSelect**:
    `Set(varSelectedCommitment, ThisItem); EditForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)`
-   — tapping any row jumps straight to Commitment detail.
-6. End-to-end check: confirm the pre-seeded "Compare tooling vendor quotes" commitment (`Times Postponed = 3` in 04-SAMPLE-DATA.md) appears under **Slipping**.
+   — tapping any row jumps straight to Commitment detail. Same pattern as `galMeetings`/`galDecisions`/`galCommitments` in B.3–B.5; repeat for all three galleries.
+9. Press **F5** (Preview), open **Follow-up Radar** from Home, and confirm: each column's count label matches the number of rows actually rendered beneath it, an overdue due date renders red, and the Back arrow returns to `scrHome`. Then **Esc** to exit Preview.
+10. End-to-end check: confirm the pre-seeded "Compare tooling vendor quotes" commitment (`Times Postponed = 3` in 04-SAMPLE-DATA.md) appears under **Slipping**, and that it also appears under **Overdue** if its Due Date has passed — a commitment can legitimately land in more than one column, since the three galleries filter independently rather than being mutually exclusive.
 
 ---
 
