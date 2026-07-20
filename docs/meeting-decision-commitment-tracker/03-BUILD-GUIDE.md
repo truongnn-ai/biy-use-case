@@ -59,7 +59,7 @@ remaining days in the canvas app and the reminder flow.
    - Decision → **Lookup** "Meeting".
    - Decision → **Lookup** "Decision Maker" → Team Member (optional).
    - Commitment → **Lookup** "Meeting".
-   - Commitment → **Lookup** "Owner" → Team Member (optional; blank = ownerless).
+   - Commitment → **Lookup** "Commitment Owner" → Team Member (optional; blank = ownerless). **Don't name it plain "Owner"** — every Dataverse table already has a system-managed **Owner** column (`ownerid`, polymorphic — User or Team), and a custom lookup with the exact same display name collides with it. Naming yours "Commitment Owner" up front avoids that collision entirely (see A.3's gotcha and the polymorphic-value error in B.5 for what happens if you don't).
    - Commitment → **Lookup** "Related Decision" (optional).
 4. **Do not** create calculated columns — derived flags are computed in the apps/views.
 
@@ -98,10 +98,12 @@ Once all four are added:
 
 1. In the Pages tree, expand **Commitment** → **Forms** → select the main form to preview it in the center pane.
 2. The Copilot-generated default form already lists every column — that's good enough for the demo as-is.
-3. Optional polish: select the form → **Edit** → drag fields into a top-to-bottom order such as Commitment Title, Owner, Due Date, Commitment Status, Times Postponed, Description → **Save** → **Publish**.
+3. Optional polish: select the form → **Edit** → drag fields into a top-to-bottom order such as Commitment Title, Commitment Owner, Due Date, Commitment Status, Times Postponed, Description → **Save** → **Publish**.
 4. Repeat for Decision and Meeting only if time allows — this step is not required for a working app.
 
-> **System "Owner" field gotcha (all four tables):** every Dataverse table auto-generates its own system **Owner** column (`ownerid` — tracks which Dataverse *user/team* administratively owns the row for security purposes). This is unrelated to the **Owner** lookup we designed on Commitment (which points to a Team Member and means "who committed to this"). Copilot-generated forms sometimes surface the system Owner field and mark it required, which blocks saving a new record until you manually pick a user. You **cannot delete it from the form** — Dataverse blocks removing a required column's only occurrence on a form — so instead select it → in the Properties panel check **Hide**, then **Save and publish**. Dataverse still auto-assigns ownership to the creating user behind the scenes; hiding just stops it from blocking you on save.
+> **System "Owner" field gotcha (all four tables):** every Dataverse table auto-generates its own system **Owner** column (`ownerid` — tracks which Dataverse *user/team* administratively owns the row for security purposes, and is **polymorphic**: it can point to either a User or a Team). This is unrelated to the **Commitment Owner** lookup we designed on Commitment (which points to a Team Member and means "who committed to this") — Step 1 already names it "Commitment Owner" specifically to avoid colliding with this system column. Copilot-generated forms sometimes surface the system Owner field and mark it required, which blocks saving a new record until you manually pick a user. You **cannot delete it from the form** — Dataverse blocks removing a required column's only occurrence on a form — so instead select it → in the Properties panel check **Hide**, then **Save and publish**. Dataverse still auto-assigns ownership to the creating user behind the scenes; hiding just stops it from blocking you on save.
+>
+> If you named the custom lookup plain "Owner" anyway (or built this before renaming it), Power Fx formulas referencing `Owner` in the canvas app (B.5) will silently resolve to the system polymorphic column instead of your lookup, throwing **"The '.' operator cannot be used on Polymorphic values"** the moment you try `Owner.'Team Member Name'`. Fix: rename the custom lookup's display name (e.g. to **Commitment Owner**) in the table's column settings, then update the canvas formulas to match — see B.5 step 5.
 
 ### A.4 Create the five custom views
 
@@ -114,7 +116,7 @@ Views live under each table → **Views** in the Pages tree.
 | View | Table | Conditions (joined with AND unless noted) |
 |---|---|---|
 | **Overdue** | Commitment | Commitment Status **Does Not Equal** Done **AND** Does Not Equal Cancelled **AND** Due Date **Contains Data** **AND** (Due Date **Older Than X Days** `1` **OR** Due Date **Today**) — see tree below |
-| **Ownerless** | Commitment | Owner **Does Not Contain Data** **AND** Commitment Status **Does Not Equal** Done **AND** Does Not Equal Cancelled |
+| **Ownerless** | Commitment | Commitment Owner **Does Not Contain Data** **AND** Commitment Status **Does Not Equal** Done **AND** Does Not Equal Cancelled |
 | **Slipping** | Commitment | Times Postponed **Greater Than or Equal** `2` **AND** Commitment Status **Does Not Equal** Done **AND** Does Not Equal Cancelled |
 | **Due for review** | Decision | Decision Status **Equals** Decided **AND** Review Date **Contains Data** **AND** (Review Date **Older Than X Days** `1` **OR** Review Date **Today**) |
 | **Reversed / Superseded** | Decision | Decision Status **Equals** `Reversed / Superseded` — single condition, no OR group needed |
@@ -135,7 +137,7 @@ AND
 **Ownerless** (Commitment)
 ```
 AND
-├── Owner | Does not contain data
+├── Commitment Owner | Does not contain data
 ├── Commitment Status | Does Not Equal | Done
 └── Commitment Status | Does Not Equal | Cancelled
 ```
@@ -380,21 +382,39 @@ scrCommitments                                      scrCommitmentDetail
    `Set(varSelectedCommitment, frmCommitment.LastSubmit); Navigate(scrCommitments, ScreenTransition.Fade)`
    Same pattern as `frmMeeting` in B.3 — without this, edits made on this form (and new commitments created via "+ Add commitment" from Decision detail, or "+ New commitment" below) are never persisted.
 3. On `scrCommitments`: **Insert** → type `combo box` → click **Combo box**, `X = 20`, `Y = 70`, `Width = 400`, rename `cmbMe`, **Items** = `Team Members` (needed for "My commitments" below).
-4. Below it, add filter chips (buttons) **All · My commitments · Open · Overdue**, `Y = 130`, each setting `Set(varCommitmentFilter, "...")` in its **OnSelect** (e.g. `Set(varCommitmentFilter, "My")`).
-5. **Insert** → **Vertical gallery**, `X = 20`, `Y = 190`, `Width = 1326`, `Height = 530`, rename `galCommitments`. **Items**:
+4. Add 4 filter chips below the combo box: **Insert** → **Button**, all at `Y = 130`, `Height = 50`. For each: set **X**, **Width**, **Text**, **OnSelect** as shown, then rename it in the Tree view.
+
+   | Chip | X | Width | Text | OnSelect | Rename |
+   |---|---|---|---|---|---|
+   | 1 | 20 | 150 | `"All"` | `Set(varCommitmentFilter, "All")` | `btnCommFilterAll` |
+   | 2 | 180 | 180 | `"My commitments"` | `Set(varCommitmentFilter, "My")` | `btnCommFilterMy` |
+   | 3 | 370 | 150 | `"Open"` | `Set(varCommitmentFilter, "Open")` | `btnCommFilterOpen` |
+   | 4 | 530 | 150 | `"Overdue"` | `Set(varCommitmentFilter, "Overdue")` | `btnCommFilterOverdue` |
+
+   Easiest build: create chip 1, set its `X`/`Width`/`Text`/`OnSelect`/rename, then Ctrl+C → Ctrl+V three times and only change those same four properties on each copy. Chip 2 is wider (180) since "My commitments" is longer than the other labels — adjust further if it still looks clipped. **All**'s value (`"All"`) doesn't need to match a case in the `Switch` below — it's meant to fall through to that `Switch`'s `true` (default) branch, same as chip 3/4 being the only ones with real conditions.
+5. **Insert** → **Vertical gallery** (layout: "Title, subtitle, body" so you get three text placeholders to repurpose below). Position: `X = 20`, `Y = 190`, `Width = 1326`, `Height = 530`. Rename `galCommitments`. Formula bar → **Items**:
    ```
    Filter(Commitments,
        Switch(varCommitmentFilter,
-           "My", Owner.'Team Member Name' = cmbMe.Selected.'Team Member Name',
+           "My", 'Commitment Owner'.'Team Member Name' = cmbMe.Selected.'Team Member Name',
            "Open", !(Text('Commitment Status') in ["Done","Cancelled"]),
            "Overdue", !(Text('Commitment Status') in ["Done","Cancelled"]) && !IsBlank('Due Date') && 'Due Date' < Today(),
            true))
    ```
-   `Owner.'Team Member Name' = cmbMe.Selected.'Team Member Name'` compares the primary name column on both sides — the same fix as the `Meeting` lookup comparisons in B.3, needed because `Owner` (a lookup) and `cmbMe.Selected` (a full Team Members record) are different record shapes and can't be compared directly with `=`.
-6. Inside the gallery template, select the due-date label → **Color**:
+   Build the combo box and filter chips before the gallery — its `Items` formula references both `cmbMe` and `varCommitmentFilter` by name, and Studio throws **"Name isn't valid... isn't recognized"** if you set it before they exist.
+   `'Commitment Owner'.'Team Member Name' = cmbMe.Selected.'Team Member Name'` compares the primary name column on both sides — the same fix as the `Meeting` lookup comparisons in B.3, needed because `'Commitment Owner'` (a lookup) and `cmbMe.Selected` (a full Team Members record) are different record shapes and can't be compared directly with `=`.
+   **Naming note:** the lookup is deliberately named **Commitment Owner**, not plain "Owner" — every Dataverse table also has a system-managed, polymorphic **Owner** column (`ownerid`), and referencing bare `Owner` here would resolve to that system column instead, throwing **"The '.' operator cannot be used on Polymorphic values"** the moment you try `.` on it. If you already created the lookup as plain "Owner," rename its display name to **Commitment Owner** (table → column settings) before using these formulas.
+
+   Inside the gallery template (click `galCommitments` once, then click its **first row** to select the template — same as the B.4 timeline dot, controls here need `ThisItem` context too), set the three auto-generated placeholder labels:
+   - **Title** label → **Text**: `ThisItem.'Commitment Title'`.
+   - **Subtitle** label (this becomes the due-date label referenced in step 6 below) → **Text**: `"Due " & Text(ThisItem.'Due Date', "yyyy-mm-dd")`.
+   - **Body** label → **Text**: `"Owner: " & If(IsBlank(ThisItem.'Commitment Owner'), "(none)", ThisItem.'Commitment Owner'.'Team Member Name')` — `Commitment Owner` is optional (blank = ownerless per 02-DATA-MODEL.md), so guard with `IsBlank()` before dereferencing `.'Team Member Name'`, otherwise a blank Commitment Owner throws on an ownerless commitment.
+6. Still inside the gallery template, select the due-date label (the one you set in step 5) → formula bar → property dropdown → **Color**:
    `If(!(Text(ThisItem.'Commitment Status') in ["Done","Cancelled"]) && ThisItem.'Due Date' < Today(), Color.Red, Color.Black)`
-7. Select the gallery template → **OnSelect**:
+   This is what makes an overdue, still-open commitment's due date render red in the wireframe (e.g. "Due 07-15" in red), matching the KPI tile logic from B.2.
+7. Select the gallery template again (click the gallery, then its first row) → formula bar → **OnSelect**:
    `Set(varSelectedCommitment, ThisItem); EditForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)`
+   Tapping any row jumps to Commitment detail with that row loaded — same pattern as `galMeetings`/`galDecisions` in B.3/B.4.
 8. **Insert** → **Button**, top-right: `X = 1150`, `Y = 20`, `Width = 210`, `Height = 50`. Text = `"+ New commitment"`. **OnSelect**:
    `Set(varSelectedCommitment, Defaults(Commitments)); Set(varPrefillMeeting, Defaults(Meetings)); Set(varPrefillDecision, Defaults(Decisions)); NewForm(frmCommitment); Navigate(scrCommitmentDetail, ScreenTransition.Fade)`
    Same reasoning as `scrMeetings`' "+ New meeting" button in B.3 — resets `varSelectedCommitment` so the detail screen doesn't show stale data from whatever was last selected, and clears the prefill variables so a commitment created directly from this screen (not via "+ Add commitment" on a Decision) doesn't inherit the previous Meeting/Decision prefill.
@@ -417,7 +437,7 @@ scrCommitments                                      scrCommitmentDetail
 2. **Insert** → **Vertical gallery**, left column: `X = 20`, `Y = 70`, `Width = 430`, `Height = 650`. Rename `galRadarOverdue`. **Items**:
    `Filter(Commitments, !(Text('Commitment Status') in ["Done","Cancelled"]) && !IsBlank('Due Date') && 'Due Date' < Today())`
 3. **Insert** → **Vertical gallery**, middle column: `X = 468`, `Y = 70`, `Width = 430`, `Height = 650`. Rename `galRadarOwnerless`. **Items**:
-   `Filter(Commitments, IsBlank(Owner) && !(Text('Commitment Status') in ["Done","Cancelled"]))`
+   `Filter(Commitments, IsBlank('Commitment Owner') && !(Text('Commitment Status') in ["Done","Cancelled"]))`
 4. **Insert** → **Vertical gallery**, right column: `X = 916`, `Y = 70`, `Width = 430`, `Height = 650`. Rename `galRadarSlipping`. **Items**:
    `Filter(Commitments, 'Times Postponed' >= 2 && !(Text('Commitment Status') in ["Done","Cancelled"]))`
 5. Select each gallery's template → **OnSelect**:
@@ -447,13 +467,13 @@ scrCommitments                                      scrCommitmentDetail
 
 1. **+ New step** → **Filter array**.
 2. **From**: the `value` output of **List rows**.
-3. **Condition**: the Owner lookup field **is not equal to** blank — use the visual picker to select the Owner field from dynamic content if it's offered directly; otherwise use the expression `item()?['_owner_value']` **is not equal to** *(leave the compare value empty)*.
+3. **Condition**: the Commitment Owner lookup field **is not equal to** blank — use the visual picker to select the Commitment Owner field from dynamic content if it's offered directly; otherwise use the expression `item()?['_<schema name of the Commitment Owner column>_value']` **is not equal to** *(leave the compare value empty)* — check the actual schema name in the picker rather than assuming `_owner_value`, since that's the system Owner column's schema name, not this custom lookup's.
 
 ### C.4 Loop through each overdue, owned commitment
 
 1. **+ New step** → **Apply to each** → **Select an output from previous steps**: the Filter array's output.
 2. Inside the loop, **+ Add an action** → **Dataverse** → **Get a row by ID**.
-3. **Table name**: Team Members. **Row ID**: the current item's Owner lookup value (pick it from dynamic content on the Apply to each item).
+3. **Table name**: Team Members. **Row ID**: the current item's Commitment Owner lookup value (pick it from dynamic content on the Apply to each item).
 
 ### C.5 Send the email
 
