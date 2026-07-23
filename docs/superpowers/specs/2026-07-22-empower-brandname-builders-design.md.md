@@ -1,9 +1,5 @@
 # Empower@BrandName Builders — On-Demand Digital Talent Marketplace — Design
 
-> Use Case 2 from `IDIQ_Summit_Empower Use Cases.md`. Companion to the prior
-> `docs/meeting-decision-commitment-tracker/` project — same "buildable Power
-> Platform demo" philosophy, but AI matching is a first-class, in-scope
-> capability here (not deferred).
 
 ## 1. Problem & Goal
 
