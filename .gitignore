@@ -1,5 +1,7 @@
 
 .superpowers/
 .claude/settings.local.json
+.venv/
 IDIQ_Summit_Empower Use Cases.pdf
 VendorConnectAi.pdf
+build_guide/script/output
