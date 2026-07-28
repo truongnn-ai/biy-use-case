@@ -1,0 +1,5 @@
+Project Name,Project Code,Business Unit,Description,Status,Start Date,Target Date
+Document Digitisation Programme,SRC-2026-014,Controller's Department,"Sourcing a partner to digitise and auto-classify loan disbursement and accounts-payable documents across three regional processing hubs. Intelligent document processing and RPA capability required, with data residency in-region.",Active,2026-05-04,2026-11-30
+Cloud Migration Phase 2,SRC-2026-021,Information Technology Department,"Second wave of application migration to Azure covering 40 mid-tier workloads, plus 24x7 managed cloud operations and a secondary DR region.",Draft,2026-08-17,2027-06-30
+Cybersecurity Operations Uplift,SRC-2026-009,Office of Risk Management,"Establishing a co-managed SOC with regional coverage, annual penetration testing panel and identity governance uplift. Sovereign or in-region analyst staffing preferred.",Active,2026-03-16,2026-12-18
+Regional Network Refresh,SRC-2025-088,Information Technology Department,"Refresh of resident mission WAN and SD-WAN estate across 18 country offices, awarded and now closed to further shortlisting.",Closed,2025-09-01,2026-06-30

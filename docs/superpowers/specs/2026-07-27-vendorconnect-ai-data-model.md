@@ -3,7 +3,7 @@
 Dataverse tables and the derived Azure AI Search index for the 3-day Vendor
 Summit prototype.
 
-**This is a deliberately minimal model: 8 tables.** Every table and column below
+**This is a deliberately minimal model: 9 tables.** Every table and column below
 is justified by a specific row in the team's planned-feature list (§1) or by the
 client's all-four-stages rule. Anything the concept deck shows but the feature
 list does not ask for is in the deferred appendix (§7), not here.
@@ -25,7 +25,7 @@ Transcribed from the team's Miro board. This is the authoritative feature list.
 | # | Task Name | Initiative | Description |
 |---|---|---|---|
 | 1 | General Layout | — | Left side menu: Vendor · Discover · Onboarding · Offboarding · Shortlist |
-| 2 | Vendor List | Vendor Management | List registered & existing vendors. Each item shows Name, Country/Region, Industry, Domain, Tag (Active Contract, Registered) |
+| 2 | Vendor List | Vendor Management | List registered & existing vendors. Each item shows Name, Country, Industry, Domain, Tag (Active Contract, Registered) |
 | 3 | View Vendor Detail | Vendor Management | Header: Name, Industry, Domain. Tabs: Overview, Certifications, Past Experience (Case Studies, Engagement with BrandName), Contacts. Buttons: Add to shortlist, Start Onboarding/Offboarding, Compare |
 | 4 | Create new vendor | Vendor Management | Multi-step form |
 | 5 | Edit – Update Vendor info | Vendor Management | Core company metadata: Name, Industry (dropdown, single), Domain (multiple choice). Legal status: TBD. HQ location. Regional operating capacity, headcount |
@@ -50,13 +50,16 @@ Priority, Assignee, Estimated Effort and Notes are unpopulated on the source boa
 | `vca_shortlistitem` | Row 3's "Add to shortlist" button + the nav entry |
 | `vca_searchlog` | Search history page — one row per past AI search |
 | `vca_searchresult` | Search history page — the result set of each past search |
+| `vca_project` | Project-scoped shortlisting — **dummy data only, no UI** |
 
 Rows 1, 9 and 11 need no tables of their own — layout and the Discover page hold
 no data, and Comparison reads fields that already exist.
 
-The last two are not on the Miro board; they are required by the added
-**search-history page** (list all past AI search results). Without them a search
-is transient and there is nothing to list.
+The last three are not on the Miro board. `vca_searchlog` and `vca_searchresult`
+are required by the added **search-history page** (list all past AI search
+results) — without them a search is transient and there is nothing to list.
+`vca_project` exists so shortlisted vendors can be assigned to a sourcing
+project; it is seeded directly in Dataverse and has no screens of its own.
 
 ### 1.2 Stage coverage
 
@@ -66,7 +69,7 @@ is transient and there is nothing to list.
 | Cross-Validate | Computed inline during row 10(e); the verdict is stored as the Vendor Tag on `vca_searchresult`. No dedicated table. |
 | Onboard | `vca_lifecycletask` filtered on Stage = Onboarding |
 | Offboard | `vca_lifecycletask` filtered on Stage = Offboarding |
-| *(Shortlist)* | `vca_shortlistitem` |
+| *(Shortlist)* | `vca_shortlistitem`, grouped by `vca_project` |
 
 Onboarding, Offboarding and Shortlist appear in the navigation and as buttons on
 row 3, but have no feature rows on the board. `vca_lifecycletask` and
@@ -94,6 +97,9 @@ not the instantiation flows get built.
 | Search criteria matrix (row 10 c/d) | **Persisted as JSON text**, not as tables. `Extracted Criteria` on the log, `Criteria Results` on each result row. Enough to replay a past search exactly; not queryable, which the history page never needs. |
 | Cross-validation result | **Stored as the Vendor Tag** on `vca_searchresult`, not in a dedicated audit table. |
 | Externally-discovered vendors | **Snapshot in `vca_searchresult`; promoted to a `vca_vendor` row only when someone acts on them** (shortlist or start onboarding). See §3.8.1. |
+| Project assignment | Shortlisted vendors are assigned to a **`vca_project`** via an **optional** lookup. Null = unassigned. |
+| Project UI | **None this phase.** No project list, detail or CRUD screens; rows are seeded directly in Dataverse. The only project UI is a picker on shortlist items. |
+| Project scoping of search | **Search history stays global.** No Project lookup on `vca_searchlog` — searching is often exploratory before a project exists. |
 
 ### 2.1 Still open, non-blocking
 
@@ -118,7 +124,7 @@ One row per vendor. 16 columns.
 | Business Domains | Choice (multi-select) | Sector; also a vendor-list column |
 | Capabilities | Choice (multi-select) | Search quality + comparison; folded in from the deferred Capability table |
 | Industry | Choice (single) | Single choice, not multi |
-| Country / Region | Choice | Vendor-list column |
+| Country | Choice | Vendor-list column |
 | HQ Location | Single line of text | |
 | Regional Operating Capacity | Multiple lines of text | |
 | Headcount | Whole number | |
@@ -149,7 +155,7 @@ Row 7 and the Past Experience tab. 8 columns.
 
 | Column | Type | Notes |
 |---|---|---|
-| Project Name | Single line of text (required) | |
+| Delivery Project Name | Single line of text (required) | Named "Delivery" to distinguish it from `vca_project` (a *sourcing* project). This is the vendor's past delivery with BrandName |
 | Business Unit | Single line of text | |
 | Outcome Summary | Multiple lines of text | 1–2 sentences |
 | Start Date | Date only | |
@@ -201,14 +207,28 @@ If the flows land on day 3 they simply replace hand-seeding for new vendors.
 
 ### 3.6 `vca_shortlistitem`
 
-Row 3's button. One implicit shortlist per user — no parent table. 4 columns.
+Row 3's button. Grouped by project — no named-shortlist parent table. 5 columns.
 
 | Column | Type | Notes |
 |---|---|---|
 | Vendor | Lookup → Vendor (required) | |
+| Project | Lookup → Project (**optional**) | Null = unassigned. The grouping key for the shortlist page |
 | Added On | Date and Time | |
-| Added By | Single line of text | Demo persona name |
+| Added By | Single line of text | Audit only — no longer the grouping key |
 | Note | Multiple lines of text | |
+
+**Set the Project → Shortlist Item relationship to `Remove Link` on delete, not
+`Cascade`.** Deleting a project should return its items to the unassigned bucket,
+not silently destroy shortlist work. This is only safe *because* the lookup is
+optional — anyone tightening it to required must revisit the cascade behaviour at
+the same time.
+
+**Duplicate prevention is app-side.** An alternate key on (Project, Vendor) will
+not work, because Dataverse alternate keys do not tolerate a nullable column and
+Project is nullable. Before insert, check for an existing row with the same
+Vendor *and* the same Project, treating null-Project as its own bucket rather
+than as a wildcard — the same vendor legitimately appears in two different
+projects.
 
 ### 3.7 `vca_searchlog`
 
@@ -266,6 +286,43 @@ stay clean — ten Bing hits per query would otherwise flood the vendor list and
 the search index within a few rehearsals. And row 2 specifies "registered &
 existing vendor", so un-promoted finds do not belong in that list anyway.
 
+### 3.9 `vca_project`
+
+A sourcing project — the thing a shortlist is *for*. **Dummy data only this
+phase:** rows are seeded directly in Dataverse (maker portal or data import), and
+no screen creates, edits or opens a project. 7 columns.
+
+| Column | Type | Notes |
+|---|---|---|
+| Project Name | Single line of text (required) | Primary name column; what the shortlist picker displays |
+| Project Code | Single line of text | e.g. "SRC-2026-014" |
+| Business Unit | Single line of text | Requesting unit |
+| Description | Multiple lines of text | The sourcing need in plain language |
+| Status | Choice: Draft / Active / Closed | Display only this phase — there is no project list to filter |
+| Start Date | Date only | Display only this phase |
+| Target Date | Date only | Display only this phase |
+
+Ownership is not modelled — no Owner column, consistent with `vca_teammember`
+being deferred.
+
+#### 3.9.1 Why a table rather than a text column
+
+A free-text project name per shortlist item needs no table, but typos fragment
+the grouping silently — "Doc Digitisation" and "Document Digitisation" become two
+projects and nobody notices. A lookup against seeded rows makes the set closed
+without needing any project management UI to maintain it.
+
+#### 3.9.2 Seed data
+
+Two projects, deliberately different statuses:
+
+- **"Document Digitisation Programme"** — Active, 3 shortlisted vendors
+- **"Cloud Migration Phase 2"** — Draft, 2 shortlisted vendors
+- Plus 2 shortlist items left unassigned, to prove the bucket renders
+
+That is enough to show grouping works and that Status is carried, without a
+project screen to display it on.
+
 ---
 
 ## 4. Azure AI Search index
@@ -296,7 +353,7 @@ to embed whole.
     { "name": "businessDomains", "type": "Collection(Edm.String)", "filterable": true, "facetable": true },
     { "name": "capabilities", "type": "Collection(Edm.String)", "searchable": true, "filterable": true, "facetable": true },
     { "name": "certifications", "type": "Collection(Edm.String)", "searchable": true, "filterable": true, "facetable": true },
-    { "name": "countryRegion", "type": "Edm.String", "filterable": true, "facetable": true },
+    { "name": "country", "type": "Edm.String", "filterable": true, "facetable": true },
     { "name": "headcount", "type": "Edm.Int32", "filterable": true, "sortable": true },
     { "name": "hasActiveContract", "type": "Edm.Boolean", "filterable": true, "facetable": true }
   ],
@@ -344,7 +401,7 @@ The single string that gets embedded. Concatenate in this order:
 ```
 {Vendor Name} ({Legal Name})
 Industry: {Industry} | Domains: {Business Domains}
-HQ: {HQ Location}, {Country/Region} | Headcount: {Headcount}
+HQ: {HQ Location}, {Country} | Headcount: {Headcount}
 Overview: {Overview}
 Capabilities: {Capabilities}
 Certifications: {Certification Name (Issuer), ...}
@@ -372,7 +429,7 @@ index exactly (camelCase), which is why they differ from Dataverse display names
   "businessDomains": ["Financial Services", "Public Sector"],
   "capabilities": ["Document Intelligence", "RPA"],
   "certifications": ["ISO 27001", "SOC 2 Type II"],
-  "countryRegion": "Singapore",
+  "country": "Singapore",
   "headcount": 240,
   "hasActiveContract": true
 }
@@ -396,7 +453,7 @@ activates the index vectorizer:
     "kind": "text", "text": "<user query>",
     "fields": "vendorVector", "k": 10
   }],
-  "select": "id,vendorName,industry,countryRegion,websiteDomain,vendorStatus,hasActiveContract,capabilities,certifications",
+  "select": "id,vendorName,industry,country,websiteDomain,vendorStatus,hasActiveContract,capabilities,certifications",
   "top": 10
 }
 ```
@@ -407,17 +464,22 @@ activates the index vectorizer:
 
 | # | Work | Est. |
 |---|---|---|
-| 1 | Solution + publisher prefix `vca_`, choice sets (Industry, Country/Region, Business Domains, Capabilities) | 45 min |
+| 1 | Solution + publisher prefix `vca_`, choice sets (Industry, Country, Business Domains, Capabilities) | 45 min |
 | 2 | `vca_vendor` | 1 h |
 | 3 | `vca_certification` (File column), `vca_engagement`, `vca_vendorcontact` | 1 h |
 | 4 | Sample vendor load — 25–30 fictional records, including two deliberate near-duplicates | 1.5 h |
 | 5 | **Blob JSON export → hand to AI developer** (§4.2) | 1 h |
 | 6 | `vca_searchlog` + `vca_searchresult` | 45 min |
 | 7 | `vca_lifecycletask` + hand-seeded demo checklists (7 onboarding, 9 offboarding) | 1 h |
-| 8 | `vca_shortlistitem` | 15 min |
+| 8 | `vca_project` + 2 seeded project rows | 20 min |
+| 9 | `vca_shortlistitem` incl. Project lookup (Remove Link on delete) + seed assignments | 30 min |
 
-Roughly 7.25 hours — one day, with modest slack for the choice-set churn that
-always happens once real sample data arrives.
+Roughly 7.85 hours — a full day with little slack. If sample data arrives late,
+steps 7–9 are the ones to push to day 2; they block no other developer.
+
+Keeping projects UI-less is what makes this affordable — a project list and detail
+screen would have cost roughly half a day of the UI developer's time for no demo
+beat that shortlist grouping does not already deliver.
 
 Step 6 must be agreed with the AI developer, not just built: the search flow
 writes both tables, so the JSON shapes for `Extracted Criteria` and
@@ -441,7 +503,12 @@ The model is correct when all of the following pass.
 7. **Lifecycle without flows** — with only hand-seeded rows and no instantiation flow, confirm both dashboards render a part-complete progress bar from `vca_lifecycletask` filtered on Stage, and that a status change persists with a timestamp. This is the check that the all-four-stages rule is met by data rather than by static screens.
 8. **Search history replay** — run three searches (one deliberately too vague, so it logs as Rejected). Confirm the history page lists all three newest-first, and that re-opening one renders the original result set with match scores, Existing/New tags and the criteria matrix — read from `vca_searchresult`, with no second call to AI Search or Bing.
 9. **Snapshot integrity** — after replaying a past search, edit that vendor's name in Dataverse and reopen the same history entry. It must still show the *old* name from `Vendor Name Snapshot`. If it shows the new one, the page is reading through the lookup instead of the snapshot.
-10. **Promote-on-action** — shortlist an un-promoted external result. Confirm a `vca_vendor` row is created with `Source = External Discovery`, `AI Extracted = Yes` and citations copied, and that `vca_searchresult.Vendor` is back-filled with the new GUID.
+10. **Promote-on-action** — shortlist an un-promoted external result into a project. Confirm a `vca_vendor` row is created with `Source = External Discovery`, `AI Extracted = Yes` and citations copied, that `vca_searchresult.Vendor` is back-filled with the new GUID, and that the shortlist item carries the project.
+11. **Project grouping** — shortlist three vendors to one project and two with no project. Confirm the shortlist page groups 3 under the project name and 2 under Unassigned, and that reassigning an unassigned item moves it between groups.
+12. **Duplicate guard across projects** — add the same vendor twice to one project (blocked), then that same vendor to a *different* project (allowed) and to the unassigned bucket (allowed). All three must hold. This is the check that null-Project is treated as its own bucket rather than as a wildcard.
+13. **Project delete behaviour** — delete a project holding 3 items. The items must survive and appear as unassigned. If they vanish, the relationship is `Cascade` instead of `Remove Link`.
+14. **Comparison scoping** — select a project group and hit Compare; confirm the comparison set is that group's vendors, not the whole shortlist.
+15. **Label disambiguation** — confirm the Past Experience tab reads "Delivery Project Name", and that no screen shows two fields both labelled "Project Name".
 
 ---
 
@@ -459,7 +526,9 @@ by value, not by size.
 | AI insight cache columns on Vendor (Summary, Strengths, Weaknesses, Risks, Recommendation, Citation Count, Generated On) | The AI Insights screen | ~30 min | AI Insights appears in the concept deck but in no feature-list row |
 | `vca_capability` table + N:N | Category facets and a governed capability taxonomy | ~1 h | Multi-select choice covers the prototype; N:N is the fiddliest day-1 relationship |
 | `vca_teammember` | Lookup integrity on assignees and contract owners | ~30 min | One demo persona; Focal Role choice covers it |
-| `vca_shortlist` parent | Multiple named shortlists | ~20 min | One implicit shortlist per user is enough |
+| `vca_shortlist` parent | Multiple named shortlists within one project | ~20 min | One implicit shortlist per project is enough |
+| Project UI (list, detail, CRUD) | Creating and managing projects in-app instead of seeding them | ~half a day of UI work | No demo beat that shortlist grouping does not already deliver |
+| `Project` lookup on `vca_lifecycletask` | Onboarding scoped to the project a vendor was sourced for | ~20 min | Real onboarding usually happens *for* a contract or project — the obvious next step if this model goes past the summit, but not needed for the prototype |
 | Vendor `Rating`, `Last Indexed On` | Ratings display, incremental indexing | minutes each | Not in row 2's list columns; full index rebuilds are cheap at this size |
 
 ### 7.1 The two worth reconsidering

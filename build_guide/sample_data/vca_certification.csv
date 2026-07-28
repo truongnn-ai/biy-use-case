@@ -1,0 +1,62 @@
+Certification Name,Issuer,Date Earned,Expiry Date,Reference Number,Document,Vendor
+ISO/IEC 27001:2022,BSI Group,2024-03-15,2027-03-14,ISMS-SG-118742,acmetech-iso27001-2024.pdf,Acme Technologies
+SOC 2 Type II,Ernst & Young LLP,2025-11-01,2026-10-31,SOC2-2025-ACM-004,acmetech-soc2-type2-2025.pdf,Acme Technologies
+MTCS SS 584 Tier 3,TUV SUD PSB,2025-06-20,2028-06-19,MTCS-T3-SG-0412,acmetech-mtcs-tier3-2025.pdf,Acme Technologies
+ISO/IEC 27001:2022,SIRIM QAS International,2023-09-05,2026-09-04,MY-ISMS-2023-3391,northwind-iso27001-2023.pdf,Northwind Cloud Services
+ISO/IEC 20000-1:2018,SIRIM QAS International,2024-02-12,2027-02-11,MY-ITSM-2024-0877,northwind-iso20000-2024.pdf,Northwind Cloud Services
+AWS Premier Tier Services Partner,Amazon Web Services,2026-01-15,2026-12-31,APN-PREM-2026-MY-014,northwind-aws-premier-2026.pdf,Northwind Cloud Services
+Microsoft Solutions Partner - Azure Infrastructure,Microsoft,2025-10-01,2026-09-30,MSP-AZI-2025-88231,northwind-msp-azure-2025.pdf,Northwind Cloud Services
+ISO/IEC 27001:2022,BSI Group India,2024-07-22,2027-07-21,IN-ISMS-2024-5510,meridian-iso27001-2024.pdf,Meridian Data Labs
+CMMI Level 5 (Development),ISACA CMMI Institute,2025-04-30,2028-04-29,CMMI-DEV-L5-IN-2231,meridian-cmmi-l5-2025.pdf,Meridian Data Labs
+ISO/IEC 27701:2019,BSI Group India,2025-08-14,2028-08-13,IN-PIMS-2025-1104,meridian-iso27701-2025.pdf,Meridian Data Labs
+ISO 9001:2015,TUV India,2023-05-10,2026-05-09,IN-QMS-2023-2214,meridian-iso9001-2023.pdf,Meridian Data Labs
+ISO/IEC 27001:2022,SAI Global,2024-11-08,2027-11-07,AU-ISMS-2024-7712,silverline-iso27001-2024.pdf,Silverline Cyber
+IRAP Assessed - PROTECTED,ASD IRAP Assessor Panel,2025-09-19,2027-09-18,IRAP-2025-AU-0338,silverline-irap-protected-2025.pdf,Silverline Cyber
+CREST Accredited Penetration Testing,CREST,2025-02-03,2027-02-02,CREST-PT-AU-1187,silverline-crest-pt-2025.pdf,Silverline Cyber
+SOC 2 Type II,KPMG Australia,2025-12-15,2026-12-14,SOC2-2025-SLC-011,silverline-soc2-type2-2025.pdf,Silverline Cyber
+ISO 9001:2015,TUV Rheinland,2024-04-18,2027-04-17,DE-QMS-2024-2290,hanseatic-iso9001-2024.pdf,Hanseatic Systems GmbH
+TISAX Assessment Level 2,ENX Association,2025-05-27,2028-05-26,TISAX-AL2-DE-6641,hanseatic-tisax-al2-2025.pdf,Hanseatic Systems GmbH
+SAP Gold Partner,SAP SE,2026-01-01,2026-12-31,SAP-GP-2026-DE-0442,hanseatic-sap-gold-2026.pdf,Hanseatic Systems GmbH
+ISO/IEC 27001:2022,Japan Quality Assurance Organisation,2024-10-11,2027-10-10,JP-ISMS-2024-4408,kaizen-iso27001-2024.pdf,Kaizen Digital KK
+ISO 9001:2015,Japan Quality Assurance Organisation,2025-03-06,2028-03-05,JP-QMS-2025-1962,kaizen-iso9001-2025.pdf,Kaizen Digital KK
+ISTQB Partner Programme - Gold,ISTQB,2025-07-01,2027-06-30,ISTQB-GOLD-JP-0731,kaizen-istqb-gold-2025.pdf,Kaizen Digital KK
+ISO/IEC 27001:2022,BSI Group,2025-01-20,2028-01-19,UK-ISMS-2025-9903,lionheart-iso27001-2025.pdf,Lionheart Consulting
+Cyber Essentials Plus,IASME Consortium,2025-06-30,2026-06-29,CEP-2025-UK-40118,lionheart-cyber-essentials-plus-2025.pdf,Lionheart Consulting
+ISO 9001:2015,BSI Group,2024-08-08,2027-08-07,UK-QMS-2024-3345,lionheart-iso9001-2024.pdf,Lionheart Consulting
+ISO/IEC 27001:2022,Schellman & Company,2024-06-14,2027-06-13,US-ISMS-2024-1188,pacificrim-iso27001-2024.pdf,Pacific Rim Networks
+SOC 2 Type II,Schellman & Company,2025-10-20,2026-10-19,SOC2-2025-PRN-027,pacificrim-soc2-type2-2025.pdf,Pacific Rim Networks
+Cisco Gold Provider,Cisco Systems,2026-02-01,2027-01-31,CGP-2026-US-5521,pacificrim-cisco-gold-2026.pdf,Pacific Rim Networks
+ISO 22301:2019,BSI Group Americas,2025-04-11,2028-04-10,US-BCMS-2025-0669,pacificrim-iso22301-2025.pdf,Pacific Rim Networks
+PCI DSS Level 1 Service Provider,ControlCase,2026-03-01,2027-02-28,PCI-L1-SG-2026-0217,vertex-pcidss-l1-2026.pdf,Vertex Fintech Solutions
+ISO/IEC 27001:2022,TUV SUD PSB,2025-09-12,2028-09-11,SG-ISMS-2025-4471,vertex-iso27001-2025.pdf,Vertex Fintech Solutions
+ISO/IEC 27001:2022,DNV,2025-02-17,2028-02-16,AE-ISMS-2025-6620,sahara-iso27001-2025.pdf,Sahara Tech Partners
+UAE Information Assurance Compliance Certificate,TDRA,2025-11-05,2027-11-04,UAEIA-2025-0912,sahara-uae-ia-2025.pdf,Sahara Tech Partners
+ISO 22301:2019,DNV,2024-12-01,2027-11-30,AE-BCMS-2024-0155,sahara-iso22301-2024.pdf,Sahara Tech Partners
+ISO/IEC 27001:2022,TUV Rheinland Philippines,2024-05-23,2027-05-22,PH-ISMS-2024-8830,bayanihan-iso27001-2024.pdf,Bayanihan BPO
+HIPAA Compliance Attestation,Coalfire,2025-08-01,2026-07-31,HIPAA-2025-BYN-0033,bayanihan-hipaa-attestation-2025.pdf,Bayanihan BPO
+ISO 9001:2015,SGS Philippines,2025-01-15,2028-01-14,PH-QMS-2025-2077,bayanihan-iso9001-2025.pdf,Bayanihan BPO
+PCI DSS Level 1 Service Provider,ControlCase,2025-07-10,2026-07-09,PCI-L1-PH-2025-0688,bayanihan-pcidss-l1-2025.pdf,Bayanihan BPO
+ISO/IEC 27001:2022,SGS Indonesia,2025-10-02,2028-10-01,ID-ISMS-2025-3312,garuda-iso27001-2025.pdf,Garuda Software Works
+ISO 9001:2015,SGS Indonesia,2025-10-02,2028-10-01,ID-QMS-2025-3313,garuda-iso9001-2025.pdf,Garuda Software Works
+ISO/IEC 27001:2022,Bureau Veritas Vietnam,2024-09-27,2027-09-26,VN-ISMS-2024-7005,mekong-iso27001-2024.pdf,Mekong Digital
+ISO 9001:2015,Bureau Veritas Vietnam,2024-09-27,2027-09-26,VN-QMS-2024-7006,mekong-iso9001-2024.pdf,Mekong Digital
+CMMI Level 3 (Development),ISACA CMMI Institute,2025-06-11,2028-06-10,CMMI-DEV-L3-VN-4419,mekong-cmmi-l3-2025.pdf,Mekong Digital
+ISO/IEC 27001:2022,Korean Foundation for Quality,2025-12-03,2028-12-02,KR-ISMS-2025-1450,hangang-iso27001-2025.pdf,Hangang AI
+ISO/IEC 42001:2023 AI Management System,BSI Group Korea,2026-04-20,2029-04-19,KR-AIMS-2026-0088,hangang-iso42001-2026.pdf,Hangang AI
+ISO/IEC 27001:2022,DEKRA Certification,2025-03-25,2028-03-24,NL-ISMS-2025-5588,deltawerken-iso27001-2025.pdf,Deltawerken Analytics
+ISO 9001:2015,DEKRA Certification,2024-11-19,2027-11-18,NL-QMS-2024-4412,deltawerken-iso9001-2024.pdf,Deltawerken Analytics
+ISO 14001:2015,DEKRA Certification,2025-07-08,2028-07-07,NL-EMS-2025-0921,deltawerken-iso14001-2025.pdf,Deltawerken Analytics
+ISO/IEC 27001:2022,BSI Group Canada,2024-02-29,2027-02-28,CA-ISMS-2024-6614,mapleridge-iso27001-2024.pdf,Maple Ridge Systems
+SOC 2 Type II,MNP LLP,2025-09-30,2026-09-29,SOC2-2025-MRS-018,mapleridge-soc2-type2-2025.pdf,Maple Ridge Systems
+ISO/IEC 20000-1:2018,BSI Group Canada,2025-05-16,2028-05-15,CA-ITSM-2025-2288,mapleridge-iso20000-2025.pdf,Maple Ridge Systems
+ISO/IEC 27001:2022,Hong Kong Quality Assurance Agency,2025-11-14,2028-11-13,HK-ISMS-2025-7734,vpadvisory-iso27001-2025.pdf,Victoria Peak Advisory
+ISO 9001:2015,TUV Nord Thailand,2024-08-21,2027-08-20,TH-QMS-2024-1130,siam-iso9001-2024.pdf,Siam Integration
+ISO 45001:2018,TUV Nord Thailand,2025-02-06,2028-02-05,TH-OHS-2025-0448,siam-iso45001-2025.pdf,Siam Integration
+IEC 62443-2-4 Service Provider,TUV Nord Thailand,2025-09-01,2028-08-31,TH-IACS-2025-0771,siam-iec62443-2025.pdf,Siam Integration
+EN 9100:2018,AFNOR Certification,2024-10-16,2027-10-15,FR-AQMS-2024-3390,lumiere-en9100-2024.pdf,Lumiere Ingenierie
+ISO/IEC 27001:2022,AFNOR Certification,2025-06-05,2028-06-04,FR-ISMS-2025-8812,lumiere-iso27001-2025.pdf,Lumiere Ingenierie
+DO-178C DAL B Process Qualification,Bureau Veritas,2025-01-30,2028-01-29,FR-DO178-2025-0217,lumiere-do178c-dalb-2025.pdf,Lumiere Ingenierie
+ISO/IEC 27001:2022,NSAI,2025-04-09,2028-04-08,IE-ISMS-2025-5140,shannon-iso27001-2025.pdf,Shannon Cloud Group
+ISO/IEC 27018:2019,NSAI,2025-04-09,2028-04-08,IE-CLOUD-2025-5141,shannon-iso27018-2025.pdf,Shannon Cloud Group
+HITRUST CSF r2 Certification,HITRUST Alliance,2026-02-12,2028-02-11,HITRUST-2026-IE-0663,shannon-hitrust-csf-2026.pdf,Shannon Cloud Group
+SOC 2 Type II,Deloitte Ireland,2025-11-25,2026-11-24,SOC2-2025-SCG-006,shannon-soc2-type2-2025.pdf,Shannon Cloud Group
