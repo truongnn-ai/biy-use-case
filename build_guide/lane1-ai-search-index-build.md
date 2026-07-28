@@ -4,24 +4,29 @@ How to stand up the internal search index from nothing: resources, blob export,
 index, skillset, indexer, verification. Implements §4 of
 `docs/superpowers/specs/2026-07-27-vendorconnect-ai-data-model.md`.
 
+Built **in the Azure portal**. Every object below is created from *Search
+management* in the portal blade. `curl` appears only in §6, for testing — the
+same query the Power Automate flow will send, run from a terminal first so you
+know the index answers before Power Platform is in the picture.
+
 This guide ends where `lane1-canvas-to-ai-search.md` begins. That one assumes a
 populated index and wires it to Power Automate and the canvas app. Finish this
-one first — its §1 `curl` is the same `curl` that opens the other guide.
+one first.
 
 ```
 Dataverse                 Blob Storage              Azure AI Search
 ─────────                 ────────────              ───────────────
-vca_vendor         ──▶    vendor-docs/       ──▶    [data source]
+vca_vendor         ──▶    vendor-docs/       ──▶    Data sources
  + certification          <guid>.json                    ↓
- + engagement             (one per vendor)          [skillset]
+ + engagement             (one per vendor)          Skillsets
                                                     AzureOpenAIEmbedding
        §4.2 export contract                              ↓  ──▶ AOAI deployment
-                                                    [indexer]
+                                                    Indexers
                                                     parsingMode: json
                                                     key mapping: id → id
                                                     output: embedding → vendorVector
                                                          ↓
-                                                    [index]
+                                                    Indexes
                                                     14 fields + vectorizer
                                                     + semantic config
 ```
@@ -44,74 +49,88 @@ on it.
 
 ## 0. Prerequisites
 
-| Need | Notes |
-|---|---|
-| Azure AI Search service, **Basic** tier | Free tier caps you at 3 indexes / 3 indexers, 50 MB, and short indexer runtimes. Semantic ranker itself is *not* the reason — see the note below |
-| Storage account + a container, e.g. `vendor-docs` | StorageV2, LRS, public access disabled |
-| Azure OpenAI / Foundry resource with a **custom subdomain** | `https://<name>.openai.azure.com`. The skill rejects a generic endpoint |
-| A `text-embedding-3-large` deployment | Deployment *name* and *model* both matter — §8 |
-| **Admin** key or `Search Service Contributor` | Creating indexes/indexers needs admin. The query key from the other guide is read-only and will 403 here |
-| `curl` and `jq` | Every step below is a REST call. The portal can do most of it, but not reproducibly |
+Create these in the portal first. Nothing below works without all four.
 
-> **Correction to `lane1-canvas-to-ai-search.md` §0.** That table says semantic
-> ranker is unavailable on Free. It is now available on *all* pricing tiers under
+| Resource | Portal path | Notes |
+|---|---|---|
+| Azure AI Search, **Basic** tier | *Create a resource → AI Search* | Free tier caps you at 3 objects of each type, 50 MB, and 3–10 min indexer runtimes with a skillset. Semantic ranker is *not* the reason — see below |
+| Storage account + container `vendor-docs` | *Storage account → Data storage → Containers → + Container* | StorageV2 (general-purpose v2), standard performance. Anonymous access: **Private** |
+| Azure OpenAI resource or Foundry project with a **custom subdomain** | *Create a resource → Azure OpenAI*, or a Foundry project | The endpoint must be a custom subdomain — `https://<name>.openai.azure.com`, `services.ai.azure.com` or `cognitiveservices.azure.com`. A generic endpoint is rejected by the skill. (The "must be created in the Azure portal, not Foundry" restriction you may read in the docs applies to the **Import data** wizard, which §0.1 tells you not to use) |
+| A `text-embedding-3-large` deployment | *Foundry portal → Deployments → Deploy model* | Note the **deployment name** — it is often different from the model name and you need both |
+
+Write down, from *Search service → Overview* and *Settings → Keys*:
+
+- Search service URL — `https://<svc>.search.windows.net`
+- A **query key** (*Manage query keys*) — read-only, all §6 tests use it
+- The Azure OpenAI endpoint and the embedding deployment name
+
+> **Leave API keys enabled.** *Search service → Settings → Keys → API access
+> control* should stay on **API keys** or **Both**. The §6 tests and the Power
+> Automate flow both authenticate with `api-key`; switching to RBAC-only breaks
+> them.
+
+> **Correction to `lane1-canvas-to-ai-search.md` §0.** That table used to say
+> semantic ranker is unavailable on Free. It runs on *all* pricing tiers under
 > the default **free billing plan** (a monthly request allowance; requests fail
-> with a billing error once it is spent). The **standard** plan requires Basic or
-> above. You do not need to enable anything to use the semantic ranker in this
-> prototype. Basic is still the right tier, for the index/indexer quota reasons
-> above.
+> with a billing error once spent). The **standard** plan needs Basic or above.
+> You do not need to enable anything to use the semantic ranker here — *Settings
+> → Premium features* can stay as it is. Basic is still right, for the object
+> quota and runtime reasons above.
 
-### 0.1 Environment
+### 0.1 Do not use the "Import data" wizard
 
-```bash
-export SEARCH_SVC="<search-service-name>"
-export ADMIN_KEY="<admin-api-key>"
-export API="2024-07-01"
-export SEARCH="https://${SEARCH_SVC}.search.windows.net"
+The portal's headline button on the search service Overview page is **Import
+data**, and it does look like exactly this job — blob source, integrated
+vectorization, one wizard. It will build the wrong index.
 
-export AOAI_URI="https://<aoai-resource>.openai.azure.com"
-export EMBED_DEPLOYMENT="text-embedding-3-large"
+The wizard chunks content (`textSplitMode: pages`, 2 000 characters, 500
+overlap, **not configurable**) and generates its own schema: `chunk_id` as the
+document key, plus `parent_id`, `chunk`, `title`, `text_vector`. The docs are
+explicit that *you can't modify the generated fields or their attributes*. So you
+get one document per chunk instead of per vendor, no `websiteDomain`, no
+`vendorSummary`, no `hasActiveContract`, and a key that is not the Dataverse
+GUID — which is §5.1's failure by another route.
 
-export STORAGE_CONN="DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...;EndpointSuffix=core.windows.net"
-export CONTAINER="vendor-docs"
-```
+Build the four objects individually from **Search management** instead. It is
+four paste operations and it produces the schema the spec asks for.
 
-**On `API=2024-07-01`:** it is still a supported stable version and it is the
-oldest one where `vectorQueries[].kind: "text"` exists. `2026-04-01` is the
-current latest and every payload in this guide is valid on it unchanged. Pin one
-version across the index, the skillset, the indexer and the query — mixing them
-is a category of bug nobody enjoys.
+### 0.2 Managed identity and two role assignments
 
-### 0.2 Grant the search service access to the embedding model
+**Do this before anything else.** The skill, the vectorizer and the data-source
+connection all authenticate as the search service's managed identity, and a
+missing role surfaces as a 403 *inside indexer execution* — a much worse place
+to find it.
 
-**Do this before anything else.** Both the skill and the vectorizer authenticate
-as the search service's managed identity when you omit `apiKey`, and a missing
-role assignment surfaces as a 403 *inside indexer execution*, which is a much
-worse place to discover it.
+**Turn on the identity:**
 
-```bash
-# 1. Turn on the search service's system-assigned identity
-az search service update \
-  --name "$SEARCH_SVC" --resource-group "<rg>" --identity-type SystemAssigned
+1. *Search service → Settings → Identity*
+2. **System assigned** tab → Status **On** → **Save**
+3. Accept the prompt. Copy the **Object (principal) ID** that appears.
 
-PRINCIPAL=$(az search service show \
-  --name "$SEARCH_SVC" --resource-group "<rg>" \
-  --query identity.principalId -o tsv)
+**Grant it the embedding model:**
 
-# 2. Give it the embedding model
-az role assignment create \
-  --assignee-object-id "$PRINCIPAL" --assignee-principal-type ServicePrincipal \
-  --role "Cognitive Services OpenAI User" \
-  --scope "/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.CognitiveServices/accounts/<aoai-resource>"
-```
+1. Go to your **Azure OpenAI resource** → *Access control (IAM)*
+2. **+ Add → Add role assignment**
+3. Role: **Cognitive Services OpenAI User** → **Next**
+4. Assign access to: **Managed identity** → **+ Select members**
+5. Managed identity: **Search service** → pick your service → **Select**
+6. **Review + assign**
 
-Role assignments take a minute or two to propagate. If step 6 fails with 403 on
-the first try, wait and re-run before changing anything.
+**Grant it the blob container:**
 
-The alternative is an `apiKey` property on both the skill and the vectorizer.
-It works, it is one less moving part on day 1, and it puts a live key in two
-index definitions that anyone with read access can `GET`. If you take that road,
-take it knowingly and rotate afterwards.
+1. Go to your **Storage account** → *Access control (IAM)*
+2. Same flow, role: **Storage Blob Data Reader**, member: your search service
+
+That second one is what lets the data source in §3 connect with a managed
+identity instead of a connection string with an account key in it.
+
+Role assignments take a minute or two to propagate. If §6 fails with 403 on the
+first attempt, wait and re-run before changing anything.
+
+The alternative to all of this is an `apiKey` on the skill and the vectorizer,
+plus a connection string on the data source. It works, it is fewer steps on day
+1, and it puts live secrets into three object definitions that anyone with read
+access to the service can open. If you take that road, take it knowingly.
 
 ---
 
@@ -137,7 +156,8 @@ guaranteed unique *across blobs* even when it is unique within one.
 `parsingMode: json` — one blob, one document — has none of that, and it is the
 only mode where deletion detection is even available if you later want it.
 
-Twenty files is not a burden when a script writes them.
+Twenty files is not a burden when a script writes them and the portal uploads
+them in one drag.
 
 ### 1.2 The exporter
 
@@ -185,42 +205,36 @@ empty `vendorText` in the exporter rather than debugging it in the index.
 
 ### 1.3 Upload
 
-```bash
-az storage container create --name "$CONTAINER" --connection-string "$STORAGE_CONN"
+1. *Storage account → Data storage → Containers → `vendor-docs`*
+2. **Upload** → drag the whole export folder in, or **Browse for files** and
+   multi-select all `*.json`
+3. Expand **Advanced** and tick **Overwrite if files already exist** — you will
+   re-upload these more than once
+4. **Upload**
 
-az storage blob upload-batch \
-  --destination "$CONTAINER" \
-  --source ./export \
-  --pattern "*.json" \
-  --overwrite \
-  --connection-string "$STORAGE_CONN"
-
-az storage blob list --container-name "$CONTAINER" \
-  --connection-string "$STORAGE_CONN" --query "length(@)"
-```
-
-That count is the number the indexer should report in §6. Write it down.
+The blob count shown in the container is the number the indexer should report in
+§6. Write it down.
 
 ---
 
 ## 2. Create the index
 
-The full definition is in data model §4. Save it to `index.json`, substituting
-`resourceUri`, then:
+*Search service → Search management → Indexes → + Add index → **Add index
+(JSON)***
 
-```bash
-curl -s -X PUT "${SEARCH}/indexes/vendor-profiles-index?api-version=${API}" \
-  -H "Content-Type: application/json" -H "api-key: ${ADMIN_KEY}" \
-  -d @index.json | jq '{name, fieldCount: (.fields|length)}'
-```
+Paste the full definition from data model §4, substituting `resourceUri` with
+your Azure OpenAI endpoint. **Save**.
 
-Expect `201` and 14 fields.
+Expect 14 fields. If the JSON option is not offered on your portal build, use
+**Edit JSON** on the index immediately after creating it — but see §2.1 first,
+because most field attributes cannot be changed after creation, so the
+definition has to be right the first time.
 
 ### 2.1 The three settings you cannot change later
 
 Index attributes split into "flexible" and "rebuild required". Get these wrong
-and the fix is `DELETE` the index and start over — cheap now with 20 documents,
-annoying at 5 p.m. on day 2.
+and the fix is deleting the index and starting over — cheap now with 20
+documents, annoying at 5 p.m. on day 2.
 
 | Setting | Field | Why it is here |
 |---|---|---|
@@ -229,7 +243,11 @@ annoying at 5 p.m. on day 2.
 | `searchable` / `filterable` / `facetable` / `sortable` | everywhere | Fixed at creation for all four |
 
 `retrievable` is the useful exception — it *can* be changed on an existing index,
-which is what makes the vector inspection in §6 possible.
+which is what makes the vector check in §6 possible from the portal.
+
+The `normalizer` property is a good reason to paste JSON rather than build the
+field grid by hand: the visual field editor does not reliably surface it, and a
+field created without it looks identical in the grid to one created with it.
 
 ### 2.2 Why every attribute is spelled out
 
@@ -239,56 +257,75 @@ defaults, `vendorText` — the concatenated blob of everything — would be
 retrievable by `select=*`, facetable (a facet list of 20 unique paragraphs),
 sortable, and filterable, which imposes a hard 32 KB cap on the field.
 
-Vector fields are the opposite: via REST they default to `retrievable: false`,
-and only the portal wizard flips them true. The explicit `false` in the
-definition documents the intent rather than relying on that asymmetry.
+Vector fields are the opposite: created through JSON they default to
+`retrievable: false`, and only the wizard flips them true. The explicit `false`
+in the definition documents the intent rather than relying on that asymmetry.
+
+After saving, open the **Fields** tab and spot-check three rows: `vendorText`
+retrievable unticked, `vendorVector` retrievable unticked, `websiteDomain`
+filterable ticked.
 
 ---
 
 ## 3. Create the data source
 
-```bash
-curl -s -X PUT "${SEARCH}/datasources/vendor-blob-datasource?api-version=${API}" \
-  -H "Content-Type: application/json" -H "api-key: ${ADMIN_KEY}" \
-  -d "{
-    \"name\": \"vendor-blob-datasource\",
-    \"type\": \"azureblob\",
-    \"credentials\": { \"connectionString\": \"${STORAGE_CONN}\" },
-    \"container\": { \"name\": \"${CONTAINER}\" }
-  }" | jq '.name'
-```
+*Search management → Data sources → + Add data source*
 
-No `dataDeletionDetectionPolicy`. That is a decision, not an omission — see §7.
+| Field | Value |
+|---|---|
+| Name | `vendor-blob-datasource` |
+| Data source type | **Azure Blob Storage** |
+| Subscription / Storage account | yours |
+| Blob container | `vendor-docs` |
+| Blob folder | *(leave empty)* |
+| **Authenticate using managed identity** | **Ticked**, identity type **System-assigned** |
+| **Track deletions** | **Unticked** |
+
+Leaving *Track deletions* off is a decision, not an oversight — see §7. The
+managed identity checkbox is what depends on the **Storage Blob Data Reader**
+assignment from §0.2; without that role this saves fine and then fails at
+indexing time with an authorization error.
+
+Parsing mode is **not** on this form. It is an indexer setting — §5.
 
 ---
 
 ## 4. Create the skillset
 
-This is the piece data model §4 named but did not specify. It is what actually
-populates `vendorVector`; without it every document indexes with a null vector,
-hybrid search silently degrades to keyword-only, and verification 3 fails.
+*Search management → Skillsets → + Add skillset*
 
-```bash
-curl -s -X PUT "${SEARCH}/skillsets/vendor-embedding-skillset?api-version=${API}" \
-  -H "Content-Type: application/json" -H "api-key: ${ADMIN_KEY}" \
-  -d "{
-    \"name\": \"vendor-embedding-skillset\",
-    \"description\": \"Embeds vendorText for the vendor-profiles-index\",
-    \"skills\": [
-      {
-        \"@odata.type\": \"#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill\",
-        \"name\": \"embed-vendor-text\",
-        \"context\": \"/document\",
-        \"resourceUri\": \"${AOAI_URI}\",
-        \"deploymentId\": \"${EMBED_DEPLOYMENT}\",
-        \"modelName\": \"text-embedding-3-large\",
-        \"dimensions\": 3072,
-        \"inputs\": [ { \"name\": \"text\", \"source\": \"/document/vendorText\" } ],
-        \"outputs\": [ { \"name\": \"embedding\", \"targetName\": \"vendorTextVector\" } ]
-      }
-    ]
-  }" | jq '.name'
+This page is a JSON editor. It is the piece data model §4 named but did not
+specify, and it is what actually populates `vendorVector`; without it every
+document indexes with a null vector, hybrid search silently degrades to
+keyword-only, and verification 3 fails.
+
+Replace `<aoai-endpoint>` and `<embedding-deployment-name>`:
+
+```json
+{
+  "name": "vendor-embedding-skillset",
+  "description": "Embeds vendorText for the vendor-profiles-index",
+  "skills": [
+    {
+      "@odata.type": "#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill",
+      "name": "embed-vendor-text",
+      "context": "/document",
+      "resourceUri": "https://<aoai-endpoint>.openai.azure.com",
+      "deploymentId": "<embedding-deployment-name>",
+      "modelName": "text-embedding-3-large",
+      "dimensions": 3072,
+      "inputs": [
+        { "name": "text", "source": "/document/vendorText" }
+      ],
+      "outputs": [
+        { "name": "embedding", "targetName": "vendorTextVector" }
+      ]
+    }
+  ]
+}
 ```
+
+**Save**.
 
 Four things to get right:
 
@@ -306,37 +343,48 @@ Four things to get right:
   but not the field, or vice versa, is the failure in §8.
 
 No `apiKey` and no `authIdentity` means the system-assigned identity from §0.2.
+There is no `cognitiveServices` block because the embedding skill bills through
+Azure OpenAI, not through a Foundry multi-service key.
 
 ---
 
 ## 5. Create the indexer
 
-Where the three pieces meet, and where the two mappings that matter live.
+*Search management → Indexers → + Add indexer*
 
-```bash
-curl -s -X PUT "${SEARCH}/indexers/vendor-profiles-indexer?api-version=${API}" \
-  -H "Content-Type: application/json" -H "api-key: ${ADMIN_KEY}" \
-  -d '{
-    "name": "vendor-profiles-indexer",
-    "dataSourceName": "vendor-blob-datasource",
-    "skillsetName": "vendor-embedding-skillset",
-    "targetIndexName": "vendor-profiles-index",
-    "parameters": {
-      "batchSize": 10,
-      "maxFailedItems": 0,
-      "configuration": {
-        "parsingMode": "json",
-        "indexedFileNameExtensions": ".json"
-      }
-    },
-    "fieldMappings": [
-      { "sourceFieldName": "id", "targetFieldName": "id" }
-    ],
-    "outputFieldMappings": [
-      { "sourceFieldName": "/document/vendorTextVector", "targetFieldName": "vendorVector" }
-    ]
-  }' | jq '.name'
+Where the three pieces meet, and where the two mappings that matter live.
+Neither of them is on the visual form, so use the JSON editor.
+
+**An indexer runs immediately when it is created.** Create it with
+`"disabled": true`, confirm the definition, then enable and run — otherwise it
+fires with an incomplete definition, indexes 20 documents with the wrong key,
+and you have to reset it before the fix takes effect.
+
+```json
+{
+  "name": "vendor-profiles-indexer",
+  "dataSourceName": "vendor-blob-datasource",
+  "skillsetName": "vendor-embedding-skillset",
+  "targetIndexName": "vendor-profiles-index",
+  "disabled": true,
+  "parameters": {
+    "batchSize": 10,
+    "maxFailedItems": 0,
+    "configuration": {
+      "parsingMode": "json",
+      "indexedFileNameExtensions": ".json"
+    }
+  },
+  "fieldMappings": [
+    { "sourceFieldName": "id", "targetFieldName": "id" }
+  ],
+  "outputFieldMappings": [
+    { "sourceFieldName": "/document/vendorTextVector", "targetFieldName": "vendorVector" }
+  ]
+}
 ```
+
+Save, reopen it via **Edit JSON**, set `"disabled": false`, save again. Then §6.
 
 ### 5.1 `fieldMappings` — the one that costs you the GUID
 
@@ -353,7 +401,7 @@ Dataverse — three separate bugs from one omitted line, discovered separately.
 Every other field maps by name automatically, because the JSON property names
 were chosen to equal the index field names. This is the one exception.
 
-### 5.2 `outputFieldMappings` — note the `/*`
+### 5.2 `outputFieldMappings` — note the path
 
 The skill's output is an array, and it lives in the enrichment tree, not in the
 source document. Getting it into the index needs an *output* field mapping —
@@ -362,11 +410,10 @@ source document. Getting it into the index needs an *output* field mapping —
 `sourceFieldName` is `/document/vendorTextVector`, matching the `targetName` you
 gave the skill output in §4. Microsoft's own sample writes
 `/document/embedding/*` for a skill that omits `targetName` (in which case the
-node takes the output's name, `embedding`). Either form works; the `/*` suffix
-is the array-flattening notation and is harmless here. What is not harmless is
-mismatching this path against the skillset's `targetName` — like a bad
-`fieldMappings` source, a path that resolves to nothing is skipped **without an
-error**, and you get 20 documents with null vectors.
+node takes the output's name, `embedding`). Either form works. What is not
+harmless is mismatching this path against the skillset's `targetName` — like a
+bad `fieldMappings` source, a path that resolves to nothing is skipped
+**without an error**, and you get 20 documents with null vectors.
 
 ### 5.3 `maxFailedItems: 0`
 
@@ -378,65 +425,64 @@ rehearsal that one vendor is unsearchable.
 
 ## 6. Run and verify
 
-```bash
-curl -s -X POST "${SEARCH}/indexers/vendor-profiles-indexer/run?api-version=${API}" \
-  -H "api-key: ${ADMIN_KEY}" -H "Content-Length: 0"
+*Search management → Indexers → `vendor-profiles-indexer` → **Run***
 
-# 20-40s later
-curl -s "${SEARCH}/indexers/vendor-profiles-indexer/status?api-version=${API}" \
-  -H "api-key: ${ADMIN_KEY}" \
-  | jq '.lastResult | {status, itemsProcessed, itemsFailed, errors, warnings}'
-```
+The page shows status, docs succeeded, and a per-document error/warning list.
+Wait for **Success** with `itemsFailed: 0` before going further; a red run here
+is a §8 lookup, not something to work around.
 
-Work down this list. Each step isolates one failure mode, and each one has been
-someone's afternoon.
+Then work down this list. Steps 1–3 are portal; 4–7 are `curl`, because they are
+the queries the flow will send and you want them proven outside Power Platform.
 
-**1 — Documents landed.**
+Set up for the curl steps:
 
 ```bash
-curl -s "${SEARCH}/indexes/vendor-profiles-index/docs/\$count?api-version=${API}" \
-  -H "api-key: ${ADMIN_KEY}"
+export SEARCH="https://<search-service-name>.search.windows.net"
+export QUERY_KEY="<query-key>"
+export API="2024-07-01"
 ```
 
-Must equal the blob count from §1.3. Fewer means `itemsFailed`; more means you
-indexed a leftover container.
+**On `API=2024-07-01`:** it is still a supported stable version and the oldest
+one where `vectorQueries[].kind: "text"` exists. `2026-04-01` is the current
+latest and every payload here is valid on it unchanged. Pin one version across
+the index, the indexer and the query.
 
-**2 — The key is the GUID.** The §5.1 check, and the cheapest one to run:
+**1 — Documents landed.** *Indexes → `vendor-profiles-index`* shows the document
+count. It must equal the blob count from §1.3. Fewer means `itemsFailed`; more
+means you indexed a leftover container.
 
-```bash
-curl -s "${SEARCH}/indexes/vendor-profiles-index/docs?api-version=${API}&search=*&\$top=1&\$select=id,vendorName" \
-  -H "api-key: ${ADMIN_KEY}" | jq '.value[0]'
-```
+**2 — The key is the GUID.** The §5.1 check, and the cheapest one to run. Open
+*Indexes → `vendor-profiles-index` → Search explorer*, hit **Search** with the
+default `*`, and read the `id` on the first document.
 
-A GUID is correct. A base64 string means `fieldMappings` is missing — fix the
-indexer, then `POST /reset` before re-running, or unchanged blobs are skipped.
+A GUID is correct. A base64 string means `fieldMappings` is missing — fix it via
+**Edit JSON**, then **Reset** the indexer before **Run**, or unchanged blobs are
+skipped and nothing changes.
 
-**3 — Vectors are populated.** `vendorVector` is `retrievable: false`, so
-temporarily flip it (allowed without a rebuild), look, and flip it back:
+**3 — Vectors are populated.** `vendorVector` is `retrievable: false`, so it is
+absent from every result. Temporarily flip it — this is the one attribute change
+that does not need a rebuild:
 
-```bash
-# GET the index, set vendorVector.retrievable = true, PUT it back
-curl -s "${SEARCH}/indexes/vendor-profiles-index?api-version=${API}" \
-  -H "api-key: ${ADMIN_KEY}" \
-  | jq '(.fields[] | select(.name=="vendorVector") | .retrievable) = true' > idx-tmp.json
+1. *Indexes → `vendor-profiles-index` → Fields*
+2. Tick **Retrievable** on `vendorVector` → **Save**
+3. *Search explorer* → **Query options** → untick *Hide vector values in search
+   results* → **Search**
+4. Confirm a long float array on every document
+5. Go back to **Fields**, untick **Retrievable**, **Save**
 
-curl -s -X PUT "${SEARCH}/indexes/vendor-profiles-index?api-version=${API}" \
-  -H "Content-Type: application/json" -H "api-key: ${ADMIN_KEY}" -d @idx-tmp.json > /dev/null
+Missing or null means the skill or the output field mapping is wrong. Do not
+leave retrievable on — one `select=*` from a later debugging session would pull
+3 072 floats per hit through Power Automate.
 
-curl -s "${SEARCH}/indexes/vendor-profiles-index/docs?api-version=${API}&search=*&\$top=1&\$select=vendorVector" \
-  -H "api-key: ${ADMIN_KEY}" | jq '.value[0].vendorVector | length'
-```
+Note that *Hide vector values in search results* is a **display** toggle in
+Search explorer. It does not override `retrievable: false`; with retrievable off
+there is nothing to hide either way. Both steps are needed.
 
-Expect `3072`. `null` means the skill or the output field mapping is wrong. Then
-set `retrievable` back to `false` and PUT again — do not leave it open, or one
-`select=*` from a debugging session returns 20 × 3 072 floats through Power
-Automate.
-
-**4 — The vectorizer works** (query-time embedding, no vector supplied):
+**4 — The vectorizer works** — query-time embedding, no vector supplied:
 
 ```bash
 curl -s -X POST "${SEARCH}/indexes/vendor-profiles-index/docs/search?api-version=${API}" \
-  -H "Content-Type: application/json" -H "api-key: ${ADMIN_KEY}" \
+  -H "Content-Type: application/json" -H "api-key: ${QUERY_KEY}" \
   -d '{
     "vectorQueries": [{ "kind": "text", "text": "document processing for government",
                         "fields": "vendorVector", "k": 5 }],
@@ -453,7 +499,7 @@ sends, and the opening `curl` of `lane1-canvas-to-ai-search.md` §1:
 
 ```bash
 curl -s -X POST "${SEARCH}/indexes/vendor-profiles-index/docs/search?api-version=${API}" \
-  -H "Content-Type: application/json" -H "api-key: ${ADMIN_KEY}" \
+  -H "Content-Type: application/json" -H "api-key: ${QUERY_KEY}" \
   -d '{
     "search": "document digitisation vendor with government experience",
     "queryType": "semantic",
@@ -471,16 +517,17 @@ Every hit needs a non-null `@search.rerankerScore` (0–4) and a non-empty
 exporter skipped it — and it is what the internal result card renders, so it is
 visible on stage.
 
-**6 — Semantic reranking actually reorders.** Run step 5 again with `queryType`
-and `vectorQueries` removed. If the ordering is identical, the semantic config
-is not being applied and you have plain BM25 dressed up.
+**6 — Semantic reranking actually reorders.** Run step 5 again with `queryType`,
+`semanticConfiguration` and `vectorQueries` removed. If the ordering is
+identical, the semantic config is not being applied and you have plain BM25
+dressed up.
 
 **7 — The cross-validation key survives casing.** With the second Acme row
 seeded (data model verification 6):
 
 ```bash
 curl -s -X POST "${SEARCH}/indexes/vendor-profiles-index/docs/search?api-version=${API}" \
-  -H "Content-Type: application/json" -H "api-key: ${ADMIN_KEY}" \
+  -H "Content-Type: application/json" -H "api-key: ${QUERY_KEY}" \
   -d '{ "search": "*", "filter": "websiteDomain eq '"'"'acmetech.com'"'"'",
         "select": "vendorName,websiteDomain" }' | jq '.value'
 ```
@@ -500,43 +547,38 @@ comes from lane 3.
 ## 7. Refreshing the index
 
 Change detection works automatically — the indexer compares blob `LastModified`
-timestamps, so re-uploading a changed vendor and re-running picks it up.
-**Deletion detection does not.** No policy is configured, so deleting a blob
-leaves its document in the index permanently.
+timestamps, so re-uploading a changed vendor and hitting **Run** picks it up.
+**Deletion detection does not.** *Track deletions* is off in §3, so deleting a
+blob leaves its document in the index permanently.
 
 That is the right call here. Native blob soft delete would need soft delete
 enabled on the storage account, blob versioning off, and — the awkward part —
-the policy in place **from the very first indexer run**. Adding it later does
-not retroactively clean up; the docs are explicit that you have to build a new
+the policy in place **from the very first indexer run**. Adding it later does not
+retroactively clean up; the docs are explicit that you have to build a new
 index. Setting all that up for a 20-document prototype buys nothing.
 
 So there are exactly two refresh procedures. Pick deliberately.
 
-**Vendor added or edited** — re-export, re-upload, re-run:
+**Vendor added or edited**
 
-```bash
-az storage blob upload-batch --destination "$CONTAINER" --source ./export \
-  --pattern "*.json" --overwrite --connection-string "$STORAGE_CONN"
+1. *Storage account → Containers → `vendor-docs` → Upload*, overwrite on
+2. *Search management → Indexers → `vendor-profiles-indexer` → **Run***
 
-curl -s -X POST "${SEARCH}/indexers/vendor-profiles-indexer/run?api-version=${API}" \
-  -H "api-key: ${ADMIN_KEY}" -H "Content-Length: 0"
-```
+**Vendor deleted, or the schema changed** — about 90 seconds:
 
-**Vendor deleted, or the schema changed** — full rebuild, about 90 seconds:
+1. *Indexes → `vendor-profiles-index` → **Delete***
+2. *Indexes → + Add index (JSON)* → paste the definition again
+3. *Indexers → `vendor-profiles-indexer` → **Reset***
+4. *Indexers → `vendor-profiles-indexer` → **Run***
 
-```bash
-curl -s -X DELETE "${SEARCH}/indexes/vendor-profiles-index?api-version=${API}" -H "api-key: ${ADMIN_KEY}"
-curl -s -X PUT    "${SEARCH}/indexes/vendor-profiles-index?api-version=${API}" \
-     -H "Content-Type: application/json" -H "api-key: ${ADMIN_KEY}" -d @index.json
-curl -s -X POST   "${SEARCH}/indexers/vendor-profiles-indexer/reset?api-version=${API}" \
-     -H "api-key: ${ADMIN_KEY}" -H "Content-Length: 0"
-curl -s -X POST   "${SEARCH}/indexers/vendor-profiles-indexer/run?api-version=${API}" \
-     -H "api-key: ${ADMIN_KEY}" -H "Content-Length: 0"
-```
+**Reset is the step people skip.** Without it the indexer remembers which blobs
+it has already processed and skips them all, so you get an empty index and a
+successful run — the most confusing possible combination. Any time you change
+the indexer definition or rebuild the index, reset before running.
 
-`reset` is the step people skip. Without it the indexer remembers which blobs it
-has already seen and skips them all, and you get an empty index and a successful
-run — the most confusing possible combination.
+Keep the index JSON in the repo next to this guide. Step 2 is a paste, and
+retyping a 14-field definition under time pressure is how normalizers go
+missing.
 
 ### 7.1 What this means during the demo
 
@@ -556,10 +598,12 @@ Ordered by how long each one costs before you work out what it is.
 
 | Symptom | Cause |
 |---|---|
-| Documents index, `id` is a base64 string | `fieldMappings` omitted. §5.1. Fix, `reset`, re-run |
+| Documents index, `id` is a base64 string | `fieldMappings` omitted. §5.1. Fix, **Reset**, **Run** |
 | `vendorVector` null on every document | `outputFieldMappings` path does not match the skillset's `targetName`. Resolves to nothing, skipped without error. §5.2 |
-| Indexer 403 / "access denied" on the skill | Managed identity missing `Cognitive Services OpenAI User`, or the role assignment has not propagated yet. §0.2 |
-| `The field 'vendorVector' has dimensions 3072, model produced 1536` | Deployment is `text-embedding-3-small`. Fix the deployment, or drop the index and recreate it at 1536 in *three* places: index field, skill, and nothing else — the vectorizer follows the model |
+| Index has one document per *chunk*, fields called `chunk_id` / `text_vector` | Built with the **Import data** wizard. §0.1. Delete and start at §2 |
+| Indexer 403 / "access denied" calling the skill | Managed identity missing **Cognitive Services OpenAI User**, or the assignment has not propagated. §0.2 |
+| Indexer cannot read the container | Managed identity missing **Storage Blob Data Reader**. §0.2 |
+| `The field 'vendorVector' has dimensions 3072, model produced 1536` | Deployment is `text-embedding-3-small`. Fix the deployment, or delete the index and recreate it at 1536 in both the index field and the skill |
 | Query returns nonsense but no error | Skill and vectorizer point at **different models**. Both must be `text-embedding-3-large`. Nothing validates this; the vectors are simply in different spaces |
 | `vectorizer not found` / unknown field | Index created without the `vectorizers` block, or the profile's `vectorizer` name does not match a name in that array |
 | `Text is larger than 8,000 tokens` | A `vendorText` that grew past the skill limit. Trim engagement summaries in the exporter, or add a Text Split skill and accept the one-to-many rework |
@@ -567,18 +611,30 @@ Ordered by how long each one costs before you work out what it is.
 | One facet value containing the whole list | Semicolon strings from the CSVs went in where JSON arrays were expected. §1.2 rule 4 |
 | Filter on `websiteDomain` misses an obvious match | Scheme or `www.` not stripped at export. The normalizer handles casing only. §6 step 7 |
 | Empty result cards in the app, populated externally | `vendorSummary` missing from the export or from `select` |
-| Indexer succeeds, index is empty | Re-ran without `reset` after a rebuild. §7 |
-| 403 creating the index | Using the query key. Index and indexer operations need the admin key. §0 |
+| Indexer run succeeds, 0/0 documents processed, index empty | Re-ran without **Reset** after a rebuild. §7 |
+| Indexer ran before you finished configuring it | Indexers run on creation. Create with `"disabled": true`. §5 |
+| 403 on the §6 curl steps | *Keys → API access control* set to RBAC-only, or you used an admin key that has since been rotated. §0 |
+
+Two portal tools worth knowing when the table does not cover it:
+
+- **Debug Sessions** (*Search management → Debug sessions*) runs the skillset
+  against a single document and shows the enrichment tree. It is the fastest way
+  to see whether `/document/vendorText` and `/document/vendorTextVector` exist
+  with the names you think they have.
+- The **indexer execution history** on the indexer page keeps per-run warnings,
+  not just errors. The "Text is empty" case only ever appears there.
 
 ---
 
 ## 9. Teardown
 
-```bash
-for r in indexers/vendor-profiles-indexer skillsets/vendor-embedding-skillset \
-         datasources/vendor-blob-datasource indexes/vendor-profiles-index; do
-  curl -s -X DELETE "${SEARCH}/${r}?api-version=${API}" -H "api-key: ${ADMIN_KEY}"
-done
-```
+*Search management*, deleting in this order — an index with a live indexer
+pointed at it will refuse:
 
-Delete in that order — an index with a live indexer pointed at it will refuse.
+1. **Indexers** → `vendor-profiles-indexer` → Delete
+2. **Skillsets** → `vendor-embedding-skillset` → Delete
+3. **Data sources** → `vendor-blob-datasource` → Delete
+4. **Indexes** → `vendor-profiles-index` → Delete
+
+The blob container and the role assignments can stay; they cost nothing and
+rebuilding from §2 is faster with them in place.
