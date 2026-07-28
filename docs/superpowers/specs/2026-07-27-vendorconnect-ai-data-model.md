@@ -327,7 +327,12 @@ project screen to display it on.
 
 ## 4. Azure AI Search index
 
-Index name `vendor-profiles-index`. One document per vendor. 13 fields.
+Index name `vendor-profiles-index`. One document per vendor. 14 fields.
+
+**Pin `api-version=2024-07-01` or later** for every call against this index.
+`vectorQueries[].kind: "text"` (§4.3) does not exist before it. `2024-07-01` is
+still a supported stable version; `2026-04-01` is the current latest and the
+schema below is unchanged on it.
 
 **Key departure from the Empower@BrandName Builders pattern:** that project
 hand-built embeddings in a nightly Power Automate loop. This prototype uses
@@ -338,27 +343,38 @@ text and AI Search embeds it server-side, so the internal search lane needs no
 embedding call of its own. No chunking skill — vendor documents are short enough
 to embed whole.
 
+The index is only half of it. The data source, skillset and indexer that
+*populate* `vendorVector` are specified in
+`build_guide/lane1-ai-search-index-build.md`, along with the two settings that
+are fixed at creation time and cannot be changed later — the `lowercase`
+normalizer on `websiteDomain`, and the explicit `id` key field mapping.
+
 ```json
 {
   "name": "vendor-profiles-index",
   "fields": [
-    { "name": "id", "type": "Edm.String", "key": true, "filterable": true },
-    { "name": "vendorName", "type": "Edm.String", "searchable": true, "filterable": true, "sortable": true },
-    { "name": "websiteDomain", "type": "Edm.String", "searchable": true, "filterable": true },
-    { "name": "vendorText", "type": "Edm.String", "searchable": true },
-    { "name": "vendorVector", "type": "Collection(Edm.Single)", "searchable": true,
+    { "name": "id", "type": "Edm.String", "key": true, "searchable": false, "filterable": true, "sortable": false, "facetable": false },
+    { "name": "vendorName", "type": "Edm.String", "searchable": true, "filterable": true, "sortable": true, "facetable": false },
+    { "name": "websiteDomain", "type": "Edm.String", "searchable": true, "filterable": true, "sortable": false, "facetable": false, "normalizer": "lowercase" },
+    { "name": "vendorText", "type": "Edm.String", "searchable": true, "retrievable": false, "filterable": false, "sortable": false, "facetable": false },
+    { "name": "vendorSummary", "type": "Edm.String", "searchable": false, "retrievable": true, "filterable": false, "sortable": false, "facetable": false },
+    { "name": "vendorVector", "type": "Collection(Edm.Single)", "searchable": true, "retrievable": false,
       "dimensions": 3072, "vectorSearchProfile": "vendor-vector-profile" },
-    { "name": "vendorStatus", "type": "Edm.String", "filterable": true, "facetable": true },
-    { "name": "industry", "type": "Edm.String", "filterable": true, "facetable": true },
-    { "name": "businessDomains", "type": "Collection(Edm.String)", "filterable": true, "facetable": true },
+    { "name": "vendorStatus", "type": "Edm.String", "searchable": false, "filterable": true, "facetable": true, "sortable": false },
+    { "name": "industry", "type": "Edm.String", "searchable": false, "filterable": true, "facetable": true, "sortable": false },
+    { "name": "businessDomains", "type": "Collection(Edm.String)", "searchable": true, "filterable": true, "facetable": true },
     { "name": "capabilities", "type": "Collection(Edm.String)", "searchable": true, "filterable": true, "facetable": true },
     { "name": "certifications", "type": "Collection(Edm.String)", "searchable": true, "filterable": true, "facetable": true },
-    { "name": "country", "type": "Edm.String", "filterable": true, "facetable": true },
-    { "name": "headcount", "type": "Edm.Int32", "filterable": true, "sortable": true },
+    { "name": "country", "type": "Edm.String", "searchable": false, "filterable": true, "facetable": true, "sortable": false },
+    { "name": "headcount", "type": "Edm.Int32", "filterable": true, "sortable": true, "facetable": false },
     { "name": "hasActiveContract", "type": "Edm.Boolean", "filterable": true, "facetable": true }
   ],
   "vectorSearch": {
-    "algorithms": [{ "name": "hnsw-default", "kind": "hnsw" }],
+    "algorithms": [{
+      "name": "hnsw-default",
+      "kind": "hnsw",
+      "hnswParameters": { "metric": "cosine", "m": 4, "efConstruction": 400, "efSearch": 500 }
+    }],
     "profiles": [{
       "name": "vendor-vector-profile",
       "algorithm": "hnsw-default",
@@ -394,6 +410,36 @@ to embed whole.
 time. There is no `lastIndexedOn` — the dataset is small enough to rebuild the
 index in full, so no change-watermark is needed.
 
+**Every attribute above is written out on purpose.** The REST API defaults
+`Edm.String` to searchable *and* filterable *and* facetable *and* sortable, so
+omitting an attribute is not the same as declining it. Two of these matter:
+
+- **`vendorText` is `retrievable: false` and non-filterable.** It is the whole
+  embedded blob. Left at defaults it is returned by `select=*`, and filterable
+  `Edm.String` carries a hard 32 KB cap that a verbose vendor could one day trip
+  — an indexing failure that reads like a data problem.
+- **`vendorVector` is `retrievable: false`**, so no query can accidentally pull
+  3 072 floats per hit back through Power Automate. `retrievable` is one of the
+  few attributes that *can* be flipped later without a rebuild, which is how
+  verification 3 inspects the vector. `stored` is deliberately left at its
+  default `true`: setting it false saves about 250 KB at this size and would
+  make that inspection impossible without a rebuild.
+
+**`websiteDomain` carries the `lowercase` normalizer** because it is the
+cross-validation match key (§1.2), and `$filter` on a string field is an exact,
+case-sensitive comparison. Without it, `websiteDomain eq 'acmetech.com'` does
+not match a stored `ACMETech.com`, and verification 6 fails for a reason that
+looks like a matching-logic bug. Normalizers can only be set when the field is
+created — adding one later requires a full index rebuild.
+
+**`vendorSummary` exists to serve `vca_searchresult.Summary Snapshot`** (§3.8),
+the short description on a result card. Without it the only prose in the index
+is `vendorText`, which the internal lane must not select, so internal result
+cards would render with no description while external ones — which get theirs
+from the Bing grounded answer — render with. It maps from the Dataverse
+`Overview` column, truncated at export. It is `searchable: false` so it does not
+double-count against `vendorText` in keyword scoring.
+
 ### 4.1 `vendorText` composition
 
 The single string that gets embedded. Concatenate in this order:
@@ -413,16 +459,22 @@ Note that `legalName`, `hqLocation` and `regionalOperatingCapacity` are *not*
 index fields — they contribute to `vendorText` (and so to semantic matching) but
 nothing filters or displays on them, so they need no field of their own.
 
+Keep the whole string under 8 000 tokens. That is the hard input limit on the
+`AzureOpenAIEmbedding` skill, and exceeding it is an error, not a truncation.
+Nothing in the sample data comes close — a vendor with 20 engagements might.
+
 ### 4.2 Blob document contract
 
-One JSON object per vendor in the indexed container. Field names must match the
-index exactly (camelCase), which is why they differ from Dataverse display names.
+One JSON object per vendor, **one blob per vendor**, in the indexed container.
+Field names must match the index exactly (camelCase), which is why they differ
+from Dataverse display names.
 
 ```json
 {
   "id": "8f3c1e2a-...",
   "vendorName": "Acme Technologies",
   "websiteDomain": "acmetech.com",
+  "vendorSummary": "Boutique document AI firm specialising in intelligent document processing for regulated industries.",
   "vendorText": "Acme Technologies (Acme Technologies Pte Ltd)\nIndustry: ...",
   "vendorStatus": "Registered",
   "industry": "Information Technology",
@@ -439,6 +491,18 @@ index exactly (camelCase), which is why they differ from Dataverse display names
 developer — agree it before either starts.** A camelCase mismatch produces empty
 search results with no error.
 
+Three rules the exporter has to honour:
+
+- **`id` is the Dataverse vendor GUID, lowercase, no braces.** Promote-on-action
+  (§3.8.1) writes this value back to `vca_searchresult.Vendor`, so if it is
+  anything else that link cannot be made. It is also why the indexer needs an
+  explicit key field mapping — see the build guide.
+- **`websiteDomain` is normalised at export**: lowercased, scheme stripped,
+  leading `www.` stripped, no trailing slash or path. The index normalizer
+  handles casing on its own, but not `https://` or `www.`.
+- **`vendorSummary` is the Dataverse `Overview` text, first sentence or ~200
+  characters.** It is display copy, not search copy.
+
 ### 4.3 Internal search query shape
 
 Hybrid + semantic, sent from Power Automate. `vectorQueries.kind: "text"` is what
@@ -453,10 +517,14 @@ activates the index vectorizer:
     "kind": "text", "text": "<user query>",
     "fields": "vendorVector", "k": 10
   }],
-  "select": "id,vendorName,industry,country,websiteDomain,vendorStatus,hasActiveContract,capabilities,certifications",
+  "select": "id,vendorName,vendorSummary,industry,country,websiteDomain,vendorStatus,hasActiveContract,capabilities,certifications",
   "top": 10
 }
 ```
+
+`vendorText` and `vendorVector` are absent from `select` by design *and* by
+schema — both are `retrievable: false`, so the omission is enforced rather than
+merely documented.
 
 ---
 
@@ -496,10 +564,10 @@ The model is correct when all of the following pass.
 
 1. **Dataverse CRUD** — create a vendor via the row 4 multi-step form with a certification (including a real file upload to the File column), a past engagement and a contact; confirm all three children resolve on the row 3 detail tabs.
 2. **Export contract** — run the JSON export and validate every camelCase key against the index field list. Check this *before* indexing; a mismatch fails silently.
-3. **Indexer** — run once; confirm document count equals the Dataverse vendor count and `vendorVector` is non-null on every document.
+3. **Indexer** — run once; confirm the indexer reports 0 failed documents, that the index document count equals the number of exported blobs, and that `id` on a returned document is the Dataverse GUID rather than a base64 string (if it is base64, the key field mapping is missing). Then flip `vendorVector` to `retrievable: true`, confirm it is non-null and 3 072 long on every document, and flip it back — `retrievable` is changeable without a rebuild.
 4. **Vectorizer** — POST the §4.3 query with `vectorQueries.kind: "text"` and no pre-computed embedding. Ranked results back means integrated vectorization works and the internal lane needs no embedding call.
 5. **Semantic ranker** — compare a conceptual query ("document processing for government") against keyword-only search. Results should rank differently; identical ordering means the config is not applied.
-6. **Cross-validation key** — confirm the two seeded near-duplicates ("Acme Technologies Pte Ltd" / "ACME Tech", same website domain) resolve to the Existing Vendor tag on row 10(e).
+6. **Cross-validation key** — confirm the two seeded near-duplicates ("Acme Technologies Pte Ltd" / "ACME Tech", same website domain) resolve to the Existing Vendor tag on row 10(e). Seed one of the two with a deliberately messy domain (`https://www.ACMETech.com/`) so this also exercises export-time normalisation and the `lowercase` normalizer, not just the happy path. *`vca_vendor.csv` currently holds only one Acme row — the second is still to be added.*
 7. **Lifecycle without flows** — with only hand-seeded rows and no instantiation flow, confirm both dashboards render a part-complete progress bar from `vca_lifecycletask` filtered on Stage, and that a status change persists with a timestamp. This is the check that the all-four-stages rule is met by data rather than by static screens.
 8. **Search history replay** — run three searches (one deliberately too vague, so it logs as Rejected). Confirm the history page lists all three newest-first, and that re-opening one renders the original result set with match scores, Existing/New tags and the criteria matrix — read from `vca_searchresult`, with no second call to AI Search or Bing.
 9. **Snapshot integrity** — after replaying a past search, edit that vendor's name in Dataverse and reopen the same history entry. It must still show the *old* name from `Vendor Name Snapshot`. If it shows the new one, the page is reading through the lookup instead of the snapshot.
@@ -509,6 +577,7 @@ The model is correct when all of the following pass.
 13. **Project delete behaviour** — delete a project holding 3 items. The items must survive and appear as unassigned. If they vanish, the relationship is `Cascade` instead of `Remove Link`.
 14. **Comparison scoping** — select a project group and hit Compare; confirm the comparison set is that group's vendors, not the whole shortlist.
 15. **Label disambiguation** — confirm the Past Experience tab reads "Delivery Project Name", and that no screen shows two fields both labelled "Project Name".
+16. **Index refresh** — add a vendor in Dataverse, re-run the export and the indexer, and confirm the new vendor is findable. Then delete a vendor's blob, re-run, and confirm its document is **still in the index**: no deletion detection policy is configured, so removals need a full rebuild. Know which of the two you are doing before a rehearsal — a promoted external vendor (verification 10) is invisible to internal search until the next export, and that is expected, not a bug.
 
 ---
 

@@ -33,9 +33,9 @@ canvas app until step 1 returns rows from a terminal.
 | Need | Why | Gotcha |
 |---|---|---|
 | **HTTP action** in Power Automate | Calls the AI Search REST endpoint | **Premium connector.** Every demo user needs a Power Apps Premium (or per-app) licence. Check this on day 1 — it is a procurement problem, not a code problem. |
-| AI Search **Basic** tier or above | Semantic ranker is not available on Free | Semantic ranker has a free 1 000 query/month allowance; a prototype will not exceed it |
+| AI Search **Basic** tier or above | Index, indexer and storage quotas — *not* semantic ranker | Semantic ranker now runs on **all** tiers under the default free billing plan (monthly allowance; a prototype will not exceed it). The paid *standard* plan is what needs Basic+. Free tier's real limits are 3 indexes / 3 indexers, 50 MB and capped indexer runtimes |
 | A **query key**, not the admin key | The flow only reads | Portal → your search service → *Settings → Keys → Manage query keys* |
-| Index `vendor-profiles-index` populated | — | Blob indexer with integrated vectorization, per data-model spec §4 |
+| Index `vendor-profiles-index` populated | — | Blob indexer with integrated vectorization. Build it with `lane1-ai-search-index-build.md`; schema in data-model spec §4 |
 
 > **Alternative worth knowing:** a canvas app can call a **custom connector**
 > directly, with no Power Automate in between. We are not doing that, because
@@ -66,7 +66,7 @@ curl -s -X POST \
       { "kind": "text", "text": "document digitisation vendor with government experience",
         "fields": "vendorVector", "k": 10 }
     ],
-    "select": "id,vendorName,industry,country,websiteDomain,vendorStatus,hasActiveContract,capabilities,certifications",
+    "select": "id,vendorName,vendorSummary,industry,country,websiteDomain,vendorStatus,hasActiveContract,capabilities,certifications",
     "top": 10
   }' | jq '.value[] | {vendorName, "@search.score", "@search.rerankerScore"}'
 ```
@@ -80,8 +80,13 @@ Notes that matter:
   embeds the query server-side using the vectorizer declared on the index. Power
   Automate sends plain text. If you get an error about the vectorizer, the index
   was created without the `vectorizers` block in §4 of the data-model spec.
-- **Do not `select` `vendorText`.** It is the embedded blob of everything and it
-  will blow up the response payload.
+- **`vendorText` and `vendorVector` are not selectable.** Both are
+  `retrievable: false` in the schema, precisely so nobody can pull the embedded
+  blob or 3 072 floats per hit through this flow. Ask for them and you get an
+  error rather than a bloated payload.
+- **`vendorSummary` is the result card's description.** It is the only prose the
+  internal lane returns, and it populates `vca_searchresult.Summary Snapshot`.
+  Drop it from `select` and internal cards render blank next to external ones.
 
 ### Scores — read this before building the UI
 
@@ -154,7 +159,7 @@ Body — note the query text is injected in **two** places, `search` and
       "k": 10
     }
   ],
-  "select": "id,vendorName,industry,country,websiteDomain,vendorStatus,hasActiveContract,capabilities,certifications",
+  "select": "id,vendorName,vendorSummary,industry,country,websiteDomain,vendorStatus,hasActiveContract,capabilities,certifications",
   "top": 10
 }
 ```
@@ -184,6 +189,7 @@ schema you want is roughly:
           "@search.rerankerScore": { "type": "number" },
           "id":                    { "type": "string" },
           "vendorName":            { "type": "string" },
+          "vendorSummary":         { "type": ["string", "null"] },
           "industry":              { "type": "string" },
           "country":               { "type": "string" },
           "websiteDomain":         { "type": "string" },
@@ -213,6 +219,7 @@ much less painful than untyped-array handling in the app.
 |---|---|
 | `id` | `item()?['id']` |
 | `vendorName` | `item()?['vendorName']` |
+| `vendorSummary` | `coalesce(item()?['vendorSummary'], '')` |
 | `industry` | `item()?['industry']` |
 | `country` | `item()?['country']` |
 | `websiteDomain` | `item()?['websiteDomain']` |
@@ -289,6 +296,7 @@ ClearCollect(colInternal,
         {
             id:                Text(row.Value.id),
             vendorName:        Text(row.Value.vendorName),
+            vendorSummary:     Text(row.Value.vendorSummary),
             industry:          Text(row.Value.industry),
             country:           Text(row.Value.country),
             websiteDomain:     Text(row.Value.websiteDomain),
