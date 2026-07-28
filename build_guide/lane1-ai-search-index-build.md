@@ -20,7 +20,8 @@ vca_vendor         ──▶    vendor-docs/       ──▶    Data sources
  + certification          <guid>.json                    ↓
  + engagement             (one per vendor)          Skillsets
                                                     AzureOpenAIEmbedding
-       §4.2 export contract                              ↓  ──▶ AOAI deployment
+       §4.2 export contract                              ↓  ──▶ Azure OpenAI
+                                                                embedding deployment
                                                     Indexers
                                                     parsingMode: json
                                                     key mapping: id → id
@@ -299,7 +300,7 @@ specify, and it is what actually populates `vendorVector`; without it every
 document indexes with a null vector, hybrid search silently degrades to
 keyword-only, and verification 3 fails.
 
-Replace `<aoai-endpoint>` and `<embedding-deployment-name>`:
+Replace `<your-openai-resource>` and `<embedding-deployment-name>`:
 
 ```json
 {
@@ -310,7 +311,7 @@ Replace `<aoai-endpoint>` and `<embedding-deployment-name>`:
       "@odata.type": "#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill",
       "name": "embed-vendor-text",
       "context": "/document",
-      "resourceUri": "https://<aoai-endpoint>.openai.azure.com",
+      "resourceUri": "https://<your-openai-resource>.openai.azure.com",
       "deploymentId": "<embedding-deployment-name>",
       "modelName": "text-embedding-3-large",
       "dimensions": 3072,
@@ -385,6 +386,13 @@ and you have to reset it before the fix takes effect.
 ```
 
 Save, reopen it via **Edit JSON**, set `"disabled": false`, save again. Then §6.
+
+Note that **this is the point where data first moves.** Everything up to here —
+index, data source, skillset, indexer — has been definitions only, and the index
+has held zero documents. Indexers run on creation *and on update*, so flipping
+`disabled` to false is likely to start a run on its own. If §6's **Run** then
+reports 0/0 documents processed against a populated index, that is why, and
+nothing is wrong.
 
 ### 5.1 `fieldMappings` — the one that costs you the GUID
 
@@ -611,7 +619,8 @@ Ordered by how long each one costs before you work out what it is.
 | One facet value containing the whole list | Semicolon strings from the CSVs went in where JSON arrays were expected. §1.2 rule 4 |
 | Filter on `websiteDomain` misses an obvious match | Scheme or `www.` not stripped at export. The normalizer handles casing only. §6 step 7 |
 | Empty result cards in the app, populated externally | `vendorSummary` missing from the export or from `select` |
-| Indexer run succeeds, 0/0 documents processed, index empty | Re-ran without **Reset** after a rebuild. §7 |
+| Indexer run succeeds, 0/0 documents processed, index **empty** | Re-ran without **Reset** after a rebuild. §7 |
+| Indexer run succeeds, 0/0 documents processed, index **populated** | Nothing to do. Change detection found no new or changed blobs — it already ran when you enabled it in §5 |
 | Indexer ran before you finished configuring it | Indexers run on creation. Create with `"disabled": true`. §5 |
 | 403 on the §6 curl steps | *Keys → API access control* set to RBAC-only, or you used an admin key that has since been rotated. §0 |
 
