@@ -503,19 +503,34 @@ never needs an embedding call. A `vectorizer not found` or 403 sends you back to
 §0.2 or the index's `vectorizers` block.
 
 **5 — The full hybrid + semantic query.** This is the exact payload the flow
-sends, and the opening `curl` of `lane1-canvas-to-ai-search.md` §1:
+sends, and the opening `curl` of `lane1-canvas-to-ai-search.md` §1. It runs
+against **`api-version=2026-05-01-preview`**, not `${API}` — `queryRewrites`
+and `answers` count syntax are preview surface, not on the `2024-07-01` /
+`2026-04-01` stable versions §0's pin covers. Query the index with this
+preview version any time you need generative query rewriting or extractive
+answers; keep the indexer, skillset and index itself on the stable pin:
 
 ```bash
-curl -s -X POST "${SEARCH}/indexes/vendor-profiles-index/docs/search?api-version=${API}" \
+curl -s -X POST "${SEARCH}/indexes/vendor-profiles-index/docs/search.post.search?api-version=2026-05-01-preview" \
   -H "Content-Type: application/json" -H "api-key: ${QUERY_KEY}" \
   -d '{
     "search": "document digitisation vendor with government experience",
+    "count": true,
+    "vectorQueries": [
+      {
+        "kind": "text",
+        "text": "document digitisation vendor with government experience",
+        "fields": "vendorVector",
+        "queryRewrites": "generative"
+      }
+    ],
     "queryType": "semantic",
     "semanticConfiguration": "vendor-semantic-config",
-    "vectorQueries": [{ "kind": "text", "text": "document digitisation vendor with government experience",
-                        "fields": "vendorVector", "k": 10 }],
-    "select": "id,vendorName,vendorSummary,industry,country,websiteDomain,vendorStatus,hasActiveContract,capabilities,certifications",
-    "top": 10
+    "captions": "extractive",
+    "answers": "extractive|count-3",
+    "queryLanguage": "en-us",
+    "queryRewrites": "generative",
+    "top": 3
   }' | jq '.value[] | {vendorName, vendorSummary, r: ."@search.rerankerScore"}'
 ```
 
@@ -524,6 +539,14 @@ Every hit needs a non-null `@search.rerankerScore` (0–4) and a non-empty
 `semanticConfiguration` did not take. An empty `vendorSummary` means the
 exporter skipped it — and it is what the internal result card renders, so it is
 visible on stage.
+
+`queryRewrites: "generative"` appears twice and does two different jobs: the
+top-level one rewrites the `search` text before BM25/semantic scoring, the one
+inside `vectorQueries` rewrites it before embedding for the vector leg. Drop
+either one and that leg falls back to the literal query text. `answers` and
+`captions` ride on the same semantic pass as the reranker score — no extra
+Azure OpenAI call — and land in the response as top-level `@search.answers`
+and per-hit `@search.captions`, not on `vendorSummary`.
 
 **6 — Semantic reranking actually reorders.** Run step 5 again with `queryType`,
 `semanticConfiguration` and `vectorQueries` removed. If the ordering is
