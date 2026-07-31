@@ -9,16 +9,16 @@ so the parent must exist before Copilot can wire up the lookup.
 
 **Before you start**
 
-1. Open <https://make.powerapps.com>, pick the target Dev environment.
-2. Work with the **`new_` publisher prefix** — the default publisher's prefix, so
-   the Default solution and a solution using that publisher both produce `new_`
+1. Open [https://make.powerapps.com](https://make.powerapps.com), pick the target Dev environment.
+2. Work with the `new_` **publisher prefix** — the default publisher's prefix, so
+  the Default solution and a solution using that publisher both produce `new_`
    names. Just confirm the prefix reads `new` before you create the first table;
    Copilot takes it from whichever solution you are in.
 3. Read §0 below and create the four shared global choices first.
 
 > **Prefix note.** The data-model spec writes every name with a `vca_` prefix
 > (solution "VendorConnect AI", publisher prefix `vca_`). This document uses
-> **`new_`** instead, per the prefix in use. The mapping is 1:1 —
+> `new_` instead, per the prefix in use. The mapping is 1:1 —
 > `vca_vendor` in the spec is `new_vendor` here, and so on for all 9 tables.
 > Nothing else changes: display names ("Vendor Name", "Match Score") and the
 > camelCase Blob export field names in spec §4.2 carry no prefix, so the export
@@ -34,12 +34,12 @@ yes/no, and single-select choices with inline options.
 lists the specifics:
 
 - **Lookups** — it often invents a text column instead of a relationship, or
-  builds the relationship but not the delete behaviour.
+builds the relationship but not the delete behaviour.
 - **Multi-select choices** — normally created as single-select. Switch the
-  behaviour on the column afterwards.
+behaviour on the column afterwards.
 - **File columns** — not supported by the Copilot table builder at all.
 - **Global choices** — Copilot creates *local* (table-scoped) choices. Any choice
-  reused across tables must be created globally first (§0) and then re-pointed.
+reused across tables must be created globally first (§0) and then re-pointed.
 
 Copilot also likes to add sample rows and columns you did not ask for. Delete the
 extras before moving to the next table; a stray `new_notes` column costs nothing
@@ -48,34 +48,45 @@ export in §4.2 of the spec.
 
 ---
 
+
+
 ## 0. Global choices (do this first, not via Copilot)
 
 Copilot cannot create environment-level global choices. Build these by hand in
 *Solution → New → More → Choice*, then reference them by name in the prompts
 below.
 
-**These option lists are the exact distinct values used by `sample_data/`** — every
+**These option lists are the exact distinct values used by** `sample_data/` — every
 one is populated, and nothing in the CSVs falls outside them. Add options if you
 want, but do not remove any: the Dataverse import wizard fails the whole row on an
 unmatched choice value, and a silently-dropped multi-select value produces empty
 Azure AI Search facets with no error.
 
-| Choice name | Behaviour | Options (count) |
-|---|---|---|
-| `new_industry` | Single | Business Process Outsourcing · Consulting · Cybersecurity · Engineering Services · Financial Technology · Information Technology · Professional Services · Software Publishing · Telecommunications **(9)** |
-| `new_country` | Single | Australia · Canada · France · Germany · Hong Kong SAR · India · Indonesia · Ireland · Japan · Malaysia · Netherlands · Philippines · Singapore · South Korea · Thailand · United Arab Emirates · United Kingdom · United States · Vietnam **(19)** |
-| `new_businessdomain` | **Multi-select** | Aviation · Education · Energy & Utilities · Financial Services · Healthcare · Manufacturing · Public Sector · Retail & Consumer · Telecommunications · Transport & Logistics **(10)** |
-| `new_capability` | **Multi-select** | Application Development · Business Intelligence · Change Management · Cloud Migration · Conversational AI · Cybersecurity Operations · Data Engineering · Data Governance · DevOps Automation · Document Intelligence · ERP Implementation · Identity & Access Management · Integration & APIs · Machine Learning · Managed Services · Network Infrastructure · Penetration Testing · RPA · Site Reliability Engineering · Test Automation **(20)** |
 
-Watch the exact labels — the near-misses are what break an import. `Retail &
-Consumer` (not "Retail & E-commerce"), `Engineering Services` (not "Engineering &
-Construction"), `Machine Learning` (not "AI & Machine Learning"), `Managed
-Services` (not "Managed IT Services"), `Integration & APIs` (not "Systems
+| Choice name          | Behaviour                                                          | Options (count)                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| -------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `new_industry`       | Single                                                             | Business Process Outsourcing · Consulting · Cybersecurity · Engineering Services · Financial Technology · Information Technology · Professional Services · Software Publishing · Telecommunications **(9)**                                                                                                                                                                                                                                         |
+| `new_country`        | **Single on Country, Multi-select on Regional Operating Capacity** | Australia · Belgium · Canada · China · France · Germany · Hong Kong SAR · India · Indonesia · Ireland · Japan · Malaysia · Myanmar · Netherlands · New Zealand · Philippines · Poland · Qatar · Saudi Arabia · Singapore · South Korea · Spain · Thailand · United Arab Emirates · United Kingdom · United States · Vietnam **(27)**                                                                                                                |
+| `new_businessdomain` | **Multi-select**                                                   | Aviation · Education · Energy & Utilities · Financial Services · Healthcare · Manufacturing · Public Sector · Retail & Consumer · Telecommunications · Transport & Logistics **(10)**                                                                                                                                                                                                                                                               |
+| `new_capability`     | **Multi-select**                                                   | Application Development · Business Intelligence · Change Management · Cloud Migration · Conversational AI · Cybersecurity Operations · Data Engineering · Data Governance · DevOps Automation · Document Intelligence · ERP Implementation · Identity & Access Management · Integration & APIs · Machine Learning · Managed Services · Network Infrastructure · Penetration Testing · RPA · Site Reliability Engineering · Test Automation **(20)** |
+
+
+`new_country` **backs two columns on Vendor, deliberately.** Country
+(single-select) and Regional Operating Capacity (multi-select) both point at
+the same global choice — a global choice's option list is shared, but each
+column independently decides single- vs multi-select. This keeps the two
+country vocabularies from drifting apart (e.g. "USA" on one column and "United
+States" on the other). The list is 27, not the 19 that Country alone would
+need, because Regional Operating Capacity's sample data uses 8 countries no
+vendor is headquartered in (New Zealand, Poland, Saudi Arabia, Qatar, Belgium,
+China, Myanmar, Spain).
+
+Watch the exact labels — the near-misses are what break an import. `Retail & Consumer` (not "Retail & E-commerce"), `Engineering Services` (not "Engineering &
+Construction"), `Machine Learning` (not "AI & Machine Learning"), `Managed Services` (not "Managed IT Services"), `Integration & APIs` (not "Systems
 Integration"), `Cybersecurity Operations` as a capability but plain
 `Cybersecurity` as an industry.
 
-Multi-select values in the CSVs are **semicolon-delimited** (`Financial
-Services;Public Sector`), which is what the import wizard expects — no
+Multi-select values in the CSVs are **semicolon-delimited** (`Financial Services;Public Sector`), which is what the import wizard expects — no
 transformation needed.
 
 The remaining choices in the spec are each used by exactly one table, so local
@@ -83,20 +94,24 @@ choices created inline by Copilot are fine. All of the single-table option sets 
 the prompts below already match `sample_data/` exactly — verified against the
 CSVs:
 
-| Choice | Values in sample data | Matches spec |
-|---|---|---|
-| Vendor Status | Potential (6) · Registered (8) · Existing (6) | ✅ |
-| Source | Internal Catalogue (9) · External Discovery (6) · Manual Registration (5) | ✅ |
-| Project Status | Active (2) · Draft (1) · Closed (1) | ✅ |
-| Lifecycle Stage | Onboarding (21) · Offboarding (18) | ✅ |
-| Task Status | Not Started (16) · In Progress (4) · Complete (17) · N/A (2) | ✅ |
-| Focal Role | all 8 values used | ✅ |
-| Input Validation Outcome · Result Source · Vendor Tag | not seeded — `new_searchlog` / `new_searchresult` are written live by the search flow | n/a |
+
+| Choice                                                | Values in sample data                                                                 | Matches spec |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------ |
+| Vendor Status                                         | Potential (6) · Registered (8) · Existing (6)                                         | ✅            |
+| Source                                                | Internal Catalogue (9) · External Discovery (6) · Manual Registration (5)             | ✅            |
+| Project Status                                        | Active (2) · Draft (1) · Closed (1)                                                   | ✅            |
+| Lifecycle Stage                                       | Onboarding (21) · Offboarding (18)                                                    | ✅            |
+| Task Status                                           | Not Started (16) · In Progress (4) · Complete (17) · N/A (2)                          | ✅            |
+| Focal Role                                            | all 8 values used                                                                     | ✅            |
+| Input Validation Outcome · Result Source · Vendor Tag | not seeded — `new_searchlog` / `new_searchresult` are written live by the search flow | n/a          |
+
 
 `Pronoun` in `vca_vendorcontact.csv` holds `she/her` (22), `he/him` (16) and
 `they/them` (3). It stays **free text** — see table 4.
 
 ---
+
+
 
 ## 1. `new_vendor`
 
@@ -113,15 +128,7 @@ Columns:
 - Legal Name — single line of text. The registered legal entity name.
 - Website Domain — single line of text. The company's web domain, for example
   acmetech.com. Used to detect duplicate vendors.
-- Business Domains — choice, allow multiple selections. The industry sectors the
-  vendor serves.
-- Capabilities — choice, allow multiple selections. The services the vendor can
-  deliver.
-- Industry — choice, single selection only. The vendor's own industry.
-- Country — choice, single selection. The country the vendor is headquartered in.
 - HQ Location — single line of text. City or address of the head office.
-- Regional Operating Capacity — multiple lines of text. Which regions the vendor
-  can deliver in and at what scale.
 - Headcount — whole number. Total employees.
 - Vendor Status — choice, single selection, with the options: Potential,
   Registered, Existing.
@@ -135,23 +142,41 @@ Columns:
 - Source Citations — multiple lines of text. A JSON array of citation URLs.
 
 Do not add any other columns. Do not create sample data.
+
+---
+- Business Domains — choice, allow multiple selections. The industry sectors the
+  vendor serves.
+- Capabilities — choice, allow multiple selections. The services the vendor can
+  deliver.
+- Industry — choice, single selection only. The vendor's own industry.
+- Country — choice, single selection. The country the vendor is headquartered in.
+- Regional Operating Capacity — choice, allow multiple selections. Which
+  countries the vendor can deliver in.
 ```
 
 **Fix up manually**
 
 - Set **Business Domains** and **Capabilities** to the global choices
-  `new_businessdomain` / `new_capability` and confirm both are **multi-select**
-  (*Choices*, not *Choice*). Copilot almost always makes them single.
-- Set **Industry** → `new_industry`, **Country** → `new_country`.
+`new_businessdomain` / `new_capability` and confirm both are **multi-select**
+(*Choices*, not *Choice*). Copilot almost always makes them single.
+- Set **Industry** → `new_industry`, **Country** → `new_country` (single-select).
+- Set **Regional Operating Capacity** → `new_country` as well, but as
+**multi-select** (*Choices*). Same global choice as Country, different
+selection behaviour — Copilot will not create this column as a choice at all
+(it reads "Regional Operating Capacity" as free text), so add it by hand:
+new column → *Choice* → sync with global choice `new_country` → allow
+multiple selections.
 - Confirm **Industry** is single-select. The spec calls this out explicitly.
-- Set `Regional Operating Capacity`, `Overview` and `Source Citations` max length
-  to 2000+ — Copilot defaults multiline text to 2000, which is fine for the first
-  two but tight for a citation array; bump Source Citations to 4000.
+- Set `Overview` and `Source Citations` max length to 2000+ — Copilot defaults
+multiline text to 2000, which is fine for Overview but tight for a citation
+array; bump Source Citations to 4000.
 
 **Verify:** 16 columns beyond the system ones, and the table's logical name is
 `new_vendor`.
 
 ---
+
+
 
 ## 2. `new_certification`
 
@@ -175,12 +200,12 @@ Do not create sample data.
 
 **Fix up manually**
 
-- **Add the `Document` column by hand** — type **File**. Copilot's table builder
-  has no File type, so this one is always manual. New column → *File* → max size
-  32768 KB is plenty for a PDF certificate.
+- **Add the** `Document` **column by hand** — type **File**. Copilot's table builder
+has no File type, so this one is always manual. New column → *File* → max size
+32768 KB is plenty for a PDF certificate.
 - Confirm **Vendor** is a real *Lookup* column with a 1:N relationship from
-  Vendor, is **Business required**, and that Copilot did not create a text column
-  named "Vendor" instead. If it did: delete it and add the lookup manually.
+Vendor, is **Business required**, and that Copilot did not create a text column
+named "Vendor" instead. If it did: delete it and add the lookup manually.
 
 **Verify:** 7 columns including Document and the Vendor lookup. Upload a real PDF
 to Document on one test row — this is verification step 1 in the spec.
@@ -190,6 +215,8 @@ to Document on one test row — this is verification step 1 in the spec.
 attach two placeholder PDFs by hand for the demo.
 
 ---
+
+
 
 ## 3. `new_engagement`
 
@@ -221,13 +248,15 @@ Do not create sample data.
 **Fix up manually**
 
 - Keep the primary column labelled exactly **Delivery Project Name**. Do not let
-  it become "Project Name" — the spec's verification step 15 checks that no screen
-  shows two fields both labelled "Project Name" (Project has its own).
+it become "Project Name" — the spec's verification step 15 checks that no screen
+shows two fields both labelled "Project Name" (Project has its own).
 - Confirm the Vendor lookup as in table 2.
 
 **Verify:** 8 columns.
 
 ---
+
+
 
 ## 4. `new_vendorcontact`
 
@@ -251,9 +280,9 @@ Do not create sample data.
 
 **Fix up manually**
 
-- **`Pronoun` must stay free text.** If Copilot turns it into a choice with
-  she/her, he/him, they/them options, delete the column and re-add it as single
-  line of text. The spec is explicit that this is not constrained to a picklist.
+- `Pronoun` **must stay free text.** If Copilot turns it into a choice with
+she/her, he/him, they/them options, delete the column and re-add it as single
+line of text. The spec is explicit that this is not constrained to a picklist.
 - Confirm the Vendor lookup.
 
 **Verify:** 6 columns, and the table's logical name is `new_vendorcontact` (Power
@@ -261,6 +290,8 @@ Apps will strip the space in "Vendor Contact" — check it did not produce
 `new_vendor_contact`).
 
 ---
+
+
 
 ## 5. `new_searchlog`
 
@@ -292,21 +323,23 @@ Do not create sample data.
 **Fix up manually**
 
 - Dataverse **cannot use a multiline text column as the primary name column**.
-  Copilot will either silently make `Query Text` single-line or create a separate
-  primary column. Resolution: let the primary name column be a single line of
-  text named **Query Text** (255 chars) and *additionally* create
-  **Query Text Full** as multiple lines of text if you expect queries over 255
-  characters. For a 3-day prototype, the single-line primary column alone is
-  usually enough — decide now and tell the AI developer, since the search flow
-  writes this column.
-- Rename the `Rejected - too vague` option label to **`Rejected – too vague`**
-  (en dash) if you want it to match the spec's wording exactly; the value matters,
-  the dash does not.
+Copilot will either silently make `Query Text` single-line or create a separate
+primary column. Resolution: let the primary name column be a single line of
+text named **Query Text** (255 chars) and *additionally* create
+**Query Text Full** as multiple lines of text if you expect queries over 255
+characters. For a 3-day prototype, the single-line primary column alone is
+usually enough — decide now and tell the AI developer, since the search flow
+writes this column.
+- Rename the `Rejected - too vague` option label to `Rejected – too vague`
+(en dash) if you want it to match the spec's wording exactly; the value matters,
+the dash does not.
 - Set `Extracted Criteria` max length to 4000.
 
 **Verify:** 9 columns.
 
 ---
+
+
 
 ## 6. `new_searchresult`
 
@@ -342,17 +375,19 @@ Do not create sample data.
 
 **Fix up manually**
 
-- **`Vendor` must be optional** (Business required = *Optional*). Copilot tends
-  to mark every lookup required. If it is required, un-promoted external finds
-  cannot be logged at all and verification step 8 fails.
-- **`Search Log` must be required.**
+- `Vendor` **must be optional** (Business required = *Optional*). Copilot tends
+to mark every lookup required. If it is required, un-promoted external finds
+cannot be logged at all and verification step 8 fails.
+- `Search Log` **must be required.**
 - Confirm `Match Score` is **Decimal** with precision 2 and min 0 / max 1.
 - Set `Criteria Results` and `Source Citations` max length to 4000+ — the criteria
-  matrix JSON carries evidence strings and outgrows 2000 quickly.
+matrix JSON carries evidence strings and outgrows 2000 quickly.
 
 **Verify:** 11 columns, one required lookup and one optional lookup.
 
 ---
+
+
 
 ## 7. `new_lifecycletask`
 
@@ -385,7 +420,7 @@ Do not create sample data.
 **Fix up manually**
 
 - Confirm **Stage** is required — the two dashboards are one view filtered on it,
-  so a null Stage row appears on neither.
+so a null Stage row appears on neither.
 - Default `Status` to **Not Started**.
 - Do **not** add a Project lookup. It is listed as deferred in the spec §7.
 
@@ -395,6 +430,8 @@ Do not create sample data.
 statuses are deliberate, so the progress bars read part-complete.
 
 ---
+
+
 
 ## 8. `new_project`
 
@@ -423,13 +460,15 @@ Do not add an owner or assignee column. Do not create sample data.
 **Fix up manually**
 
 - Nothing structural. Do not add an Owner column — ownership is deliberately not
-  modelled (spec §3.9).
+modelled (spec §3.9).
 
 **Verify:** 7 columns. Then load `sample_data/vca_project.csv` — 4 rows, Active ×2,
 Draft ×1, Closed ×1 (the spec asks for 2; the sample data goes further and covers
 Closed as well).
 
 ---
+
+
 
 ## 9. `new_shortlistitem`
 
@@ -454,18 +493,18 @@ Do not create sample data.
 **Fix up manually — this table has the most Copilot cannot do**
 
 1. **Primary name column.** The spec lists no name column, but Dataverse forces
-   one. Let Copilot create the default `Name` and leave it unused, or set it with
+  one. Let Copilot create the default `Name` and leave it unused, or set it with
    a formula/flow to `Vendor name — Project name` so the row is readable in the
    maker portal. Either is fine; do not add it to any screen.
-2. **`Project` must be optional.** Null is the "unassigned" bucket and the spec's
-   verification steps 11–13 all depend on it.
+2. `Project` **must be optional.** Null is the "unassigned" bucket and the spec's
+  verification steps 11–13 all depend on it.
 3. **Set the Project → Shortlist Item relationship delete behaviour to
-   `Remove Link`, not `Cascade`.** Copilot will not do this. Go to
+  `Remove Link`, not `Cascade`.** Copilot will not do this. Go to
    *Project → Relationships → the Shortlist Item 1:N relationship → Advanced
    options → Delete: Remove Link*. Deleting a project must return its items to
    the unassigned bucket, not destroy them.
 4. **Do not create an alternate key on (Project, Vendor).** Dataverse alternate
-   keys reject nullable columns and Project is nullable. Duplicate prevention is
+  keys reject nullable columns and Project is nullable. Duplicate prevention is
    app-side: before insert, look for a row with the same Vendor *and* the same
    Project, treating null-Project as its own bucket rather than as a wildcard.
 
@@ -477,30 +516,37 @@ repeats, so the duplicate guard starts clean.
 
 ---
 
+
+
 ## After all 9 tables
 
 1. **Publish all customizations** in the solution.
 2. Walk spec §6 verification steps 1 and 15 — they are the two that catch schema
-   mistakes rather than app mistakes.
+  mistakes rather than app mistakes.
 3. Load `sample_data/` in the README's stated order (vendor → project →
-   certification → engagement → contact → lifecycle task → shortlist item);
+  certification → engagement → contact → lifecycle task → shortlist item);
    lookups are display-name text, so parents must land first. **The sample data
    has 20 vendors, not the spec's 25–30, and does not yet contain the deliberate
    near-duplicate pair** ("Acme Technologies Pte Ltd" / "ACME Tech" sharing one
    website domain) — verification step 6 has no data behind it until a second Acme
    row is added. This gap is already recorded in `sample_data/README.md`.
 4. Produce the Blob JSON export (spec §4.2) and hand it to the AI developer
-   **before** anyone builds the index. Field names are camelCase and must match
+  **before** anyone builds the index. Field names are camelCase and must match
    the index exactly; a mismatch returns empty results with no error.
+
+
 
 ### Things Copilot will never do — a single checklist
 
-| Item | Table | Why it matters |
-|---|---|---|
-| `Document` File column | Certification | Copilot has no File type |
-| Multi-select on Business Domains / Capabilities | Vendor | Search facets and comparison read them as sets |
-| Global choices instead of local | Vendor (4 columns) | Sample data and index values must agree across tables |
-| `Vendor` lookup optional | Search Result | Un-promoted external finds have no vendor row yet |
-| `Project` lookup optional | Shortlist Item | Null is the unassigned bucket |
-| `Remove Link` on delete | Project → Shortlist Item | Cascade silently destroys shortlist work |
-| Decimal 0–1, precision 2 | Search Result Match Score | Match score is a fraction, not a whole number |
+
+| Item                                            | Table                     | Why it matters                                        |
+| ----------------------------------------------- | ------------------------- | ----------------------------------------------------- |
+| `Document` File column                          | Certification             | Copilot has no File type                              |
+| Multi-select on Business Domains / Capabilities | Vendor                    | Search facets and comparison read them as sets        |
+| Global choices instead of local                 | Vendor (5 columns)        | Sample data and index values must agree across tables |
+| `Vendor` lookup optional                        | Search Result             | Un-promoted external finds have no vendor row yet     |
+| `Project` lookup optional                       | Shortlist Item            | Null is the unassigned bucket                         |
+| `Remove Link` on delete                         | Project → Shortlist Item  | Cascade silently destroys shortlist work              |
+| Decimal 0–1, precision 2                        | Search Result Match Score | Match score is a fraction, not a whole number         |
+
+
