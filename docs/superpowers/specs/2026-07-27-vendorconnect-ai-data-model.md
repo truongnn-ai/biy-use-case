@@ -438,6 +438,13 @@ normalizer on `websiteDomain`, and the explicit `id` key field mapping.
       }
     }]
   },
+  "scoringProfiles": [
+    { "name": "boost-capability", "text": { "weights": { "capabilities": 4 } } },
+    { "name": "boost-certification", "text": { "weights": { "certifications": 4 } } },
+    { "name": "boost-industry-domain", "text": { "weights": { "industry": 3, "businessDomains": 3 } } },
+    { "name": "boost-location", "text": { "weights": { "country": 3 } } },
+    { "name": "General", "text": { "weights": { "vendorText": 1, "vendorSummary": 1 } } }
+  ],
   "semantic": {
     "configurations": [{
       "name": "vendor-semantic-config",
@@ -457,6 +464,50 @@ normalizer on `websiteDomain`, and the explicit `id` key field mapping.
 `certifications` is derived from the child `vca_certification` rows at export
 time. There is no `lastIndexedOn` — the dataset is small enough to rebuild the
 index in full, so no change-watermark is needed.
+
+**Ranking order for the §4.3 hybrid + semantic query, in sequence:**
+
+```
+1. Text scoring (BM25)          2. Vector scoring (cosine/HNSW)
+   against `search` text            against `vendorVector`
+   using searchable fields,         via vectorQueries.kind:"text"
+   reweighted by `scoringProfile`   (k: 10 nearest neighbors)
+        │                                │
+        └───────────────┬────────────────┘
+                         ▼
+              3. RRF fusion → @search.score
+                         ▼
+        4. Semantic reranking → @search.rerankerScore
+                         ▼
+                  final sorted results
+```
+
+1. **BM25** scores `search` against searchable fields, reweighted by
+   `scoringProfile`.
+2. **Vector search** (`vectorQueries`, in parallel) scores cosine similarity
+   against `vendorVector` for the top `k`.
+3. **RRF fusion** combines the two ranked lists by rank position (not raw
+   score) into `@search.score` — capped to the top 50 fused candidates.
+4. **Semantic reranking** rescores those candidates using this `semantic`
+   config into `@search.rerankerScore`, which is the final sort order
+   (`queryType: "semantic"`).
+
+`scoringProfile` only acts at step 1 — it improves a document's odds of
+surviving the funnel, it does not decide the final order. `semantic` only
+acts at step 4 — it can only rerank whatever survived steps 1–3.
+
+**`scoringProfiles` names double as the fixed intent taxonomy** for row 10(c)
+("determine core requirements sought"). `build_guide/lane0-intent-extraction.md`
+classifies each query into exactly one of these five names via a structured
+Azure OpenAI completion, and the flow substitutes that name straight into
+`scoringProfile` (§4.3) — no per-query field-weight assembly, just a static
+profile picked by name. `General` is a deliberate no-op (weight 1 on the two
+prose fields is the same as the unweighted default), which is what lets the
+flow substitute it unconditionally rather than branching on "no intent
+detected." `boost-location` can only target `country` (the index has no
+`regionalOperatingCapacity` field), so a query about regional delivery
+capacity rather than HQ location is only caught by `vendorText`'s semantic
+embedding, not by this profile.
 
 **Every attribute above is written out on purpose.** The REST API defaults
 `Edm.String` to searchable *and* filterable *and* facetable *and* sortable, so
@@ -561,13 +612,14 @@ activates the index vectorizer:
 ```json
 {
   "search": "<user query>",
+  "scoringProfile": "<primaryIntent value from lane0-intent-extraction.md>",
   "queryType": "semantic",
   "semanticConfiguration": "vendor-semantic-config",
   "vectorQueries": [{
     "kind": "text", "text": "<user query>",
     "fields": "vendorVector", "k": 10
   }],
-  "select": "id,vendorName,vendorSummary,industry,country,websiteDomain,vendorStatus,hasActiveContract,capabilities,certifications",
+  "select": "id,vendorName,vendorSummary,industry,businessDomains,country,websiteDomain,vendorStatus,hasActiveContract,capabilities,certifications,headcount",
   "top": 10
 }
 ```
@@ -575,6 +627,21 @@ activates the index vectorizer:
 `vendorText` and `vendorVector` are absent from `select` by design *and* by
 schema — both are `retrievable: false`, so the omission is enforced rather than
 merely documented.
+
+`scoringProfile` is new: its value is always one of the five names in this
+index's `scoringProfiles` array, decided upfront by the Lane 0 classification
+call in `build_guide/lane0-intent-extraction.md` and substituted in
+unconditionally — including on `General`, which is a genuine no-op profile
+rather than an omitted key.
+
+`businessDomains` and `headcount` are also new to `select` — they were
+previously fetchable index fields that nothing consumed. Lane 0 also returns
+`displayFields`, a list of at least 5 vendor field names (drawn from this same
+`select` list) chosen per query to tell the canvas app which attributes are
+most worth surfacing on a result card for that particular intent. See
+`build_guide/lane0-intent-extraction.md` §2.2 for the fixed field vocabulary
+and `build_guide/lane1-canvas-to-ai-search.md` §2.5/§2.8 for how it's wired
+through.
 
 ---
 
