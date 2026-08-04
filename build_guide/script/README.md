@@ -13,6 +13,8 @@ python3 export_vendors.py [--input-dir DIR] [--output-dir DIR]
 
 python3 export_[vendors.py](http://vendors.py) --input-dir /Users/ethanng/Documents/ws/biy_app/build_guide/exported_sample_data --output-dir output/
 
+python3 export_[vendors.py](http://vendors.py) --input-dir /Users/ethanng/Documents/ws/biy_app/build_guide/exported_sample_data_external --output-dir output_external/
+
 Run from anywhere; both paths default to relative-to-cwd, so either `cd` into
 the repo root first or pass absolute paths.
 

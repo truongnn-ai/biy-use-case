@@ -150,9 +150,9 @@ def main():
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    vendors = read_csv(input_dir / "new_vendors.csv")
-    certifications = read_csv(input_dir / "new_certifications.csv")
-    engagements = read_csv(input_dir / "new_engagement1s.csv")
+    vendors = read_csv(input_dir / "new_vendorexternals.csv")
+    certifications = read_csv(input_dir / "new_certificationexternals.csv")
+    engagements = read_csv(input_dir / "new_engagementsexternal.csv")
 
     certs_by_vendor = group_by_vendor(certifications)
     engagements_by_vendor = group_by_vendor(engagements)

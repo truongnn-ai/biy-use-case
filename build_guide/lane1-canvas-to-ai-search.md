@@ -355,14 +355,19 @@ return the result set as a JSON *string* and parse it in the app.
 | `resultCount` | Number | `@{length(body('Select'))}` |
 | `durationMs` | Number | `@{div(sub(ticks(utcNow()), variables('startTicks')), 10000)}` |
 | `displayFields` | Text | `@{variables('varDisplayFields')}` |
+| `extractedCriteria` | Text | `@{variables('varExtractedCriteria')}` |
 
 `durationMs` is display-only for now (a status-line/debug value in the canvas
 app) rather than feeding a `vca_searchlog` write — search history persistence
 is deferred, see §2.5. Set `startTicks` with an *Initialize variable* right
-after the trigger. `displayFields` is a JSON string (already stringified in
-§2.5) — `ParseJSON` it in the app the same way `results` is parsed. There is
-only one Respond action in this flow now — no validation branch means no
-second, rejected-path Respond to keep in sync with it.
+after the trigger. `displayFields` and `extractedCriteria` are both JSON
+strings (already stringified in §2.5) — `ParseJSON` them in the app the same
+way `results` is parsed. `extractedCriteria` was set as a flow variable back
+in §2.5 but never actually left the flow until now — it needs to reach the
+canvas app so it can be forwarded again, unchanged, as Lane 3's criteria
+input (`lane3-result-insight.md`), rather than Lane 3 re-deriving its own
+list. There is only one Respond action in this flow now — no validation
+branch means no second, rejected-path Respond to keep in sync with it.
 
 ### 2.10 Two limits to design around
 
@@ -436,6 +441,7 @@ ClearCollect(colInternal,
 );
 
 Set(varDisplayFields, ParseJSON(varLane1.displayFields));
+Set(varExtractedCriteria, ParseJSON(varLane1.extractedCriteria));
 
 UpdateContext({
     locLane1Status: $"Internal catalogue — {CountRows(colInternal)} results",
@@ -468,7 +474,10 @@ Which is exactly why §2.8 joins it in the flow instead.
 `ParseJSON` alone is enough here since it's a flat array of strings, not
 nested objects. Test whether a given field should render on a card with
 `CountRows(Filter(Table(varDisplayFields), Value = "headcount")) > 0` (or the
-`in` operator, depending on app version).
+`in` operator, depending on app version). `varExtractedCriteria` is the same
+shape (a flat array of requirement strings, e.g. `["Government experience",
+"ISO 27001"]`) — kept as-is in scope for now, to be passed unchanged into
+Lane 3's `.Run()` call (`lane3-result-insight.md`) as its `criteria` input.
 
 ### 3.3 Gallery binding
 
