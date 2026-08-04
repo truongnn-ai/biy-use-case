@@ -1,0 +1,26 @@
+{
+  "id": "6dfae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Sonoran Cloud Works",
+  "websiteDomain": "sonorancloudworks.com",
+  "vendorSummary": "Southwest cloud consultancy migrating retail and healthcare workloads to multi-cloud platforms with SRE retainers.",
+  "vendorText": "Sonoran Cloud Works (Sonoran Cloud Works Inc)\nIndustry: Information Technology | Domains: Retail & Consumer, Healthcare\nHQ: Phoenix, United States | Headcount: 340\nOverview: Southwest cloud consultancy migrating retail and healthcare workloads to multi-cloud platforms with SRE retainers.\nCapabilities: Cloud Migration, DevOps Automation, Site Reliability Engineering\nCertifications: SOC 2 Type II (A-LIGN), ISO/IEC 27001:2022 (Schellman & Company), AWS Advanced Tier Services Partner (Amazon Web Services)\nPast experience: \nRegional capacity: United States, Mexico",
+  "vendorStatus": "Potential",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Retail & Consumer",
+    "Healthcare"
+  ],
+  "capabilities": [
+    "Cloud Migration",
+    "DevOps Automation",
+    "Site Reliability Engineering"
+  ],
+  "certifications": [
+    "SOC 2 Type II",
+    "ISO/IEC 27001:2022",
+    "AWS Advanced Tier Services Partner"
+  ],
+  "country": "United States",
+  "headcount": 340,
+  "hasActiveContract": false
+}

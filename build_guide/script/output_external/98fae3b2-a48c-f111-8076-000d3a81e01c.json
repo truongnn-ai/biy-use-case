@@ -1,0 +1,24 @@
+{
+  "id": "98fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Rift Valley Data Labs",
+  "websiteDomain": "riftvalleydatalabs.co.ke",
+  "vendorSummary": "Nairobi analytics lab supporting health ministry data platforms across East Africa.",
+  "vendorText": "Rift Valley Data Labs (Rift Valley Data Labs Ltd)\nIndustry: Professional Services | Domains: Public Sector, Healthcare\nHQ: Nairobi, Kenya | Headcount: 220\nOverview: Nairobi analytics lab supporting health ministry data platforms across East Africa.\nCapabilities: Data Engineering, Business Intelligence\nCertifications: ISO 9001:2015 (KEBS Kenya), ISO/IEC 27001:2022 (KEBS Kenya)\nPast experience: \nRegional capacity: Kenya, Uganda, Tanzania",
+  "vendorStatus": "Potential",
+  "industry": "Professional Services",
+  "businessDomains": [
+    "Public Sector",
+    "Healthcare"
+  ],
+  "capabilities": [
+    "Data Engineering",
+    "Business Intelligence"
+  ],
+  "certifications": [
+    "ISO 9001:2015",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Kenya",
+  "headcount": 220,
+  "hasActiveContract": false
+}

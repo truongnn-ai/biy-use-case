@@ -1,0 +1,26 @@
+{
+  "id": "9a3e44c2-bfc1-4022-8c95-b83d2f292488",
+  "vendorName": "Hanseatic Systems GmbH",
+  "websiteDomain": "hanseatic-systems.de",
+  "vendorSummary": "SAP S/4HANA implementation specialist serving industrial manufacturers across the DACH region.",
+  "vendorText": "Hanseatic Systems GmbH (Hanseatic Systems GmbH)\nIndustry: Professional Services | Domains: Public Sector, Healthcare\nHQ: Hamburg, Germany | Headcount: 880\nOverview: SAP S/4HANA implementation specialist serving industrial manufacturers across the DACH region.\nCapabilities: ERP Implementation, Managed Services, Change Management\nCertifications: SAP Gold Partner (SAP SE), TISAX Assessment Level 2 (ENX Association), ISO 9001:2015 (TUV Rheinland)\nPast experience: Automotive Supplier Quality Portal — Case study: built a supplier quality collaboration portal for a German automotive tier-1, reducing defect escalation time from days to hours.; Warehouse Management System Rollout — Case study: rolled out a WMS across four distribution centres for a Belgian logistics group, cutting pick-pack cycle time by 22%.\nRegional capacity: Canada, United States",
+  "vendorStatus": "Registered",
+  "industry": "Professional Services",
+  "businessDomains": [
+    "Public Sector",
+    "Healthcare"
+  ],
+  "capabilities": [
+    "ERP Implementation",
+    "Managed Services",
+    "Change Management"
+  ],
+  "certifications": [
+    "SAP Gold Partner",
+    "TISAX Assessment Level 2",
+    "ISO 9001:2015"
+  ],
+  "country": "Germany",
+  "headcount": 880,
+  "hasActiveContract": false
+}

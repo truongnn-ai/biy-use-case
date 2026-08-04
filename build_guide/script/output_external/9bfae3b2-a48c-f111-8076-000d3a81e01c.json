@@ -1,0 +1,24 @@
+{
+  "id": "9bfae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Highveld Managed Services",
+  "websiteDomain": "highveldmanaged.co.za",
+  "vendorSummary": "Johannesburg managed IT provider supporting mining and utilities operations across Southern Africa.",
+  "vendorText": "Highveld Managed Services (Highveld Managed Services Pty Ltd)\nIndustry: Information Technology | Domains: Manufacturing, Energy & Utilities\nHQ: Johannesburg, South Africa | Headcount: 410\nOverview: Johannesburg managed IT provider supporting mining and utilities operations across Southern Africa.\nCapabilities: Managed Services, Network Infrastructure\nCertifications: ISO/IEC 27001:2022 (SABS South Africa), ISO/IEC 20000-1:2018 (SABS South Africa)\nPast experience: \nRegional capacity: South Africa, Botswana, Zambia",
+  "vendorStatus": "Registered",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Manufacturing",
+    "Energy & Utilities"
+  ],
+  "capabilities": [
+    "Managed Services",
+    "Network Infrastructure"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "ISO/IEC 20000-1:2018"
+  ],
+  "country": "South Africa",
+  "headcount": 410,
+  "hasActiveContract": false
+}

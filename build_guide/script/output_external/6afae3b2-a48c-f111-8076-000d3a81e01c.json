@@ -1,0 +1,24 @@
+{
+  "id": "6afae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Great Lakes ERP Partners",
+  "websiteDomain": "greatlakeserp.com",
+  "vendorSummary": "Midwest SAP and Oracle implementation partner focused on discrete manufacturing clients.",
+  "vendorText": "Great Lakes ERP Partners (Great Lakes ERP Partners LLC)\nIndustry: Professional Services | Domains: Manufacturing\nHQ: Chicago, United States | Headcount: 780\nOverview: Midwest SAP and Oracle implementation partner focused on discrete manufacturing clients.\nCapabilities: ERP Implementation, Change Management, Integration & APIs\nCertifications: ISO 9001:2015 (Schellman & Company), ISO/IEC 27001:2022 (Schellman & Company)\nPast experience: \nRegional capacity: United States",
+  "vendorStatus": "Registered",
+  "industry": "Professional Services",
+  "businessDomains": [
+    "Manufacturing"
+  ],
+  "capabilities": [
+    "ERP Implementation",
+    "Change Management",
+    "Integration & APIs"
+  ],
+  "certifications": [
+    "ISO 9001:2015",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "United States",
+  "headcount": 780,
+  "hasActiveContract": false
+}

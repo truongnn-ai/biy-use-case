@@ -1,0 +1,25 @@
+{
+  "id": "aea2510a-0527-4942-9030-c67dcd9cac5a",
+  "vendorName": "Hangang AI",
+  "websiteDomain": "hangang.ai",
+  "vendorSummary": "Applied AI product company shipping Korean-language conversational agents and OCR pipelines.",
+  "vendorText": "Hangang AI (Hangang AI Co Ltd)\nIndustry: Software Publishing | Domains: Financial Services, Public Sector\nHQ: Seoul, South Korea | Headcount: 145\nOverview: Applied AI product company shipping Korean-language conversational agents and OCR pipelines.\nCapabilities: Change Management, Managed Services, Data Governance\nCertifications: ISO/IEC 42001:2023 AI Management System (BSI Group Korea), ISO/IEC 27001:2022 (Korean Foundation for Quality)\nPast experience: Regional Language Support Chatbot — Case study: deployed a regional-language support chatbot for a telecom operator, containing 48% of tier-1 chat volume.\nRegional capacity: United Kingdom, Ireland",
+  "vendorStatus": "Potential",
+  "industry": "Software Publishing",
+  "businessDomains": [
+    "Financial Services",
+    "Public Sector"
+  ],
+  "capabilities": [
+    "Change Management",
+    "Managed Services",
+    "Data Governance"
+  ],
+  "certifications": [
+    "ISO/IEC 42001:2023 AI Management System",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "South Korea",
+  "headcount": 145,
+  "hasActiveContract": false
+}

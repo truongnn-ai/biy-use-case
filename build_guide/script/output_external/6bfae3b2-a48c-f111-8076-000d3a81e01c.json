@@ -1,0 +1,25 @@
+{
+  "id": "6bfae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Yukon Data Systems",
+  "websiteDomain": "yukondatasystems.ca",
+  "vendorSummary": "Prairie-based data platform vendor serving energy operators with production analytics and regulatory reporting pipelines.",
+  "vendorText": "Yukon Data Systems (Yukon Data Systems Corp)\nIndustry: Information Technology | Domains: Energy & Utilities, Public Sector\nHQ: Calgary, Canada | Headcount: 410\nOverview: Prairie-based data platform vendor serving energy operators with production analytics and regulatory reporting pipelines.\nCapabilities: Data Engineering, Business Intelligence, Data Governance\nCertifications: ISO/IEC 27701:2019 (BSI Group Canada), ISO/IEC 27001:2022 (BSI Group Canada)\nPast experience: \nRegional capacity: Canada, United States",
+  "vendorStatus": "Potential",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Energy & Utilities",
+    "Public Sector"
+  ],
+  "capabilities": [
+    "Data Engineering",
+    "Business Intelligence",
+    "Data Governance"
+  ],
+  "certifications": [
+    "ISO/IEC 27701:2019",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Canada",
+  "headcount": 410,
+  "hasActiveContract": false
+}

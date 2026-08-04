@@ -1,0 +1,24 @@
+{
+  "id": "71fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Pampas Data Collective",
+  "websiteDomain": "pampasdatacollective.com.ar",
+  "vendorSummary": "Buenos Aires analytics consultancy supporting energy and public-sector reporting modernisation.",
+  "vendorText": "Pampas Data Collective (Pampas Data Collective SA)\nIndustry: Professional Services | Domains: Energy & Utilities, Public Sector\nHQ: Buenos Aires, Argentina | Headcount: 210\nOverview: Buenos Aires analytics consultancy supporting energy and public-sector reporting modernisation.\nCapabilities: Data Engineering, Business Intelligence\nCertifications: ISO 9001:2015 (IRAM Argentina), ISO/IEC 27001:2022 (IRAM Argentina)\nPast experience: \nRegional capacity: Argentina, Uruguay",
+  "vendorStatus": "Registered",
+  "industry": "Professional Services",
+  "businessDomains": [
+    "Energy & Utilities",
+    "Public Sector"
+  ],
+  "capabilities": [
+    "Data Engineering",
+    "Business Intelligence"
+  ],
+  "certifications": [
+    "ISO 9001:2015",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Argentina",
+  "headcount": 210,
+  "hasActiveContract": false
+}

@@ -1,0 +1,25 @@
+{
+  "id": "80fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Madrid Managed Services",
+  "websiteDomain": "madridmanagedservices.es",
+  "vendorSummary": "Madrid managed services provider running SOC and network operations for regional retailers.",
+  "vendorText": "Madrid Managed Services (Madrid Managed Services SA)\nIndustry: Information Technology | Domains: Public Sector, Retail & Consumer\nHQ: Madrid, Spain | Headcount: 560\nOverview: Madrid managed services provider running SOC and network operations for regional retailers.\nCapabilities: Managed Services, Cybersecurity Operations, Network Infrastructure\nCertifications: ISO/IEC 20000-1:2018 (AENOR), ISO/IEC 27001:2022 (AENOR)\nPast experience: \nRegional capacity: Spain, Portugal",
+  "vendorStatus": "Potential",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Public Sector",
+    "Retail & Consumer"
+  ],
+  "capabilities": [
+    "Managed Services",
+    "Cybersecurity Operations",
+    "Network Infrastructure"
+  ],
+  "certifications": [
+    "ISO/IEC 20000-1:2018",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Spain",
+  "headcount": 560,
+  "hasActiveContract": false
+}

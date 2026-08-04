@@ -1,0 +1,26 @@
+{
+  "id": "bf43a72c-3b95-470d-a54b-b79f29e47f91",
+  "vendorName": "Siam Integration",
+  "websiteDomain": "siamintegration.co.th",
+  "vendorSummary": "Industrial systems integrator linking plant-floor OT with enterprise IT, plus field maintenance coverage.",
+  "vendorText": "Siam Integration (Siam Integration Co Ltd)\nIndustry: Engineering Services | Domains: Financial Services, Retail & Consumer\nHQ: Bangkok, Thailand | Headcount: 540\nOverview: Industrial systems integrator linking plant-floor OT with enterprise IT, plus field maintenance coverage.\nCapabilities: Data Engineering, Business Intelligence, Data Governance\nCertifications: IEC 62443-2-4 Service Provider (TUV Nord Thailand), ISO 45001:2018 (TUV Nord Thailand), ISO 9001:2015 (TUV Nord Thailand)\nPast experience: Manufacturing OT-IT Bridge Programme — Ongoing programme bridging plant-floor operational technology with enterprise IT across three regional plants.\nRegional capacity: India, United Arab Emirates, United Kingdom",
+  "vendorStatus": "Registered",
+  "industry": "Engineering Services",
+  "businessDomains": [
+    "Financial Services",
+    "Retail & Consumer"
+  ],
+  "capabilities": [
+    "Data Engineering",
+    "Business Intelligence",
+    "Data Governance"
+  ],
+  "certifications": [
+    "IEC 62443-2-4 Service Provider",
+    "ISO 45001:2018",
+    "ISO 9001:2015"
+  ],
+  "country": "Thailand",
+  "headcount": 540,
+  "hasActiveContract": false
+}

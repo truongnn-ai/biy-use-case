@@ -1,0 +1,24 @@
+{
+  "id": "77fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Shannon Estuary Robotics",
+  "websiteDomain": "shannonestuaryrobotics.ie",
+  "vendorSummary": "Limerick-based automation integrator serving medtech and pharma manufacturing lines.",
+  "vendorText": "Shannon Estuary Robotics (Shannon Estuary Robotics Ltd)\nIndustry: Information Technology | Domains: Manufacturing\nHQ: Limerick, Ireland | Headcount: 130\nOverview: Limerick-based automation integrator serving medtech and pharma manufacturing lines.\nCapabilities: RPA, Application Development, Test Automation\nCertifications: ISO/IEC 27001:2022 (NSAI), ISO 9001:2015 (NSAI)\nPast experience: \nRegional capacity: Ireland",
+  "vendorStatus": "Registered",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Manufacturing"
+  ],
+  "capabilities": [
+    "RPA",
+    "Application Development",
+    "Test Automation"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "ISO 9001:2015"
+  ],
+  "country": "Ireland",
+  "headcount": 130,
+  "hasActiveContract": false
+}

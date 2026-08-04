@@ -1,0 +1,24 @@
+{
+  "id": "8cfae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Bosphorus Bridge IT",
+  "websiteDomain": "bosphorusbridgeit.com.tr",
+  "vendorSummary": "Istanbul fintech integrator connecting regional payment rails for retail lenders.",
+  "vendorText": "Bosphorus Bridge IT (Bosphorus Bridge IT A.S.)\nIndustry: Financial Technology | Domains: Financial Services, Retail & Consumer\nHQ: Istanbul, Turkiye | Headcount: 380\nOverview: Istanbul fintech integrator connecting regional payment rails for retail lenders.\nCapabilities: Integration & APIs, Machine Learning\nCertifications: ISO/IEC 27001:2022 (TSE Turkiye), PCI DSS Level 1 Service Provider (ControlCase EU)\nPast experience: \nRegional capacity: Turkiye, Greece",
+  "vendorStatus": "Potential",
+  "industry": "Financial Technology",
+  "businessDomains": [
+    "Financial Services",
+    "Retail & Consumer"
+  ],
+  "capabilities": [
+    "Integration & APIs",
+    "Machine Learning"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "PCI DSS Level 1 Service Provider"
+  ],
+  "country": "Turkiye",
+  "headcount": 380,
+  "hasActiveContract": false
+}

@@ -1,0 +1,26 @@
+{
+  "id": "8d66e83a-7774-42de-9fa2-49414c96244d",
+  "vendorName": "Acme Technologies",
+  "websiteDomain": "acmetech.com",
+  "vendorSummary": "Boutique document AI firm specialising in intelligent document processing for regulated industries, with its primary delivery hub in Singapore.",
+  "vendorText": "Acme Technologies (Acme Technologies Pte Ltd)\nIndustry: Information Technology | Domains: Healthcare, Financial Services\nHQ: Singapore, Singapore | Headcount: 240\nOverview: Boutique document AI firm specialising in intelligent document processing for regulated industries, with its primary delivery hub in Singapore.\nCapabilities: Cloud Migration, Identity & Access Management, Cybersecurity Operations\nCertifications: MTCS SS 584 Tier 3 (TUV SUD PSB), SOC 2 Type II (Ernst & Young LLP), ISO/IEC 27001:2022 (BSI Group)\nPast experience: Supplier Invoice OCR Rollout — Extended the document intelligence pilot to accounts payable across two more business units, holding straight-through processing above 70%.; Contract Metadata Extraction Pilot — Piloted clause and metadata extraction across 3,000 vendor contracts to seed the new contract repository.\nRegional capacity: Ireland, United Kingdom",
+  "vendorStatus": "Potential",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Healthcare",
+    "Financial Services"
+  ],
+  "capabilities": [
+    "Cloud Migration",
+    "Identity & Access Management",
+    "Cybersecurity Operations"
+  ],
+  "certifications": [
+    "MTCS SS 584 Tier 3",
+    "SOC 2 Type II",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Singapore",
+  "headcount": 240,
+  "hasActiveContract": false
+}

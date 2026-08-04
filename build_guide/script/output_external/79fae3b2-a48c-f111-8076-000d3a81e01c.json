@@ -1,0 +1,26 @@
+{
+  "id": "79fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Rhine Valley Systems",
+  "websiteDomain": "rhinevalleysystems.de",
+  "vendorSummary": "Rhineland SAP partner delivering ERP consolidation for chemical and utilities groups.",
+  "vendorText": "Rhine Valley Systems (Rhine Valley Systems GmbH)\nIndustry: Professional Services | Domains: Manufacturing, Energy & Utilities\nHQ: Cologne, Germany | Headcount: 690\nOverview: Rhineland SAP partner delivering ERP consolidation for chemical and utilities groups.\nCapabilities: ERP Implementation, Integration & APIs, Change Management\nCertifications: ISO 9001:2015 (TUV Rheinland), ISO/IEC 27001:2022 (TUV Rheinland), SAP Gold Partner (SAP SE)\nPast experience: \nRegional capacity: Germany, Netherlands",
+  "vendorStatus": "Registered",
+  "industry": "Professional Services",
+  "businessDomains": [
+    "Manufacturing",
+    "Energy & Utilities"
+  ],
+  "capabilities": [
+    "ERP Implementation",
+    "Integration & APIs",
+    "Change Management"
+  ],
+  "certifications": [
+    "ISO 9001:2015",
+    "ISO/IEC 27001:2022",
+    "SAP Gold Partner"
+  ],
+  "country": "Germany",
+  "headcount": 690,
+  "hasActiveContract": false
+}

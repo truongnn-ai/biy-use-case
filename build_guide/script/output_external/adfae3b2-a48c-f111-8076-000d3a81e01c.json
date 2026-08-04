@@ -1,0 +1,24 @@
+{
+  "id": "adfae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Hokkaido Field Systems",
+  "websiteDomain": "hokkaidofieldsystems.co.jp",
+  "vendorSummary": "Sapporo engineering firm maintaining rural network infrastructure for utilities and logistics clients.",
+  "vendorText": "Hokkaido Field Systems (Hokkaido Field Systems Co Ltd)\nIndustry: Engineering Services | Domains: Energy & Utilities, Transport & Logistics\nHQ: Sapporo, Japan | Headcount: 140\nOverview: Sapporo engineering firm maintaining rural network infrastructure for utilities and logistics clients.\nCapabilities: Network Infrastructure, Managed Services\nCertifications: ISO/IEC 27001:2022 (Japan Quality Assurance Organisation), ISO 9001:2015 (Japan Quality Assurance Organisation)\nPast experience: \nRegional capacity: Japan",
+  "vendorStatus": "Potential",
+  "industry": "Engineering Services",
+  "businessDomains": [
+    "Energy & Utilities",
+    "Transport & Logistics"
+  ],
+  "capabilities": [
+    "Network Infrastructure",
+    "Managed Services"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "ISO 9001:2015"
+  ],
+  "country": "Japan",
+  "headcount": 140,
+  "hasActiveContract": false
+}

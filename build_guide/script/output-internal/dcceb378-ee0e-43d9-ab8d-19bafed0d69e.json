@@ -1,0 +1,27 @@
+{
+  "id": "dcceb378-ee0e-43d9-ab8d-19bafed0d69e",
+  "vendorName": "Bayanihan BPO",
+  "websiteDomain": "bayanihanbpo.ph",
+  "vendorSummary": "Large outsourcing provider handling claims processing and back-office operations, increasingly automation-led.",
+  "vendorText": "Bayanihan BPO (Bayanihan Business Services Inc)\nIndustry: Business Process Outsourcing | Domains: Energy & Utilities, Public Sector\nHQ: Manila, Philippines | Headcount: 3400\nOverview: Large outsourcing provider handling claims processing and back-office operations, increasingly automation-led.\nCapabilities: Cloud Migration, Cybersecurity Operations, Managed Services\nCertifications: PCI DSS Level 1 Service Provider (ControlCase), ISO 9001:2015 (SGS Philippines), HIPAA Compliance Attestation (Coalfire), ISO/IEC 27001:2022 (TUV Rheinland Philippines)\nPast experience: Loan Servicing Back-Office Transition — Ongoing transition of loan servicing back-office functions; two of four process areas transitioned so far.\nRegional capacity: United Arab Emirates, Saudi Arabia, Qatar",
+  "vendorStatus": "Existing",
+  "industry": "Business Process Outsourcing",
+  "businessDomains": [
+    "Energy & Utilities",
+    "Public Sector"
+  ],
+  "capabilities": [
+    "Cloud Migration",
+    "Cybersecurity Operations",
+    "Managed Services"
+  ],
+  "certifications": [
+    "PCI DSS Level 1 Service Provider",
+    "ISO 9001:2015",
+    "HIPAA Compliance Attestation",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Philippines",
+  "headcount": 3400,
+  "hasActiveContract": true
+}

@@ -1,0 +1,25 @@
+{
+  "id": "a66ec1b0-a48c-f111-8076-000d3a80923d",
+  "vendorName": "Shannon Cloud",
+  "websiteDomain": "shannoncloud.ie",
+  "vendorSummary": "Dublin-based GDPR-aligned cloud and identity modernisation provider, freshly discovered through external vendor scanning.",
+  "vendorText": "Shannon Cloud (Shannon Cloud Group Designated Activity Company)\nIndustry: Information Technology | Domains: Healthcare, Financial Services\nHQ: Dublin, Ireland | Headcount: 485\nOverview: Dublin-based GDPR-aligned cloud and identity modernisation provider, freshly discovered through external vendor scanning.\nCapabilities: Cloud Migration, Cybersecurity Operations, Identity & Access Management\nCertifications: ISO/IEC 27701:2019 (NSAI), ISO/IEC 27001:2022 (NSAI)\nPast experience: \nRegional capacity: Ireland, United Kingdom",
+  "vendorStatus": "Potential",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Healthcare",
+    "Financial Services"
+  ],
+  "capabilities": [
+    "Cloud Migration",
+    "Cybersecurity Operations",
+    "Identity & Access Management"
+  ],
+  "certifications": [
+    "ISO/IEC 27701:2019",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Ireland",
+  "headcount": 485,
+  "hasActiveContract": false
+}

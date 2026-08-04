@@ -1,0 +1,27 @@
+{
+  "id": "4474ff98-14d5-481e-a5f6-ce16851a7df5",
+  "vendorName": "Pacific Rim Networks",
+  "websiteDomain": "pacificrimnetworks.com",
+  "vendorSummary": "Network integrator and managed service provider covering trans-Pacific connectivity, SD-WAN and edge infrastructure.",
+  "vendorText": "Pacific Rim Networks (Pacific Rim Networks Inc)\nIndustry: Telecommunications | Domains: Manufacturing, Transport & Logistics\nHQ: Seattle, United States | Headcount: 2100\nOverview: Network integrator and managed service provider covering trans-Pacific connectivity, SD-WAN and edge infrastructure.\nCapabilities: Test Automation, Application Development, Integration & APIs\nCertifications: ISO 22301:2019 (BSI Group Americas), Cisco Gold Provider (Cisco Systems), SOC 2 Type II (Schellman & Company), ISO/IEC 27001:2022 (Schellman & Company)\nPast experience: Field Office Satellite Backup Links — Ongoing rollout of satellite backup links for field offices in low-connectivity regions.; Branch Office Connectivity Refresh — Refreshed connectivity at 22 branch offices, reducing average packet loss during peak hours by 40%.\nRegional capacity: Vietnam, Singapore, Japan",
+  "vendorStatus": "Existing",
+  "industry": "Telecommunications",
+  "businessDomains": [
+    "Manufacturing",
+    "Transport & Logistics"
+  ],
+  "capabilities": [
+    "Test Automation",
+    "Application Development",
+    "Integration & APIs"
+  ],
+  "certifications": [
+    "ISO 22301:2019",
+    "Cisco Gold Provider",
+    "SOC 2 Type II",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "United States",
+  "headcount": 2100,
+  "hasActiveContract": true
+}

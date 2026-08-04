@@ -1,0 +1,24 @@
+{
+  "id": "c6fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Patagonia Field Networks",
+  "websiteDomain": "patagoniafieldnetworks.cl",
+  "vendorSummary": "Punta Arenas engineering firm maintaining remote-region energy and logistics connectivity.",
+  "vendorText": "Patagonia Field Networks (Patagonia Field Networks SA)\nIndustry: Engineering Services | Domains: Energy & Utilities, Transport & Logistics\nHQ: Punta Arenas, Chile | Headcount: 70\nOverview: Punta Arenas engineering firm maintaining remote-region energy and logistics connectivity.\nCapabilities: Network Infrastructure, Integration & APIs\nCertifications: ISO 9001:2015 (INN Chile), ISO/IEC 27001:2022 (INN Chile)\nPast experience: \nRegional capacity: Chile, Argentina",
+  "vendorStatus": "Registered",
+  "industry": "Engineering Services",
+  "businessDomains": [
+    "Energy & Utilities",
+    "Transport & Logistics"
+  ],
+  "capabilities": [
+    "Network Infrastructure",
+    "Integration & APIs"
+  ],
+  "certifications": [
+    "ISO 9001:2015",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Chile",
+  "headcount": 70,
+  "hasActiveContract": false
+}

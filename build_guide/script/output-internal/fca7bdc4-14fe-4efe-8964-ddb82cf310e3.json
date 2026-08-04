@@ -1,0 +1,24 @@
+{
+  "id": "fca7bdc4-14fe-4efe-8964-ddb82cf310e3",
+  "vendorName": "Victoria Peak Advisory",
+  "websiteDomain": "vpadvisory.hk",
+  "vendorSummary": "Boutique advisory practice covering data governance and regulatory reporting for regional financial institutions.",
+  "vendorText": "Victoria Peak Advisory (Victoria Peak Advisory Ltd)\nIndustry: Consulting | Domains: Public Sector, Energy & Utilities\nHQ: Hong Kong, Hong Kong SAR | Headcount: 210\nOverview: Boutique advisory practice covering data governance and regulatory reporting for regional financial institutions.\nCapabilities: Cybersecurity Operations, Penetration Testing, Identity & Access Management\nCertifications: ISO/IEC 27001:2022 (Hong Kong Quality Assurance Agency)\nPast experience: Energy Trading Risk Model Review — Case study: independent review of a Hong Kong energy trader's risk models, identifying two material calibration gaps closed before go-live.\nRegional capacity: Australia, New Zealand",
+  "vendorStatus": "Potential",
+  "industry": "Consulting",
+  "businessDomains": [
+    "Public Sector",
+    "Energy & Utilities"
+  ],
+  "capabilities": [
+    "Cybersecurity Operations",
+    "Penetration Testing",
+    "Identity & Access Management"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Hong Kong SAR",
+  "headcount": 210,
+  "hasActiveContract": false
+}

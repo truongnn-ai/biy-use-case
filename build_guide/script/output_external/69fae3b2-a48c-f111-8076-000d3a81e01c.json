@@ -1,0 +1,26 @@
+{
+  "id": "69fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Ironclad Cyber Defense",
+  "websiteDomain": "ironcladcyberdefense.com",
+  "vendorSummary": "Managed security provider offering continuous penetration testing and identity modernisation for critical infrastructure operators.",
+  "vendorText": "Ironclad Cyber Defense (Ironclad Cyber Defense Inc)\nIndustry: Cybersecurity | Domains: Public Sector, Energy & Utilities\nHQ: Austin, United States | Headcount: 220\nOverview: Managed security provider offering continuous penetration testing and identity modernisation for critical infrastructure operators.\nCapabilities: Cybersecurity Operations, Penetration Testing, Identity & Access Management\nCertifications: SOC 2 Type II (Schellman & Company), ISO/IEC 27001:2022 (Schellman & Company), CREST Accredited Penetration Testing (CREST)\nPast experience: \nRegional capacity: United States, Canada, Mexico",
+  "vendorStatus": "Potential",
+  "industry": "Cybersecurity",
+  "businessDomains": [
+    "Public Sector",
+    "Energy & Utilities"
+  ],
+  "capabilities": [
+    "Cybersecurity Operations",
+    "Penetration Testing",
+    "Identity & Access Management"
+  ],
+  "certifications": [
+    "SOC 2 Type II",
+    "ISO/IEC 27001:2022",
+    "CREST Accredited Penetration Testing"
+  ],
+  "country": "United States",
+  "headcount": 220,
+  "hasActiveContract": false
+}

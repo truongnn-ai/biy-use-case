@@ -1,0 +1,25 @@
+{
+  "id": "68fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Blue Harbor Consulting",
+  "websiteDomain": "blueharborconsulting.com",
+  "vendorSummary": "Boutique advisory firm supporting regulatory change and data governance programmes for New England financial institutions.",
+  "vendorText": "Blue Harbor Consulting (Blue Harbor Consulting LLC)\nIndustry: Consulting | Domains: Financial Services, Public Sector\nHQ: Boston, United States | Headcount: 640\nOverview: Boutique advisory firm supporting regulatory change and data governance programmes for New England financial institutions.\nCapabilities: Change Management, Data Governance, Business Intelligence\nCertifications: ISO/IEC 27001:2022 (BSI Group America), ISO 9001:2015 (BSI Group America)\nPast experience: \nRegional capacity: United States",
+  "vendorStatus": "Registered",
+  "industry": "Consulting",
+  "businessDomains": [
+    "Financial Services",
+    "Public Sector"
+  ],
+  "capabilities": [
+    "Change Management",
+    "Data Governance",
+    "Business Intelligence"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "ISO 9001:2015"
+  ],
+  "country": "United States",
+  "headcount": 640,
+  "hasActiveContract": false
+}

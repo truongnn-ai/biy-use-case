@@ -1,0 +1,25 @@
+{
+  "id": "86fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Skane Digital Works",
+  "websiteDomain": "skanedigitalworks.se",
+  "vendorSummary": "Malmo cross-border digital studio serving Oresund region retail and manufacturing clients.",
+  "vendorText": "Skane Digital Works (Skane Digital Works AB)\nIndustry: Information Technology | Domains: Retail & Consumer, Manufacturing\nHQ: Malmo, Sweden | Headcount: 330\nOverview: Malmo cross-border digital studio serving Oresund region retail and manufacturing clients.\nCapabilities: Application Development, RPA, Business Intelligence\nCertifications: ISO/IEC 27001:2022 (RISE Sweden), ISO 9001:2015 (SP Sweden)\nPast experience: \nRegional capacity: Sweden, Denmark",
+  "vendorStatus": "Potential",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Retail & Consumer",
+    "Manufacturing"
+  ],
+  "capabilities": [
+    "Application Development",
+    "RPA",
+    "Business Intelligence"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "ISO 9001:2015"
+  ],
+  "country": "Sweden",
+  "headcount": 330,
+  "hasActiveContract": false
+}

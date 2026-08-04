@@ -1,0 +1,24 @@
+{
+  "id": "bffae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Ottawa Valley Assurance",
+  "websiteDomain": "ottawavalleyassurance.ca",
+  "vendorSummary": "Ottawa advisory firm supporting federal agency data governance modernisation.",
+  "vendorText": "Ottawa Valley Assurance (Ottawa Valley Assurance Inc)\nIndustry: Consulting | Domains: Public Sector, Financial Services\nHQ: Ottawa, Canada | Headcount: 150\nOverview: Ottawa advisory firm supporting federal agency data governance modernisation.\nCapabilities: Data Governance, Change Management\nCertifications: ISO/IEC 27701:2019 (BSI Group Canada), ISO 9001:2015 (BSI Group Canada)\nPast experience: \nRegional capacity: Canada",
+  "vendorStatus": "Potential",
+  "industry": "Consulting",
+  "businessDomains": [
+    "Public Sector",
+    "Financial Services"
+  ],
+  "capabilities": [
+    "Data Governance",
+    "Change Management"
+  ],
+  "certifications": [
+    "ISO/IEC 27701:2019",
+    "ISO 9001:2015"
+  ],
+  "country": "Canada",
+  "headcount": 150,
+  "hasActiveContract": false
+}

@@ -1,0 +1,24 @@
+{
+  "id": "88fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Vistula Systems Group",
+  "websiteDomain": "vistulasystems.pl",
+  "vendorSummary": "Warsaw ERP integrator delivering finance transformation for Central European manufacturers.",
+  "vendorText": "Vistula Systems Group (Vistula Systems Group Sp. z o.o.)\nIndustry: Professional Services | Domains: Manufacturing, Public Sector\nHQ: Warsaw, Poland | Headcount: 470\nOverview: Warsaw ERP integrator delivering finance transformation for Central European manufacturers.\nCapabilities: ERP Implementation, Integration & APIs\nCertifications: ISO 9001:2015 (PCBC Poland), ISO/IEC 27001:2022 (PCBC Poland)\nPast experience: \nRegional capacity: Poland, Germany",
+  "vendorStatus": "Potential",
+  "industry": "Professional Services",
+  "businessDomains": [
+    "Manufacturing",
+    "Public Sector"
+  ],
+  "capabilities": [
+    "ERP Implementation",
+    "Integration & APIs"
+  ],
+  "certifications": [
+    "ISO 9001:2015",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Poland",
+  "headcount": 470,
+  "hasActiveContract": false
+}

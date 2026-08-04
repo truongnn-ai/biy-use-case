@@ -1,0 +1,27 @@
+{
+  "id": "810a32a6-ba7a-4a6e-a747-bcad70e79cb7",
+  "vendorName": "Shannon Cloud Group",
+  "websiteDomain": "shannoncloud.ie",
+  "vendorSummary": "EU-resident cloud provider offering GDPR-aligned hosting, identity modernisation and managed detection.",
+  "vendorText": "Shannon Cloud Group (Shannon Cloud Group DAC)\nIndustry: Information Technology | Domains: Financial Services, Public Sector\nHQ: Dublin, Ireland | Headcount: 470\nOverview: EU-resident cloud provider offering GDPR-aligned hosting, identity modernisation and managed detection.\nCapabilities: Document Intelligence, RPA, Machine Learning\nCertifications: SOC 2 Type II (Deloitte Ireland), HITRUST CSF r2 Certification (HITRUST Alliance), ISO/IEC 27018:2019 (NSAI), ISO/IEC 27001:2022 (NSAI)\nPast experience: EU Data Residency Compliance Review — Case study: independent review confirming EU data residency compliance for an Irish public-sector client ahead of an audit deadline.\nRegional capacity: Singapore, Malaysia, Indonesia",
+  "vendorStatus": "Registered",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Financial Services",
+    "Public Sector"
+  ],
+  "capabilities": [
+    "Document Intelligence",
+    "RPA",
+    "Machine Learning"
+  ],
+  "certifications": [
+    "SOC 2 Type II",
+    "HITRUST CSF r2 Certification",
+    "ISO/IEC 27018:2019",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Ireland",
+  "headcount": 470,
+  "hasActiveContract": false
+}

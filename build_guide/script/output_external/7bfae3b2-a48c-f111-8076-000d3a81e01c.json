@@ -1,0 +1,24 @@
+{
+  "id": "7bfae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Bavarian Cyber Guard",
+  "websiteDomain": "bavariancyberguard.de",
+  "vendorSummary": "Munich-based security testing firm serving DACH region automotive and banking clients.",
+  "vendorText": "Bavarian Cyber Guard (Bavarian Cyber Guard AG)\nIndustry: Cybersecurity | Domains: Manufacturing, Financial Services\nHQ: Munich, Germany | Headcount: 260\nOverview: Munich-based security testing firm serving DACH region automotive and banking clients.\nCapabilities: Cybersecurity Operations, Penetration Testing\nCertifications: CREST Accredited Penetration Testing (CREST), ISO/IEC 27001:2022 (TUV SUD)\nPast experience: \nRegional capacity: Germany, Austria, Switzerland",
+  "vendorStatus": "Registered",
+  "industry": "Cybersecurity",
+  "businessDomains": [
+    "Manufacturing",
+    "Financial Services"
+  ],
+  "capabilities": [
+    "Cybersecurity Operations",
+    "Penetration Testing"
+  ],
+  "certifications": [
+    "CREST Accredited Penetration Testing",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Germany",
+  "headcount": 260,
+  "hasActiveContract": false
+}

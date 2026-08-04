@@ -1,0 +1,24 @@
+{
+  "id": "7efae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Zeeland Data Governance",
+  "websiteDomain": "zeelanddatagovernance.nl",
+  "vendorSummary": "Rotterdam boutique advising on data governance and reporting for energy trading desks.",
+  "vendorText": "Zeeland Data Governance (Zeeland Data Governance B.V.)\nIndustry: Professional Services | Domains: Financial Services, Energy & Utilities\nHQ: Rotterdam, Netherlands | Headcount: 190\nOverview: Rotterdam boutique advising on data governance and reporting for energy trading desks.\nCapabilities: Data Governance, Business Intelligence\nCertifications: ISO/IEC 27001:2022 (DEKRA Certification), ISO/IEC 27701:2019 (DEKRA Certification)\nPast experience: \nRegional capacity: Netherlands",
+  "vendorStatus": "Potential",
+  "industry": "Professional Services",
+  "businessDomains": [
+    "Financial Services",
+    "Energy & Utilities"
+  ],
+  "capabilities": [
+    "Data Governance",
+    "Business Intelligence"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "ISO/IEC 27701:2019"
+  ],
+  "country": "Netherlands",
+  "headcount": 190,
+  "hasActiveContract": false
+}

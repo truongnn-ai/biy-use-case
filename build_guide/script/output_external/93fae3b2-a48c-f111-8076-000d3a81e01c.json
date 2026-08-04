@@ -1,0 +1,25 @@
+{
+  "id": "93fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Galilee Cyber Works",
+  "websiteDomain": "galileecyberworks.co.il",
+  "vendorSummary": "Tel Aviv security research firm offering penetration testing for regional banks and telcos.",
+  "vendorText": "Galilee Cyber Works (Galilee Cyber Works Ltd)\nIndustry: Cybersecurity | Domains: Financial Services, Telecommunications\nHQ: Tel Aviv, Israel | Headcount: 210\nOverview: Tel Aviv security research firm offering penetration testing for regional banks and telcos.\nCapabilities: Cybersecurity Operations, Penetration Testing, Identity & Access Management\nCertifications: CREST Accredited Penetration Testing (CREST), ISO/IEC 27001:2022 (SII Israel)\nPast experience: \nRegional capacity: Israel, Cyprus",
+  "vendorStatus": "Registered",
+  "industry": "Cybersecurity",
+  "businessDomains": [
+    "Financial Services",
+    "Telecommunications"
+  ],
+  "capabilities": [
+    "Cybersecurity Operations",
+    "Penetration Testing",
+    "Identity & Access Management"
+  ],
+  "certifications": [
+    "CREST Accredited Penetration Testing",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Israel",
+  "headcount": 210,
+  "hasActiveContract": false
+}

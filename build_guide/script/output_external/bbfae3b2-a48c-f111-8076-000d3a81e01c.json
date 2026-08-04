@@ -1,0 +1,24 @@
+{
+  "id": "bbfae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Outback Field Robotics",
+  "websiteDomain": "outbackfieldrobotics.com.au",
+  "vendorSummary": "Perth automation vendor deploying remote-operations robotics software for mining and energy sites.",
+  "vendorText": "Outback Field Robotics (Outback Field Robotics Pty Ltd)\nIndustry: Information Technology | Domains: Manufacturing, Energy & Utilities\nHQ: Perth, Australia | Headcount: 210\nOverview: Perth automation vendor deploying remote-operations robotics software for mining and energy sites.\nCapabilities: RPA, Application Development\nCertifications: ISO 9001:2015 (SAI Global Australia), ISO/IEC 27001:2022 (SAI Global Australia)\nPast experience: \nRegional capacity: Australia",
+  "vendorStatus": "Potential",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Manufacturing",
+    "Energy & Utilities"
+  ],
+  "capabilities": [
+    "RPA",
+    "Application Development"
+  ],
+  "certifications": [
+    "ISO 9001:2015",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Australia",
+  "headcount": 210,
+  "hasActiveContract": false
+}

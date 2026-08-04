@@ -1,0 +1,26 @@
+{
+  "id": "67fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Cascade Robotics",
+  "websiteDomain": "cascaderobotics.com",
+  "vendorSummary": "Applied robotics and RPA integrator serving Pacific Northwest manufacturers and logistics operators.",
+  "vendorText": "Cascade Robotics (Cascade Robotics Inc)\nIndustry: Information Technology | Domains: Manufacturing, Transport & Logistics\nHQ: Seattle, United States | Headcount: 310\nOverview: Applied robotics and RPA integrator serving Pacific Northwest manufacturers and logistics operators.\nCapabilities: RPA, Machine Learning, Application Development\nCertifications: AWS Advanced Tier Services Partner (Amazon Web Services), SOC 2 Type II (Moss Adams LLP), ISO/IEC 27001:2022 (TUV SUD America)\nPast experience: \nRegional capacity: United States, Canada",
+  "vendorStatus": "Potential",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Manufacturing",
+    "Transport & Logistics"
+  ],
+  "capabilities": [
+    "RPA",
+    "Machine Learning",
+    "Application Development"
+  ],
+  "certifications": [
+    "AWS Advanced Tier Services Partner",
+    "SOC 2 Type II",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "United States",
+  "headcount": 310,
+  "hasActiveContract": false
+}

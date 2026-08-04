@@ -1,0 +1,24 @@
+{
+  "id": "87fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Baltic Sea Cyber Labs",
+  "websiteDomain": "balticseacyberlabs.fi",
+  "vendorSummary": "Helsinki security lab providing identity modernisation for Nordic telecom operators.",
+  "vendorText": "Baltic Sea Cyber Labs (Baltic Sea Cyber Labs Oy)\nIndustry: Cybersecurity | Domains: Public Sector, Telecommunications\nHQ: Helsinki, Finland | Headcount: 140\nOverview: Helsinki security lab providing identity modernisation for Nordic telecom operators.\nCapabilities: Cybersecurity Operations, Identity & Access Management\nCertifications: CREST Accredited Penetration Testing (CREST), ISO/IEC 27001:2022 (Inspecta Finland)\nPast experience: \nRegional capacity: Finland, Estonia, Sweden",
+  "vendorStatus": "Registered",
+  "industry": "Cybersecurity",
+  "businessDomains": [
+    "Public Sector",
+    "Telecommunications"
+  ],
+  "capabilities": [
+    "Cybersecurity Operations",
+    "Identity & Access Management"
+  ],
+  "certifications": [
+    "CREST Accredited Penetration Testing",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Finland",
+  "headcount": 140,
+  "hasActiveContract": false
+}

@@ -1,0 +1,26 @@
+{
+  "id": "ccf4d9c6-30c1-4958-828a-5c1e9e23df79",
+  "vendorName": "Maple Ridge Systems",
+  "websiteDomain": "mapleridgesystems.ca",
+  "vendorSummary": "Public-sector ERP and finance transformation specialist with a bilingual service desk.",
+  "vendorText": "Maple Ridge Systems (Maple Ridge Systems Corp)\nIndustry: Professional Services | Domains: Manufacturing, Energy & Utilities\nHQ: Toronto, Canada | Headcount: 950\nOverview: Public-sector ERP and finance transformation specialist with a bilingual service desk.\nCapabilities: ERP Implementation, Integration & APIs, Change Management\nCertifications: ISO/IEC 20000-1:2018 (BSI Group Canada), SOC 2 Type II (MNP LLP), ISO/IEC 27001:2022 (BSI Group Canada)\nPast experience: ERP Month-End Close Acceleration — Reworked month-end close processes in the finance ERP, cutting close time from six days to three.\nRegional capacity: Germany, Netherlands, Poland",
+  "vendorStatus": "Potential",
+  "industry": "Professional Services",
+  "businessDomains": [
+    "Manufacturing",
+    "Energy & Utilities"
+  ],
+  "capabilities": [
+    "ERP Implementation",
+    "Integration & APIs",
+    "Change Management"
+  ],
+  "certifications": [
+    "ISO/IEC 20000-1:2018",
+    "SOC 2 Type II",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Canada",
+  "headcount": 950,
+  "hasActiveContract": true
+}

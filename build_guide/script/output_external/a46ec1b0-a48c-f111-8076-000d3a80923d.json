@@ -1,0 +1,25 @@
+{
+  "id": "a46ec1b0-a48c-f111-8076-000d3a80923d",
+  "vendorName": "Siam Integration Group",
+  "websiteDomain": "siamintegration.co.th",
+  "vendorSummary": "Bangkok industrial systems integrator connecting plant-floor OT with enterprise IT, re-identified via manual registration with an expanded network infrastructure practice.",
+  "vendorText": "Siam Integration Group (Siam Integration Public Co Ltd)\nIndustry: Engineering Services | Domains: Manufacturing, Retail & Consumer\nHQ: Bangkok, Thailand | Headcount: 560\nOverview: Bangkok industrial systems integrator connecting plant-floor OT with enterprise IT, re-identified via manual registration with an expanded network infrastructure practice.\nCapabilities: Network Infrastructure, Integration & APIs, Managed Services\nCertifications: ISO/IEC 27001:2022 (TUV Nord Thailand), ISO 9001:2015 (TUV Nord Thailand)\nPast experience: \nRegional capacity: Thailand, Vietnam",
+  "vendorStatus": "Potential",
+  "industry": "Engineering Services",
+  "businessDomains": [
+    "Manufacturing",
+    "Retail & Consumer"
+  ],
+  "capabilities": [
+    "Network Infrastructure",
+    "Integration & APIs",
+    "Managed Services"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "ISO 9001:2015"
+  ],
+  "country": "Thailand",
+  "headcount": 560,
+  "hasActiveContract": false
+}

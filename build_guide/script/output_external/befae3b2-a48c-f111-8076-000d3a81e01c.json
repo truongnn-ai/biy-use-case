@@ -1,0 +1,24 @@
+{
+  "id": "befae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Appalachian Managed IT",
+  "websiteDomain": "appalachianmanagedit.com",
+  "vendorSummary": "Charlotte managed services provider running SOC coverage for regional hospital networks.",
+  "vendorText": "Appalachian Managed IT (Appalachian Managed IT LLC)\nIndustry: Information Technology | Domains: Healthcare, Public Sector\nHQ: Charlotte, United States | Headcount: 290\nOverview: Charlotte managed services provider running SOC coverage for regional hospital networks.\nCapabilities: Managed Services, Cybersecurity Operations\nCertifications: ISO/IEC 27001:2022 (Schellman & Company), ISO/IEC 20000-1:2018 (Schellman & Company)\nPast experience: \nRegional capacity: United States",
+  "vendorStatus": "Registered",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Healthcare",
+    "Public Sector"
+  ],
+  "capabilities": [
+    "Managed Services",
+    "Cybersecurity Operations"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "ISO/IEC 20000-1:2018"
+  ],
+  "country": "United States",
+  "headcount": 290,
+  "hasActiveContract": false
+}

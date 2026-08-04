@@ -1,0 +1,24 @@
+{
+  "id": "8efae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Tatra Networks",
+  "websiteDomain": "tatranetworks.sk",
+  "vendorSummary": "Bratislava network integrator running managed connectivity for regional logistics operators.",
+  "vendorText": "Tatra Networks (Tatra Networks a.s.)\nIndustry: Telecommunications | Domains: Telecommunications, Transport & Logistics\nHQ: Bratislava, Slovakia | Headcount: 150\nOverview: Bratislava network integrator running managed connectivity for regional logistics operators.\nCapabilities: Network Infrastructure, Managed Services\nCertifications: ISO 9001:2015 (TUV SUD Slovakia), ISO/IEC 27001:2022 (TUV SUD Slovakia)\nPast experience: \nRegional capacity: Slovakia, Czech Republic, Austria",
+  "vendorStatus": "Potential",
+  "industry": "Telecommunications",
+  "businessDomains": [
+    "Telecommunications",
+    "Transport & Logistics"
+  ],
+  "capabilities": [
+    "Network Infrastructure",
+    "Managed Services"
+  ],
+  "certifications": [
+    "ISO 9001:2015",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Slovakia",
+  "headcount": 150,
+  "hasActiveContract": false
+}

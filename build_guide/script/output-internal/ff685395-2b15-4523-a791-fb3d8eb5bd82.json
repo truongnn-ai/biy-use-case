@@ -1,0 +1,26 @@
+{
+  "id": "ff685395-2b15-4523-a791-fb3d8eb5bd82",
+  "vendorName": "Kaizen Digital KK",
+  "websiteDomain": "kaizendigital.co.jp",
+  "vendorSummary": "Tokyo-based digital engineering house known for continuous-improvement delivery methods and factory floor automation.",
+  "vendorText": "Kaizen Digital KK (Kaizen Digital Kabushiki Kaisha)\nIndustry: Information Technology | Domains: Energy & Utilities, Transport & Logistics\nHQ: Tokyo, Japan | Headcount: 505\nOverview: Tokyo-based digital engineering house known for continuous-improvement delivery methods and factory floor automation.\nCapabilities: Data Engineering, Business Intelligence, Machine Learning\nCertifications: ISTQB Partner Programme - Gold (ISTQB), ISO 9001:2015 (Japan Quality Assurance Organisation), ISO/IEC 27001:2022 (Japan Quality Assurance Organisation)\nPast experience: Semiconductor Yield Analytics — Case study: deployed yield analytics for a Japanese semiconductor fab, flagging process drift an average of six hours earlier than the prior method.\nRegional capacity: Netherlands, Belgium, Germany",
+  "vendorStatus": "Potential",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Energy & Utilities",
+    "Transport & Logistics"
+  ],
+  "capabilities": [
+    "Data Engineering",
+    "Business Intelligence",
+    "Machine Learning"
+  ],
+  "certifications": [
+    "ISTQB Partner Programme - Gold",
+    "ISO 9001:2015",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Japan",
+  "headcount": 505,
+  "hasActiveContract": false
+}

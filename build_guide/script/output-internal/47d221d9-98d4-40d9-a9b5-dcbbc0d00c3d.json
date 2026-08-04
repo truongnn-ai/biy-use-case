@@ -1,0 +1,24 @@
+{
+  "id": "47d221d9-98d4-40d9-a9b5-dcbbc0d00c3d",
+  "vendorName": "Vertex Fintech Solutions",
+  "websiteDomain": "vertexfintech.sg",
+  "vendorSummary": "Payments and open-banking API specialist with pre-built connectors for regional clearing networks.",
+  "vendorText": "Vertex Fintech Solutions (Vertex Fintech Solutions Pte Ltd)\nIndustry: Financial Technology | Domains: Public Sector, Education\nHQ: Singapore, Singapore | Headcount: 175\nOverview: Payments and open-banking API specialist with pre-built connectors for regional clearing networks.\nCapabilities: Application Development, DevOps Automation\nCertifications: ISO/IEC 27001:2022 (TUV SUD PSB), PCI DSS Level 1 Service Provider (ControlCase)\nPast experience: Cross-Border Payments Sandbox — Ongoing sandbox testing of a cross-border payments corridor with two regional partner banks.\nRegional capacity: Indonesia, Singapore",
+  "vendorStatus": "Existing",
+  "industry": "Financial Technology",
+  "businessDomains": [
+    "Public Sector",
+    "Education"
+  ],
+  "capabilities": [
+    "Application Development",
+    "DevOps Automation"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "PCI DSS Level 1 Service Provider"
+  ],
+  "country": "Singapore",
+  "headcount": 175,
+  "hasActiveContract": false
+}

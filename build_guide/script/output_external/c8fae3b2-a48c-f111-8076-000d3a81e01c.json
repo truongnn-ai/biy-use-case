@@ -1,0 +1,23 @@
+{
+  "id": "c8fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Jade Mountain Robotics",
+  "websiteDomain": "jademountainrobotics.tw",
+  "vendorSummary": "Taichung automation vendor deploying precision-manufacturing robotics orchestration.",
+  "vendorText": "Jade Mountain Robotics (Jade Mountain Robotics Co Ltd)\nIndustry: Information Technology | Domains: Manufacturing\nHQ: Taichung, Taiwan | Headcount: 480\nOverview: Taichung automation vendor deploying precision-manufacturing robotics orchestration.\nCapabilities: RPA, Machine Learning\nCertifications: ISO/IEC 27001:2022 (Bureau Veritas Taiwan), ISO 9001:2015 (Bureau Veritas Taiwan)\nPast experience: \nRegional capacity: Taiwan, China",
+  "vendorStatus": "Registered",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Manufacturing"
+  ],
+  "capabilities": [
+    "RPA",
+    "Machine Learning"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "ISO 9001:2015"
+  ],
+  "country": "Taiwan",
+  "headcount": 480,
+  "hasActiveContract": false
+}

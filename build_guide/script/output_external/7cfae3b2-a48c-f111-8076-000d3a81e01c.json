@@ -1,0 +1,26 @@
+{
+  "id": "7cfae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Batavia Cloud Studio",
+  "websiteDomain": "bataviacloudstudio.nl",
+  "vendorSummary": "Amsterdam cloud-native consultancy running SRE retainers for retail and government platforms.",
+  "vendorText": "Batavia Cloud Studio (Batavia Cloud Studio B.V.)\nIndustry: Information Technology | Domains: Retail & Consumer, Public Sector\nHQ: Amsterdam, Netherlands | Headcount: 350\nOverview: Amsterdam cloud-native consultancy running SRE retainers for retail and government platforms.\nCapabilities: Cloud Migration, DevOps Automation, Site Reliability Engineering\nCertifications: AWS Advanced Tier Services Partner (Amazon Web Services), ISO/IEC 20000-1:2018 (DEKRA Certification), ISO/IEC 27001:2022 (DEKRA Certification)\nPast experience: \nRegional capacity: Netherlands, Belgium",
+  "vendorStatus": "Potential",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Retail & Consumer",
+    "Public Sector"
+  ],
+  "capabilities": [
+    "Cloud Migration",
+    "DevOps Automation",
+    "Site Reliability Engineering"
+  ],
+  "certifications": [
+    "AWS Advanced Tier Services Partner",
+    "ISO/IEC 20000-1:2018",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Netherlands",
+  "headcount": 350,
+  "hasActiveContract": false
+}

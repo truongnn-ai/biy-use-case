@@ -1,0 +1,26 @@
+{
+  "id": "b869d452-f0cf-4401-893d-4413e139e358",
+  "vendorName": "Lumiere Ingenierie",
+  "websiteDomain": "lumiere-ing.fr",
+  "vendorSummary": "Aerospace-focused software engineering firm with safety-critical development and certification experience.",
+  "vendorText": "Lumiere Ingenierie (Lumiere Ingenierie SAS)\nIndustry: Engineering Services | Domains: Public Sector, Transport & Logistics\nHQ: Toulouse, France | Headcount: 1100\nOverview: Aerospace-focused software engineering firm with safety-critical development and certification experience.\nCapabilities: Cloud Migration, DevOps Automation, Site Reliability Engineering\nCertifications: DO-178C DAL B Process Qualification (Bureau Veritas), ISO/IEC 27001:2022 (AFNOR Certification), EN 9100:2018 (AFNOR Certification)\nPast experience: Rail Signalling Software Assurance — Ongoing independent assurance of signalling software updates, producing certification evidence for each release.\nRegional capacity: Malaysia, Singapore, Thailand",
+  "vendorStatus": "Existing",
+  "industry": "Engineering Services",
+  "businessDomains": [
+    "Public Sector",
+    "Transport & Logistics"
+  ],
+  "capabilities": [
+    "Cloud Migration",
+    "DevOps Automation",
+    "Site Reliability Engineering"
+  ],
+  "certifications": [
+    "DO-178C DAL B Process Qualification",
+    "ISO/IEC 27001:2022",
+    "EN 9100:2018"
+  ],
+  "country": "France",
+  "headcount": 1100,
+  "hasActiveContract": true
+}

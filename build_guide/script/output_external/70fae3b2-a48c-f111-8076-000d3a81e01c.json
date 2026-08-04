@@ -1,0 +1,24 @@
+{
+  "id": "70fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Andes Fintech Labs",
+  "websiteDomain": "andesfintechlabs.cl",
+  "vendorSummary": "Santiago-based open banking specialist building payment connectors for Andean regional banks.",
+  "vendorText": "Andes Fintech Labs (Andes Fintech Labs SpA)\nIndustry: Financial Technology | Domains: Financial Services\nHQ: Santiago, Chile | Headcount: 150\nOverview: Santiago-based open banking specialist building payment connectors for Andean regional banks.\nCapabilities: Application Development, Integration & APIs, Machine Learning\nCertifications: ISO/IEC 27001:2022 (INN Chile), PCI DSS Level 1 Service Provider (ControlCase LatAm)\nPast experience: \nRegional capacity: Chile, Peru, Argentina",
+  "vendorStatus": "Potential",
+  "industry": "Financial Technology",
+  "businessDomains": [
+    "Financial Services"
+  ],
+  "capabilities": [
+    "Application Development",
+    "Integration & APIs",
+    "Machine Learning"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "PCI DSS Level 1 Service Provider"
+  ],
+  "country": "Chile",
+  "headcount": 150,
+  "hasActiveContract": false
+}

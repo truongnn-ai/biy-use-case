@@ -1,0 +1,24 @@
+{
+  "id": "8dfae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Zagreb Assurance Partners",
+  "websiteDomain": "zagrebassurance.hr",
+  "vendorSummary": "Zagreb advisory boutique supporting EU-funded public health digitisation programmes.",
+  "vendorText": "Zagreb Assurance Partners (Zagreb Assurance Partners d.o.o.)\nIndustry: Consulting | Domains: Public Sector, Healthcare\nHQ: Zagreb, Croatia | Headcount: 110\nOverview: Zagreb advisory boutique supporting EU-funded public health digitisation programmes.\nCapabilities: Data Governance, Change Management\nCertifications: ISO/IEC 27701:2019 (Bureau Veritas Croatia), ISO 9001:2015 (Bureau Veritas Croatia)\nPast experience: \nRegional capacity: Croatia, Slovenia",
+  "vendorStatus": "Registered",
+  "industry": "Consulting",
+  "businessDomains": [
+    "Public Sector",
+    "Healthcare"
+  ],
+  "capabilities": [
+    "Data Governance",
+    "Change Management"
+  ],
+  "certifications": [
+    "ISO/IEC 27701:2019",
+    "ISO 9001:2015"
+  ],
+  "country": "Croatia",
+  "headcount": 110,
+  "hasActiveContract": false
+}

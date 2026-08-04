@@ -1,0 +1,25 @@
+{
+  "id": "74fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Highland Security Partners",
+  "websiteDomain": "highlandsecuritypartners.co.uk",
+  "vendorSummary": "Edinburgh-based security testing firm serving Scottish public sector and energy operators.",
+  "vendorText": "Highland Security Partners (Highland Security Partners Ltd)\nIndustry: Cybersecurity | Domains: Public Sector, Energy & Utilities\nHQ: Edinburgh, United Kingdom | Headcount: 190\nOverview: Edinburgh-based security testing firm serving Scottish public sector and energy operators.\nCapabilities: Cybersecurity Operations, Penetration Testing, Identity & Access Management\nCertifications: ISO/IEC 27001:2022 (BSI Group), CREST Accredited Penetration Testing (CREST)\nPast experience: \nRegional capacity: United Kingdom",
+  "vendorStatus": "Potential",
+  "industry": "Cybersecurity",
+  "businessDomains": [
+    "Public Sector",
+    "Energy & Utilities"
+  ],
+  "capabilities": [
+    "Cybersecurity Operations",
+    "Penetration Testing",
+    "Identity & Access Management"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "CREST Accredited Penetration Testing"
+  ],
+  "country": "United Kingdom",
+  "headcount": 190,
+  "hasActiveContract": false
+}

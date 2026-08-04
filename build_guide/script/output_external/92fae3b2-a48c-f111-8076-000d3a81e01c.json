@@ -1,0 +1,24 @@
+{
+  "id": "92fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Doha Harbor Analytics",
+  "websiteDomain": "dohaharboranalytics.qa",
+  "vendorSummary": "Doha analytics consultancy supporting LNG logistics and port operations reporting.",
+  "vendorText": "Doha Harbor Analytics (Doha Harbor Analytics WLL)\nIndustry: Professional Services | Domains: Energy & Utilities, Transport & Logistics\nHQ: Doha, Qatar | Headcount: 170\nOverview: Doha analytics consultancy supporting LNG logistics and port operations reporting.\nCapabilities: Data Engineering, Business Intelligence\nCertifications: ISO 9001:2015 (QCC Qatar), ISO/IEC 27001:2022 (QCC Qatar)\nPast experience: \nRegional capacity: Qatar, United Arab Emirates",
+  "vendorStatus": "Potential",
+  "industry": "Professional Services",
+  "businessDomains": [
+    "Energy & Utilities",
+    "Transport & Logistics"
+  ],
+  "capabilities": [
+    "Data Engineering",
+    "Business Intelligence"
+  ],
+  "certifications": [
+    "ISO 9001:2015",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Qatar",
+  "headcount": 170,
+  "hasActiveContract": false
+}

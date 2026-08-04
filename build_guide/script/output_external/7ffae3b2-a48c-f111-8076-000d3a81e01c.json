@@ -1,0 +1,24 @@
+{
+  "id": "7ffae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Pyrenees Engineering Group",
+  "websiteDomain": "pyreneesengineering.es",
+  "vendorSummary": "Barcelona engineering house supporting safety-critical avionics software delivery.",
+  "vendorText": "Pyrenees Engineering Group (Pyrenees Engineering Group SL)\nIndustry: Engineering Services | Domains: Aviation, Manufacturing\nHQ: Barcelona, Spain | Headcount: 410\nOverview: Barcelona engineering house supporting safety-critical avionics software delivery.\nCapabilities: Application Development, Site Reliability Engineering\nCertifications: ISO 9001:2015 (AENOR), EN 9100:2018 (AENOR)\nPast experience: \nRegional capacity: Spain, France",
+  "vendorStatus": "Registered",
+  "industry": "Engineering Services",
+  "businessDomains": [
+    "Aviation",
+    "Manufacturing"
+  ],
+  "capabilities": [
+    "Application Development",
+    "Site Reliability Engineering"
+  ],
+  "certifications": [
+    "ISO 9001:2015",
+    "EN 9100:2018"
+  ],
+  "country": "Spain",
+  "headcount": 410,
+  "hasActiveContract": false
+}

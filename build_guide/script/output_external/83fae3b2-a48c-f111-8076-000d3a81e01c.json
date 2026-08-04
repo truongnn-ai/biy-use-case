@@ -1,0 +1,24 @@
+{
+  "id": "83fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Alpine Assurance Partners",
+  "websiteDomain": "alpineassurance.ch",
+  "vendorSummary": "Zurich advisory boutique supporting compliance transformation for private banks and insurers.",
+  "vendorText": "Alpine Assurance Partners (Alpine Assurance Partners AG)\nIndustry: Consulting | Domains: Financial Services, Healthcare\nHQ: Zurich, Switzerland | Headcount: 150\nOverview: Zurich advisory boutique supporting compliance transformation for private banks and insurers.\nCapabilities: Data Governance, Change Management\nCertifications: ISO/IEC 27701:2019 (SQS Switzerland), ISO 9001:2015 (SQS Switzerland)\nPast experience: \nRegional capacity: Switzerland, Liechtenstein",
+  "vendorStatus": "Registered",
+  "industry": "Consulting",
+  "businessDomains": [
+    "Financial Services",
+    "Healthcare"
+  ],
+  "capabilities": [
+    "Data Governance",
+    "Change Management"
+  ],
+  "certifications": [
+    "ISO/IEC 27701:2019",
+    "ISO 9001:2015"
+  ],
+  "country": "Switzerland",
+  "headcount": 150,
+  "hasActiveContract": false
+}

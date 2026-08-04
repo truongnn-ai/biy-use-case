@@ -1,0 +1,26 @@
+{
+  "id": "3d9afe86-e806-405b-ad54-c1e6842cbc02",
+  "vendorName": "Silverline Cyber",
+  "websiteDomain": "silverlinecyber.com.au",
+  "vendorSummary": "Australian-owned security services firm operating a sovereign SOC staffed by government-cleared analysts.",
+  "vendorText": "Silverline Cyber (Silverline Cyber Pty Ltd)\nIndustry: Cybersecurity | Domains: Financial Services\nHQ: Sydney, Australia | Headcount: 320\nOverview: Australian-owned security services firm operating a sovereign SOC staffed by government-cleared analysts.\nCapabilities: Data Governance, Change Management, Business Intelligence\nCertifications: SOC 2 Type II (KPMG Australia), CREST Accredited Penetration Testing (CREST), IRAP Assessed - PROTECTED (ASD IRAP Assessor Panel), ISO/IEC 27001:2022 (SAI Global)\nPast experience: Security Operations Centre Uplift — Ongoing SOC uplift adding after-hours coverage and automated triage; alert backlog reduced by half in the first quarter.; External Attack Surface Assessment — One-time assessment of internet-facing assets, identifying 31 exposed endpoints and a remediation plan accepted by security leadership.\nRegional capacity: Hong Kong SAR, Singapore, China",
+  "vendorStatus": "Registered",
+  "industry": "Cybersecurity",
+  "businessDomains": [
+    "Financial Services"
+  ],
+  "capabilities": [
+    "Data Governance",
+    "Change Management",
+    "Business Intelligence"
+  ],
+  "certifications": [
+    "SOC 2 Type II",
+    "CREST Accredited Penetration Testing",
+    "IRAP Assessed - PROTECTED",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Australia",
+  "headcount": 320,
+  "hasActiveContract": false
+}

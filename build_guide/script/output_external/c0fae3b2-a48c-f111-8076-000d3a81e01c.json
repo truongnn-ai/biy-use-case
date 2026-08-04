@@ -1,0 +1,24 @@
+{
+  "id": "c0fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Loire Valley Engineering",
+  "websiteDomain": "loirevalleyengineering.fr",
+  "vendorSummary": "Nantes engineering firm supporting aerospace supplier software assurance programmes.",
+  "vendorText": "Loire Valley Engineering (Loire Valley Engineering SAS)\nIndustry: Engineering Services | Domains: Aviation, Manufacturing\nHQ: Nantes, France | Headcount: 340\nOverview: Nantes engineering firm supporting aerospace supplier software assurance programmes.\nCapabilities: Application Development, Site Reliability Engineering\nCertifications: ISO 9001:2015 (AFNOR Certification), EN 9100:2018 (AFNOR Certification)\nPast experience: \nRegional capacity: France, Spain",
+  "vendorStatus": "Registered",
+  "industry": "Engineering Services",
+  "businessDomains": [
+    "Aviation",
+    "Manufacturing"
+  ],
+  "capabilities": [
+    "Application Development",
+    "Site Reliability Engineering"
+  ],
+  "certifications": [
+    "ISO 9001:2015",
+    "EN 9100:2018"
+  ],
+  "country": "France",
+  "headcount": 340,
+  "hasActiveContract": false
+}

@@ -1,0 +1,24 @@
+{
+  "id": "8afae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Carpathian Cloud Ops",
+  "websiteDomain": "carpathiancloudops.ro",
+  "vendorSummary": "Bucharest managed cloud provider serving public-sector and energy clients across the Balkans.",
+  "vendorText": "Carpathian Cloud Ops (Carpathian Cloud Ops SRL)\nIndustry: Information Technology | Domains: Public Sector, Energy & Utilities\nHQ: Bucharest, Romania | Headcount: 260\nOverview: Bucharest managed cloud provider serving public-sector and energy clients across the Balkans.\nCapabilities: Cloud Migration, Managed Services\nCertifications: ISO/IEC 20000-1:2018 (SRAC Romania), ISO/IEC 27001:2022 (SRAC Romania)\nPast experience: \nRegional capacity: Romania, Bulgaria",
+  "vendorStatus": "Potential",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Public Sector",
+    "Energy & Utilities"
+  ],
+  "capabilities": [
+    "Cloud Migration",
+    "Managed Services"
+  ],
+  "certifications": [
+    "ISO/IEC 20000-1:2018",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Romania",
+  "headcount": 260,
+  "hasActiveContract": false
+}

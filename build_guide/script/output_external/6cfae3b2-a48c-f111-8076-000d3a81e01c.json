@@ -1,0 +1,24 @@
+{
+  "id": "6cfae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Fraser Valley Networks",
+  "websiteDomain": "fraservalleynetworks.ca",
+  "vendorSummary": "Western Canadian network integrator providing managed WAN and edge connectivity for logistics hubs.",
+  "vendorText": "Fraser Valley Networks (Fraser Valley Networks Ltd)\nIndustry: Telecommunications | Domains: Telecommunications, Transport & Logistics\nHQ: Vancouver, Canada | Headcount: 260\nOverview: Western Canadian network integrator providing managed WAN and edge connectivity for logistics hubs.\nCapabilities: Network Infrastructure, Managed Services\nCertifications: ISO/IEC 27001:2022 (SAI Global Canada), ISO 9001:2015 (SAI Global Canada)\nPast experience: \nRegional capacity: Canada",
+  "vendorStatus": "Registered",
+  "industry": "Telecommunications",
+  "businessDomains": [
+    "Telecommunications",
+    "Transport & Logistics"
+  ],
+  "capabilities": [
+    "Network Infrastructure",
+    "Managed Services"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "ISO 9001:2015"
+  ],
+  "country": "Canada",
+  "headcount": 260,
+  "hasActiveContract": false
+}

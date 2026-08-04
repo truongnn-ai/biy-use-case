@@ -1,0 +1,27 @@
+{
+  "id": "c26d66dc-8a20-4873-8e5f-c0fdc0072e04",
+  "vendorName": "Meridian Data Labs",
+  "websiteDomain": "meridiandatalabs.in",
+  "vendorSummary": "Large-scale data platform builder with lakehouse and governance practices; multiple long-running BrandName analytics engagements.",
+  "vendorText": "Meridian Data Labs (Meridian Data Labs Pvt Ltd)\nIndustry: Information Technology | Domains: Manufacturing, Retail & Consumer\nHQ: Bengaluru, India | Headcount: 1450\nOverview: Large-scale data platform builder with lakehouse and governance practices; multiple long-running BrandName analytics engagements.\nCapabilities: Integration & APIs, Network Infrastructure, Managed Services\nCertifications: ISO 9001:2015 (TUV India), ISO/IEC 27701:2019 (BSI Group India), CMMI Level 5 (Development) (ISACA CMMI Institute), ISO/IEC 27001:2022 (BSI Group India)\nPast experience: Grants Analytics Dashboard Refresh — Ongoing refresh of the grants analytics dashboards onto the lakehouse platform; two of five dashboards migrated so far.; Finance Data Mart Consolidation — Consolidated five finance data marts into the enterprise lakehouse, retiring duplicate month-end reporting pipelines.\nRegional capacity: Thailand, Vietnam, Myanmar",
+  "vendorStatus": "Registered",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Manufacturing",
+    "Retail & Consumer"
+  ],
+  "capabilities": [
+    "Integration & APIs",
+    "Network Infrastructure",
+    "Managed Services"
+  ],
+  "certifications": [
+    "ISO 9001:2015",
+    "ISO/IEC 27701:2019",
+    "CMMI Level 5 (Development)",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "India",
+  "headcount": 1450,
+  "hasActiveContract": true
+}

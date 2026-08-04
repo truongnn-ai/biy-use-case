@@ -1,0 +1,25 @@
+{
+  "id": "3a49aa44-3f74-453c-ab9d-537c524410ec",
+  "vendorName": "Mekong Digital",
+  "websiteDomain": "mekongdigital.vn",
+  "vendorSummary": "Offshore engineering partner offering blended onshore-offshore squads and a dedicated QA automation practice.",
+  "vendorText": "Mekong Digital (Mekong Digital JSC)\nIndustry: Information Technology | Domains: Telecommunications, Transport & Logistics\nHQ: Ho Chi Minh City, Vietnam | Headcount: 690\nOverview: Offshore engineering partner offering blended onshore-offshore squads and a dedicated QA automation practice.\nCapabilities: Network Infrastructure, Managed Services\nCertifications: CMMI Level 3 (Development) (ISACA CMMI Institute), ISO 9001:2015 (Bureau Veritas Vietnam), ISO/IEC 27001:2022 (Bureau Veritas Vietnam)\nPast experience: Portal Accessibility Remediation — Ongoing remediation of accessibility findings across the regional portal, closing 60% of identified issues to date.\nRegional capacity: United States, Canada, Japan",
+  "vendorStatus": "Registered",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Telecommunications",
+    "Transport & Logistics"
+  ],
+  "capabilities": [
+    "Network Infrastructure",
+    "Managed Services"
+  ],
+  "certifications": [
+    "CMMI Level 3 (Development)",
+    "ISO 9001:2015",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Vietnam",
+  "headcount": 690,
+  "hasActiveContract": false
+}

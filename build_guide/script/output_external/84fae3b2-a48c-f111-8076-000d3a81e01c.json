@@ -1,0 +1,24 @@
+{
+  "id": "84fae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Danube Software House",
+  "websiteDomain": "danubesoftwarehouse.at",
+  "vendorSummary": "Vienna software house building citizen services portals for Central European ministries.",
+  "vendorText": "Danube Software House (Danube Software House GmbH)\nIndustry: Information Technology | Domains: Public Sector, Education\nHQ: Vienna, Austria | Headcount: 210\nOverview: Vienna software house building citizen services portals for Central European ministries.\nCapabilities: Application Development, Test Automation\nCertifications: ISO/IEC 27001:2022 (Quality Austria), CMMI Level 3 (Development) (ISACA CMMI Institute)\nPast experience: \nRegional capacity: Austria, Slovakia, Hungary",
+  "vendorStatus": "Potential",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Public Sector",
+    "Education"
+  ],
+  "capabilities": [
+    "Application Development",
+    "Test Automation"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "CMMI Level 3 (Development)"
+  ],
+  "country": "Austria",
+  "headcount": 210,
+  "hasActiveContract": false
+}

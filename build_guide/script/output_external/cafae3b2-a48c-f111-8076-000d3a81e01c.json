@@ -1,0 +1,25 @@
+{
+  "id": "cafae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Wellington Harbour Advisory",
+  "websiteDomain": "wellingtonharbouradvisory.co.nz",
+  "vendorSummary": "Wellington advisory firm supporting public-sector financial reporting modernisation.",
+  "vendorText": "Wellington Harbour Advisory (Wellington Harbour Advisory Ltd)\nIndustry: Consulting | Domains: Public Sector, Financial Services\nHQ: Wellington, New Zealand | Headcount: 130\nOverview: Wellington advisory firm supporting public-sector financial reporting modernisation.\nCapabilities: Data Governance, Change Management, Business Intelligence\nCertifications: ISO/IEC 27701:2019 (Telarc New Zealand), ISO 9001:2015 (Telarc New Zealand)\nPast experience: \nRegional capacity: New Zealand",
+  "vendorStatus": "Registered",
+  "industry": "Consulting",
+  "businessDomains": [
+    "Public Sector",
+    "Financial Services"
+  ],
+  "capabilities": [
+    "Data Governance",
+    "Change Management",
+    "Business Intelligence"
+  ],
+  "certifications": [
+    "ISO/IEC 27701:2019",
+    "ISO 9001:2015"
+  ],
+  "country": "New Zealand",
+  "headcount": 130,
+  "hasActiveContract": false
+}

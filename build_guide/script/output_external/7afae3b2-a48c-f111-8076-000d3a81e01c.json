@@ -1,0 +1,25 @@
+{
+  "id": "7afae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Berliner Datenwerk",
+  "websiteDomain": "berlinerdatenwerk.de",
+  "vendorSummary": "Berlin data engineering studio building smart-city analytics for municipal telecom infrastructure.",
+  "vendorText": "Berliner Datenwerk (Berliner Datenwerk GmbH)\nIndustry: Information Technology | Domains: Public Sector, Telecommunications\nHQ: Berlin, Germany | Headcount: 420\nOverview: Berlin data engineering studio building smart-city analytics for municipal telecom infrastructure.\nCapabilities: Data Engineering, Business Intelligence, Machine Learning\nCertifications: ISO/IEC 27701:2019 (TUV Rheinland), ISO/IEC 27001:2022 (TUV Rheinland)\nPast experience: \nRegional capacity: Germany, Poland",
+  "vendorStatus": "Potential",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Public Sector",
+    "Telecommunications"
+  ],
+  "capabilities": [
+    "Data Engineering",
+    "Business Intelligence",
+    "Machine Learning"
+  ],
+  "certifications": [
+    "ISO/IEC 27701:2019",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Germany",
+  "headcount": 420,
+  "hasActiveContract": false
+}

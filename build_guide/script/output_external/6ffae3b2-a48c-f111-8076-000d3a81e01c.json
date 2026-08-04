@@ -1,0 +1,26 @@
+{
+  "id": "6ffae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Cartagena BPO Solutions",
+  "websiteDomain": "cartagenabpo.com.co",
+  "vendorSummary": "Nearshore contact centre and back-office operator expanding automation-led services for US retail brands.",
+  "vendorText": "Cartagena BPO Solutions (Cartagena BPO Solutions SAS)\nIndustry: Business Process Outsourcing | Domains: Retail & Consumer, Financial Services\nHQ: Cartagena, Colombia | Headcount: 1250\nOverview: Nearshore contact centre and back-office operator expanding automation-led services for US retail brands.\nCapabilities: Managed Services, RPA, Document Intelligence\nCertifications: SOC 2 Type II (Deloitte Colombia), PCI DSS Level 1 Service Provider (ControlCase LatAm), ISO 9001:2015 (ICONTEC Colombia)\nPast experience: \nRegional capacity: Colombia, Mexico, United States",
+  "vendorStatus": "Potential",
+  "industry": "Business Process Outsourcing",
+  "businessDomains": [
+    "Retail & Consumer",
+    "Financial Services"
+  ],
+  "capabilities": [
+    "Managed Services",
+    "RPA",
+    "Document Intelligence"
+  ],
+  "certifications": [
+    "SOC 2 Type II",
+    "PCI DSS Level 1 Service Provider",
+    "ISO 9001:2015"
+  ],
+  "country": "Colombia",
+  "headcount": 1250,
+  "hasActiveContract": false
+}

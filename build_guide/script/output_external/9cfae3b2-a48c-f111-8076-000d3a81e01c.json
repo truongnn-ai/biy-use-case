@@ -1,0 +1,24 @@
+{
+  "id": "9cfae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Atlas Mountain Software",
+  "websiteDomain": "atlasmountainsoftware.ma",
+  "vendorSummary": "Casablanca nearshore software vendor serving Francophone telecom and government clients.",
+  "vendorText": "Atlas Mountain Software (Atlas Mountain Software SARL)\nIndustry: Information Technology | Domains: Public Sector, Telecommunications\nHQ: Casablanca, Morocco | Headcount: 190\nOverview: Casablanca nearshore software vendor serving Francophone telecom and government clients.\nCapabilities: Application Development, Test Automation\nCertifications: ISO/IEC 27001:2022 (IMANOR Morocco), ISO 9001:2015 (IMANOR Morocco)\nPast experience: \nRegional capacity: Morocco, Tunisia, Algeria",
+  "vendorStatus": "Potential",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Public Sector",
+    "Telecommunications"
+  ],
+  "capabilities": [
+    "Application Development",
+    "Test Automation"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "ISO 9001:2015"
+  ],
+  "country": "Morocco",
+  "headcount": 190,
+  "hasActiveContract": false
+}

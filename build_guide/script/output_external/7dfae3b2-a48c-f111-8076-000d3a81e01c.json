@@ -1,0 +1,25 @@
+{
+  "id": "7dfae3b2-a48c-f111-8076-000d3a81e01c",
+  "vendorName": "Flanders Field Robotics",
+  "websiteDomain": "flandersfieldrobotics.be",
+  "vendorSummary": "Antwerp port-logistics automation vendor building warehouse robotics orchestration software.",
+  "vendorText": "Flanders Field Robotics (Flanders Field Robotics NV)\nIndustry: Information Technology | Domains: Manufacturing, Transport & Logistics\nHQ: Antwerp, Belgium | Headcount: 230\nOverview: Antwerp port-logistics automation vendor building warehouse robotics orchestration software.\nCapabilities: RPA, Application Development, Machine Learning\nCertifications: ISO/IEC 27001:2022 (Vincotte), ISO 9001:2015 (Vincotte)\nPast experience: \nRegional capacity: Belgium, Netherlands, France",
+  "vendorStatus": "Registered",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Manufacturing",
+    "Transport & Logistics"
+  ],
+  "capabilities": [
+    "RPA",
+    "Application Development",
+    "Machine Learning"
+  ],
+  "certifications": [
+    "ISO/IEC 27001:2022",
+    "ISO 9001:2015"
+  ],
+  "country": "Belgium",
+  "headcount": 230,
+  "hasActiveContract": false
+}

@@ -1,0 +1,27 @@
+{
+  "id": "0e6bcf5f-3245-49c0-b91e-38452571a7de",
+  "vendorName": "Northwind Cloud Services",
+  "websiteDomain": "northwindcloud.my",
+  "vendorSummary": "Regional Azure and AWS migration partner running 24x7 managed cloud operations from Kuala Lumpur and Penang.",
+  "vendorText": "Northwind Cloud Services (Northwind Cloud Services Sdn Bhd)\nIndustry: Information Technology | Domains: Aviation, Manufacturing\nHQ: Kuala Lumpur, Malaysia | Headcount: 610\nOverview: Regional Azure and AWS migration partner running 24x7 managed cloud operations from Kuala Lumpur and Penang.\nCapabilities: Application Development, Site Reliability Engineering, DevOps Automation\nCertifications: Microsoft Solutions Partner - Azure Infrastructure (Microsoft), AWS Premier Tier Services Partner (Amazon Web Services), ISO/IEC 20000-1:2018 (SIRIM QAS International), ISO/IEC 27001:2022 (SIRIM QAS International)\nPast experience: 24x7 Managed Cloud Operations (Wave 2) — Ongoing extension of managed operations to the second migration wave, maintaining the existing availability SLA.; Regional Data Centre Exit to Azure — Decommissioned two regional data centres and migrated the remaining 28 workloads to Azure ahead of the lease expiry.\nRegional capacity: France, Spain, Germany",
+  "vendorStatus": "Registered",
+  "industry": "Information Technology",
+  "businessDomains": [
+    "Aviation",
+    "Manufacturing"
+  ],
+  "capabilities": [
+    "Application Development",
+    "Site Reliability Engineering",
+    "DevOps Automation"
+  ],
+  "certifications": [
+    "Microsoft Solutions Partner - Azure Infrastructure",
+    "AWS Premier Tier Services Partner",
+    "ISO/IEC 20000-1:2018",
+    "ISO/IEC 27001:2022"
+  ],
+  "country": "Malaysia",
+  "headcount": 610,
+  "hasActiveContract": true
+}
